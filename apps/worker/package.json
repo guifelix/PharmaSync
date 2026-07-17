@@ -1,0 +1,21 @@
+{
+  "name": "@pharmasync/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "dev": "node src/worker.ts",
+    "lint": "tsc --noEmit",
+    "test": "node --test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@pharmasync/domain": "workspace:*",
+    "@pharmasync/integration": "workspace:*",
+    "@pharmasync/observability": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
