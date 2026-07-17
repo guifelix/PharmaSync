@@ -64,6 +64,8 @@ For any work that creates, modifies, or deletes project files, use this workflow
    - Keep trunk releasable: do not leave broken typechecks, failing tests, or half-applied migrations.
 
 6. **Contract and data discipline**
+   - Prefer CRUD-shaped API/controller design. Before adding custom controller actions such as `publish`, `subscribe`, `reprocess`, `approve`, or `uploadImage`, ask whether the operation is really `index`, `show`, `store`, `update`, or `destroy` on a more specific resource such as `PublishedInventoryFeed`, `FeedReprocessing`, `ProductImage`, or `SiteMembership`.
+   - Create more small, resource-focused controllers instead of growing large controllers with many custom actions or optional-parameter branches. Do not funnel distinct user intentions through one action and then reverse-engineer intent from route params; split nested resources, pivot/relationship resources, state-transition resources, and independently edited subresources into dedicated controllers when that makes the workflow clearer.
    - Update OpenAPI contracts before or alongside API behavior changes.
    - Keep shared package types, database migrations/models, API responses, and frontend consumers aligned.
    - For integration work, preserve trace IDs, idempotency behavior, quarantine behavior, and audit evidence paths.
