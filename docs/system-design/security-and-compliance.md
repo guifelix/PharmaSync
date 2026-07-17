@@ -8,7 +8,7 @@ Phase 1 security posture:
 - Accepted workforce claims are `sub`, `iss`, `aud`, `exp`, `nbf`, `org_id` or `organization_id`, `site_ids` or `permitted_site_ids`, and `roles`.
 - The authenticated request context must expose user ID, organization ID, permitted site IDs, roles, and request trace ID.
 - Role-based access by organization, site, and responsibility. The Phase 1 permission matrix lives in [Permissions Matrix](permissions-matrix.md).
-- Tenant-aware data access in every inventory, signal, integration, and audit query.
+- Tenant-aware data access in every inventory, signal, integration, and audit query. Query code must use authenticated organization and permitted-site scope before returning tenant-owned records.
 - Encryption in transit and at rest.
 - No patient-identifiable data required for the pilot.
 - Append-only audit events for imports, corrections, quarantine actions, exports, and configuration changes.
