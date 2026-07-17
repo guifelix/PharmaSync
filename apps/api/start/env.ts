@@ -27,6 +27,14 @@ export default await Env.create(new URL('../', import.meta.url), {
   // Session
   SESSION_DRIVER: Env.schema.enum(['cookie', 'memory', 'database'] as const),
 
+  // Workforce authentication
+  AUTH_LOCAL_JWT_SECRET: Env.schema.string(),
+  OIDC_ISSUER_URL: Env.schema.string({ format: 'url', tld: false }),
+  OIDC_CLIENT_ID: Env.schema.string(),
+  OIDC_AUDIENCE: Env.schema.string(),
+  OIDC_JWKS_URL: Env.schema.string({ format: 'url', tld: false }),
+  OIDC_ACCEPTED_CLAIMS: Env.schema.string(),
+
   // Database
   DB_HOST: Env.schema.string({ format: 'host' }),
   DB_PORT: Env.schema.number(),

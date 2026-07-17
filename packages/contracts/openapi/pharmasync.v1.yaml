@@ -21,6 +21,21 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthResponse"
+  /api/v1/auth/context:
+    get:
+      summary: Get authenticated workforce context
+      description: Returns the authenticated workforce user, organization, permitted sites, roles, and trace ID derived from accepted OIDC-compatible claims.
+      security:
+        - workforceBearer: []
+      responses:
+        "200":
+          description: Authenticated workforce context
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkforceAuthContextResponse"
+        "401":
+          description: Missing or invalid bearer token
   /v1/integration/feeds:
     post:
       summary: Submit a partner inventory feed
@@ -52,7 +67,47 @@ paths:
         "200":
           description: Audit events
 components:
+  securitySchemes:
+    workforceBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
+    WorkforceAuthContext:
+      type: object
+      required: [userId, organizationId, permittedSiteIds, roles, traceId, subject, issuer, audience]
+      additionalProperties: false
+      properties:
+        userId:
+          type: string
+        organizationId:
+          type: string
+        permittedSiteIds:
+          type: array
+          items:
+            type: string
+        roles:
+          type: array
+          items:
+            type: string
+        traceId:
+          type: string
+        subject:
+          type: string
+        issuer:
+          type: string
+          format: uri
+        audience:
+          type: array
+          items:
+            type: string
+    WorkforceAuthContextResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          $ref: "#/components/schemas/WorkforceAuthContext"
     HealthStatus:
       type: string
       enum: [up, down]

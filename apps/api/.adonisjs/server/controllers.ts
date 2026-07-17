@@ -8,4 +8,5 @@ export const controllers = {
   Health: () => import('#controllers/health_controller'),
   NewAccount: () => import('#controllers/new_account_controller'),
   Profile: () => import('#controllers/profile_controller'),
+  WorkforceAuthContext: () => import('#controllers/workforce_auth_context_controller'),
 }

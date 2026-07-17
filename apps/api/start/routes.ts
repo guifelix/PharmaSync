@@ -12,6 +12,7 @@ import router from '@adonisjs/core/services/router'
 import { controllers } from '#generated/controllers'
 
 const HealthController = () => import('#controllers/health_controller')
+const WorkforceAuthContextController = () => import('#controllers/workforce_auth_context_controller')
 
 router.get('/', () => {
   return { hello: 'world' }
@@ -23,6 +24,7 @@ router
   .group(() => {
     router
       .group(() => {
+        router.get('context', [WorkforceAuthContextController, 'show']).use(middleware.workforceAuth())
         router.post('signup', [controllers.NewAccount, 'store'])
         router.post('login', [controllers.AccessTokens, 'store'])
       })
