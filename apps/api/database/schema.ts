@@ -98,3 +98,51 @@ export class MedicationProductSchema extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 }
+
+export class OrganizationSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'name', 'organizationKey', 'status', 'type', 'updatedAt'] as const
+  $columns = OrganizationSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare name: string
+  @column()
+  declare organizationKey: string
+  @column()
+  declare status: string
+  @column()
+  declare type: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class SiteSchema extends BaseModel {
+  static $columns = ['city', 'country', 'createdAt', 'id', 'name', 'organizationId', 'organizationKey', 'region', 'siteKey', 'status', 'type', 'updatedAt'] as const
+  $columns = SiteSchema.$columns
+  @column()
+  declare city: string
+  @column()
+  declare country: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare name: string
+  @column()
+  declare organizationId: number
+  @column()
+  declare organizationKey: string
+  @column()
+  declare region: string
+  @column()
+  declare siteKey: string
+  @column()
+  declare status: string
+  @column()
+  declare type: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}

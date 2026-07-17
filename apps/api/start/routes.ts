@@ -22,6 +22,7 @@ const QuarantineRecordsController = () => import('#controllers/quarantine_record
 const QuarantineReprocessingsController = () =>
   import('#controllers/quarantine_reprocessings_controller')
 const RiskSignalsController = () => import('#controllers/risk_signals_controller')
+const SitesController = () => import('#controllers/sites_controller')
 const StockPositionsController = () => import('#controllers/stock_positions_controller')
 const WorkforceAuthContextController = () => import('#controllers/workforce_auth_context_controller')
 
@@ -74,6 +75,11 @@ router
           resource: 'medication-products',
         })
       )
+
+    router
+      .get('sites', [SitesController, 'index'])
+      .use(middleware.workforceAuth())
+      .use(middleware.requirePermission({ permission: 'inventory:read', resource: 'sites' }))
 
     router
       .group(() => {

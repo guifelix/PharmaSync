@@ -33,6 +33,9 @@ export interface ApiDefinition {
   medicationProducts: {
     index: typeof routes['medication_products.index']
   }
+  sites: {
+    index: typeof routes['sites.index']
+  }
   quarantineRecords: {
     index: typeof routes['quarantine_records.index']
   }

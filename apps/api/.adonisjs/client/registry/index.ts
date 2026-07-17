@@ -60,6 +60,12 @@ const routes = {
     tokens: [{"old":"/api/v1/medication-products","type":0,"val":"api","end":""},{"old":"/api/v1/medication-products","type":0,"val":"v1","end":""},{"old":"/api/v1/medication-products","type":0,"val":"medication-products","end":""}],
     types: placeholder as Registry['medication_products.index']['types'],
   },
+  'sites.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/v1/sites',
+    tokens: [{"old":"/api/v1/sites","type":0,"val":"api","end":""},{"old":"/api/v1/sites","type":0,"val":"v1","end":""},{"old":"/api/v1/sites","type":0,"val":"sites","end":""}],
+    types: placeholder as Registry['sites.index']['types'],
+  },
   'quarantine_records.index': {
     methods: ["GET","HEAD"],
     pattern: '/api/v1/quarantine',

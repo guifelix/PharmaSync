@@ -17,6 +17,7 @@ export const controllers = {
   QuarantineRecords: () => import('#controllers/quarantine_records_controller'),
   QuarantineReprocessings: () => import('#controllers/quarantine_reprocessings_controller'),
   RiskSignals: () => import('#controllers/risk_signals_controller'),
+  Sites: () => import('#controllers/sites_controller'),
   StockPositions: () => import('#controllers/stock_positions_controller'),
   WorkforceAuthContext: () => import('#controllers/workforce_auth_context_controller'),
 }

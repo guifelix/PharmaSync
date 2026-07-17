@@ -100,6 +100,21 @@ paths:
                 $ref: "#/components/schemas/MedicationProductsResponse"
         "403":
           description: Authenticated user lacks the required role permission
+  /api/v1/sites:
+    get:
+      summary: List permitted organization sites
+      description: Returns active sites for the authenticated organization and permitted-site scope.
+      security:
+        - workforceBearer: []
+      responses:
+        "200":
+          description: Permitted active sites
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SitesResponse"
+        "403":
+          description: Authenticated user lacks the required role permission
   /api/v1/signals:
     get:
       summary: List shortage, overstock, and expiration signals
@@ -272,6 +287,51 @@ components:
                 - "null"
             organizationId:
               type: string
+            traceId:
+              type: string
+    Site:
+      type: object
+      required: [siteKey, organizationId, name, type, status, city, region, country]
+      additionalProperties: false
+      properties:
+        siteKey:
+          type: string
+        organizationId:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          enum: [warehouse, pharmacy, clinic, program-location]
+        status:
+          type: string
+          enum: [active, inactive]
+        city:
+          type: string
+        region:
+          type: string
+        country:
+          type: string
+    SitesResponse:
+      type: object
+      required: [data, meta]
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Site"
+        meta:
+          type: object
+          required: [organizationId, permittedSiteIds, traceId]
+          additionalProperties: false
+          properties:
+            organizationId:
+              type: string
+            permittedSiteIds:
+              type: array
+              items:
+                type: string
             traceId:
               type: string
     HealthStatus:

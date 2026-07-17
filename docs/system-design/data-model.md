@@ -2,8 +2,8 @@
 
 Core entities:
 
-- Organization: tenant boundary for a distributor, facility, or program.
-- Site: physical or logical location where inventory is held. Sites belong to one organization.
+- Organization: tenant boundary for a distributor, facility, or program node. Organizations use stable organization keys that match authenticated tenant context.
+- Site: physical or logical location where inventory is held. Sites belong to one organization and use stable site keys that match permitted-site claims.
 - Medication Product: public reference product, seeded from FDA/openFDA NDC data where possible. Products include the source NDC, normalized NDC, proprietary and nonproprietary names, dosage form, route, labeler, product type, marketing category, active ingredient, strength, and source.
 - Lot: product lot with lot number and expiration date. Lots are visible only through organization-owned stock and movement records.
 - Stock Position: current inventory quantity for a site/product/lot. Stock positions are organization-owned and site-scoped.
@@ -20,6 +20,7 @@ Tenant-owned query rules:
 - Tenant scope consists of organization ID and permitted site IDs from the workforce auth context.
 - Organization ID is mandatory for tenant-owned records.
 - Site ID is mandatory for site-level inventory records and optional for organization-level audit/configuration records.
+- Stock positions must reference a site; organization-level inventory without a site is not valid for Phase 1.
 - Query code must filter by organization first, then by permitted site when a site ID is present.
 - Public medication reference data may be shared across organizations, but tenant-owned joins must still apply organization/site scope.
 

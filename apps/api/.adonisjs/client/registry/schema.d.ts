@@ -115,6 +115,18 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/medication_products_controller').default['index']>>>
     }
   }
+  'sites.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/v1/sites'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/sites_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/sites_controller').default['index']>>>
+    }
+  }
   'quarantine_records.index': {
     methods: ["GET","HEAD"]
     pattern: '/api/v1/quarantine'
