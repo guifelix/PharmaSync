@@ -13,7 +13,7 @@ test.group('tenant-aware query scope', () => {
       .bearerToken(tokenFor({ roles: ['operations'], siteIds: ['site_main'] }))
 
     response.assertStatus(200)
-    assert.deepEqual(recordIds(response.body().data), ['stock_alpha_main'])
+    assert.deepEqual(recordIds(response.body().data), ['stock_alpha_main_amoxicillin'])
   })
 
   test('scopes risk signals to the authenticated organization and permitted sites', async ({
@@ -61,7 +61,7 @@ test.group('tenant-aware query scope', () => {
       .bearerToken(tokenFor({ roles: ['operations'], organizationId: 'org_beta', siteIds: ['site_main'] }))
 
     response.assertStatus(200)
-    assert.deepEqual(recordIds(response.body().data), ['stock_beta_main'])
+    assert.deepEqual(recordIds(response.body().data), ['stock_beta_main_metformin'])
   })
 })
 

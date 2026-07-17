@@ -165,3 +165,45 @@ export class MedicationLotSchema extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 }
+
+export class StockPositionSchema extends BaseModel {
+  static $columns = [
+    'createdAt',
+    'id',
+    'lastCountedAt',
+    'lowStockThreshold',
+    'medicationLotId',
+    'medicationProductId',
+    'organizationId',
+    'quantityOnHand',
+    'quantityReserved',
+    'siteId',
+    'transferCorrelationId',
+    'updatedAt',
+  ] as const
+  $columns = StockPositionSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column.dateTime()
+  declare lastCountedAt: DateTime | null
+  @column()
+  declare lowStockThreshold: number
+  @column()
+  declare medicationLotId: number
+  @column()
+  declare medicationProductId: number
+  @column()
+  declare organizationId: number
+  @column()
+  declare quantityOnHand: number
+  @column()
+  declare quantityReserved: number
+  @column()
+  declare siteId: number
+  @column()
+  declare transferCorrelationId: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}

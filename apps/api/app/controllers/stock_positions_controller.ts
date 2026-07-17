@@ -1,47 +1,34 @@
-import { expirationStatus } from '#services/medication_lot_reference'
-import { scopeTenantRecords, tenantScopeFromAuth, tenantScopeMeta } from '#services/tenant_scope'
+import {
+  demoStockPositions,
+  filterStockPositions,
+  parseStockPositionQuery,
+  stockPositionMeta,
+  stockPositionFreshnessThresholdMinutes,
+  toStockPositionView,
+} from '#services/stock_position_reference'
 import type { HttpContext } from '@adonisjs/core/http'
 
-const pilotStockPositions = [
-  {
-    id: 'stock_alpha_main',
-    organizationId: 'org_alpha',
-    siteId: 'site_main',
-    medicationName: 'Amoxicillin 500mg',
-    lotNumber: 'AMX-2026-08-A',
-    expirationDate: '2026-08-15',
-    quantityOnHand: 120,
-  },
-  {
-    id: 'stock_alpha_overflow',
-    organizationId: 'org_alpha',
-    siteId: 'site_overflow',
-    medicationName: 'Atorvastatin 20mg',
-    lotNumber: 'ATO-2027-01-B',
-    expirationDate: '2027-01-31',
-    quantityOnHand: 80,
-  },
-  {
-    id: 'stock_beta_main',
-    organizationId: 'org_beta',
-    siteId: 'site_main',
-    medicationName: 'Metformin 500mg',
-    lotNumber: 'MET-2025-12-C',
-    expirationDate: '2025-12-31',
-    quantityOnHand: 60,
-  },
-]
-
 export default class StockPositionsController {
-  async index({ workforceAuth }: HttpContext) {
+  async index({ request, workforceAuth }: HttpContext) {
+    const filters = parseStockPositionQuery({
+      siteId: request.input('siteId'),
+      medicationProductId: request.input('medicationProductId'),
+      expirationWindowDays: request.input('expirationWindowDays'),
+      lowStock: request.input('lowStock'),
+      staleOnly: request.input('staleOnly'),
+    })
+    const observedAt = new Date()
+
     return {
-      data: scopeTenantRecords(pilotStockPositions, tenantScopeFromAuth(workforceAuth)).map(
-        (stockPosition) => ({
-          ...stockPosition,
-          expirationStatus: expirationStatus(stockPosition.expirationDate),
-        })
+      data: filterStockPositions(demoStockPositions, workforceAuth, filters, observedAt).map(
+        (stockPosition) => toStockPositionView(stockPosition, observedAt, stockPositionFreshnessThresholdMinutes)
       ),
-      meta: tenantScopeMeta(workforceAuth),
+      meta: stockPositionMeta({
+        organizationId: workforceAuth.organizationId,
+        permittedSiteIds: workforceAuth.permittedSiteIds,
+        traceId: workforceAuth.traceId,
+        filters,
+      }),
     }
   }
 }

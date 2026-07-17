@@ -6,7 +6,7 @@ Core entities:
 - Site: physical or logical location where inventory is held. Sites belong to one organization and use stable site keys that match permitted-site claims.
 - Medication Product: public reference product, seeded from FDA/openFDA NDC data where possible. Products include the source NDC, normalized NDC, proprietary and nonproprietary names, dosage form, route, labeler, product type, marketing category, active ingredient, strength, and source.
 - Lot: product lot with required lot number and expiration date. Lots belong to medication products and are visible only through organization-owned stock and movement records.
-- Stock Position: current inventory quantity for a site/product/lot. Stock positions are organization-owned and site-scoped, and inventory responses expose lot number, expiration date, and expiration status.
+- Stock Position: current inventory quantity for a site/product/lot. Stock positions are organization-owned and site-scoped, identify the current on-hand and reserved quantities, expose available quantity as on-hand minus reserved, and carry update-time/freshness metadata. Inventory responses expose lot number, expiration date, expiration status, low-stock state, and transfer-correlation context when present.
 - Inventory Movement: receipt, dispense, transfer, or correction event. Movements are organization-owned and site-scoped when a site applies.
 - Partner Feed: submitted payload from an external system or simulator. Partner feeds are organization-owned and may be site-scoped when source data identifies a site.
 - Quarantine Record: invalid, duplicate, or conflicting payload that requires review. Quarantine records are organization-owned and site-scoped when the source payload maps to a site.
@@ -37,6 +37,9 @@ Lot and expiration rules:
 - Expiration status uses `expired`, `near-expiry`, or `ok`.
 - The Phase 1 near-expiry window is 90 days.
 - Inventory responses must expose expired and near-expiry lots so operations users can identify items needing action.
+- Stock positions must never return a negative available quantity.
+- Low-stock state is derived from available quantity and the configured stock threshold.
+- Stale inventory responses should carry freshness metadata when the last update exceeds the configured threshold.
 
 Phase 1 must avoid patient-identifiable data. Dispense events should be synthetic or aggregated.
 
