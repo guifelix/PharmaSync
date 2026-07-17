@@ -10,13 +10,13 @@ This folder contains two complementary diagram sources:
 Preferred with Podman:
 
 ```bash
-podman run --rm -it -p 8080:8080 -v "$PWD/architecture:/usr/local/structurizr:Z" docker.io/structurizr/lite
+podman run --rm -it -p 8080:8080 -v "$PWD/architecture:/usr/local/structurizr:Z" docker.io/structurizr/structurizr local
 ```
 
 Docker fallback:
 
 ```bash
-docker run --rm -it -p 8080:8080 -v "$PWD/architecture:/usr/local/structurizr" structurizr/lite
+docker run --rm -it -p 8080:8080 -v "$PWD/architecture:/usr/local/structurizr" structurizr/structurizr local
 ```
 
 Then open `http://localhost:8080`.
@@ -85,4 +85,4 @@ docker run --rm -v "$PWD:/workspace" -w /workspace terrastruct/d2 architecture/d
 
 - `architecture/workspace.dsl` validated with `structurizr/cli` via Docker.
 - All direct D2 files rendered successfully to SVG in `architecture/out/`.
-- Podman was preferred but was not installed in the current environment, so Docker was used.
+- Podman is preferred for local runs when available; Docker fallback works with the same volume mount and `local` command.
