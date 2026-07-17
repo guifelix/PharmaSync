@@ -19,13 +19,69 @@ Pilot-ready reference system for PharmaSync Protocol, focused on pharmaceutical 
 
 ## Development
 
+Prerequisites:
+
+- Node.js and pnpm matching `package.json`.
+- Docker or Podman-compatible Docker CLI for local Postgres and MinIO.
+- A local API env file at `apps/api/.env`. Start from `apps/api/.env.example`, then generate an Adonis app key:
+
+```bash
+cp apps/api/.env.example apps/api/.env
+pnpm --filter @pharmasync/api exec node ace generate:key
+```
+
+Install dependencies:
+
 ```bash
 pnpm install
-pnpm dev
 ```
 
 Local services:
 
 ```bash
-docker compose -f infra/local/docker-compose.yml up -d
+pnpm services:up
+pnpm services:ps
+```
+
+Run database migrations:
+
+```bash
+pnpm --filter @pharmasync/api exec node ace migration:run --force
+```
+
+Run the full local stack:
+
+```bash
+pnpm dev
+```
+
+This starts:
+
+- API: `http://localhost:3333`
+- Web app: `http://localhost:5173`
+- Worker: background process in the same terminal
+- Postgres: `localhost:5432`
+- MinIO API: `http://localhost:9000`
+- MinIO console: `http://localhost:9001`
+
+Targeted dev commands:
+
+```bash
+pnpm dev:api
+pnpm dev:web
+pnpm dev:worker
+```
+
+Basic validation:
+
+```bash
+curl -i http://localhost:3333
+curl -I http://localhost:5173
+pnpm typecheck
+```
+
+Stop local services:
+
+```bash
+pnpm services:down
 ```
