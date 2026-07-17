@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_P3S9NcuE" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="bpmn-sdk" exporterVersion="0.0.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <decision id="data-quality" name="Data Quality Decision">
+    <decisionTable id="DecisionTable_qeaYLK6s" hitPolicy="FIRST">
+      <input id="Input_E8nAQSn5" label="Completeness %">
+        <inputExpression id="InputExpression_uDTXlzhY" typeRef="number">
+          <text>completenessPercent</text>
+        </inputExpression>
+      </input>
+      <input id="Input_bsqJIqd4" label="Accuracy Score">
+        <inputExpression id="InputExpression_jPExZBMw" typeRef="number">
+          <text>accuracyScore</text>
+        </inputExpression>
+      </input>
+      <input id="Input_fBhwlRLE" label="Timeliness (hours)">
+        <inputExpression id="InputExpression_MBiH2j5b" typeRef="number">
+          <text>timelinessHours</text>
+        </inputExpression>
+      </input>
+      <input id="Input_AQnfWVUt" label="Consistency Score">
+        <inputExpression id="InputExpression_IYiKyHW2" typeRef="number">
+          <text>consistencyScore</text>
+        </inputExpression>
+      </input>
+      <output id="Output_OZ65sdFK" label="Quality Grade" name="qualityGrade" typeRef="string"/>
+      <output id="Output_wpW8gXaX" label="Required Action" name="requiredAction" typeRef="string"/>
+      <rule id="DecisionRule_xLNtKmv4">
+        <inputEntry id="UnaryTests_IwOWTK37">
+          <text>&gt;= 99</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_hIc0VIPU">
+          <text>&gt;= 99</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_gX0Amigq">
+          <text>&lt;= 1</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_WSn3QcrW">
+          <text>&gt;= 99</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_ChyjnIrz">
+          <text>"A"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_qMxwfx5V">
+          <text>"NONE"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_50Wh2Vym">
+        <inputEntry id="UnaryTests_EbVh59K9">
+          <text>&gt;= 95</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_5cihIVOe">
+          <text>&gt;= 95</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_tQE2l9G0">
+          <text>&lt;= 4</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_OYlFO4Gy">
+          <text>&gt;= 95</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_ZhYvA5Jz">
+          <text>"B"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_afZjtJb2">
+          <text>"MONITOR"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_5ndqhaxQ">
+        <inputEntry id="UnaryTests_5xWxavsq">
+          <text>&gt;= 90</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_AH8sVuw3">
+          <text>&gt;= 90</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_rbeCoEyX">
+          <text>&lt;= 8</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_6QkceM3Z">
+          <text>&gt;= 90</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1bRD3IPm">
+          <text>"C"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_Mao0kSe9">
+          <text>"REVIEW_REQUIRED"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_HCrDXKRF">
+        <inputEntry id="UnaryTests_N6sbMK5e">
+          <text>&gt;= 80</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0IJGIHD7">
+          <text>&gt;= 80</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_icFLhgAD">
+          <text>&lt;= 24</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_hswHdvi8">
+          <text>&gt;= 80</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_5FS1AVEk">
+          <text>"D"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_kQjxs5bh">
+          <text>"REMEDIATION_REQUIRED"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_ckclPCFK">
+        <inputEntry id="UnaryTests_XkeVSqaK">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_qOzKTAA4">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_nXgwEJbr">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_ydzuhwpa">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_UgBJuGkR">
+          <text>"F"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_fPsRks8o">
+          <text>"QUARANTINE_FEED"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="data-quality">
+        <dc:Bounds height="80" width="180" x="160" y="100"/>
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
+

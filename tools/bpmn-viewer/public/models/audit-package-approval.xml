@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="audit-package-approval" name="Audit Package Approval" isExecutable="true">
+    <bpmn:startEvent id="approval-requested" name="Approval Requested">
+      <bpmn:outgoing>Flow_wapFHUgh</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="load-package" name="Load Audit Package">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="audit-package-loader" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_wapFHUgh</bpmn:incoming>
+      <bpmn:outgoing>Flow_HYLTQNXe</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="review-package" name="Review Audit Package">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="audit-package-review-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_HYLTQNXe</bpmn:incoming>
+      <bpmn:outgoing>Flow_P1orw7OX</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="approval-decision" name="Approve or Return?">
+      <bpmn:incoming>Flow_P1orw7OX</bpmn:incoming>
+      <bpmn:outgoing>Flow_Yo6ft01I</bpmn:outgoing>
+      <bpmn:outgoing>Flow_heH92nh3</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="finalize-package" name="Finalize Audit Package">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="package-finalizer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Yo6ft01I</bpmn:incoming>
+      <bpmn:outgoing>Flow_Pcdsiq1f</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="distribute-package" name="Distribute to Auditors">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="package-distributor" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Pcdsiq1f</bpmn:incoming>
+      <bpmn:outgoing>Flow_Hmv4hE7W</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="approved" name="Approved &amp; Distributed">
+      <bpmn:incoming>Flow_Hmv4hE7W</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="request-revisions" name="Request Revisions">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="revision-request-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_heH92nh3</bpmn:incoming>
+      <bpmn:outgoing>Flow_rv1YKSe5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="returned" name="Returned for Revisions">
+      <bpmn:incoming>Flow_rv1YKSe5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_wapFHUgh" sourceRef="approval-requested" targetRef="load-package"/>
+    <bpmn:sequenceFlow id="Flow_HYLTQNXe" sourceRef="load-package" targetRef="review-package"/>
+    <bpmn:sequenceFlow id="Flow_P1orw7OX" sourceRef="review-package" targetRef="approval-decision"/>
+    <bpmn:sequenceFlow id="Flow_Yo6ft01I" sourceRef="approval-decision" targetRef="finalize-package" name="approve">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= approve</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Pcdsiq1f" sourceRef="finalize-package" targetRef="distribute-package"/>
+    <bpmn:sequenceFlow id="Flow_Hmv4hE7W" sourceRef="distribute-package" targetRef="approved"/>
+    <bpmn:sequenceFlow id="Flow_heH92nh3" sourceRef="approval-decision" targetRef="request-revisions" name="return">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= return</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_rv1YKSe5" sourceRef="request-revisions" targetRef="returned"/>
+  </bpmn:process>
+</bpmn:definitions>
+

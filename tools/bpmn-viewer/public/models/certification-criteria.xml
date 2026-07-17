@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_Ucxb2IW4" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="bpmn-sdk" exporterVersion="0.0.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <decision id="certification-criteria" name="Certification Criteria Decision">
+    <decisionTable id="DecisionTable_VxukmRr2" hitPolicy="FIRST">
+      <input id="Input_ie3GJgeZ" label="Feed Quality Score">
+        <inputExpression id="InputExpression_gApL2ZKL" typeRef="number">
+          <text>feedQualityScore</text>
+        </inputExpression>
+      </input>
+      <input id="Input_NbC22tjY" label="SLA Compliance %">
+        <inputExpression id="InputExpression_Sfpwrf7g" typeRef="number">
+          <text>slaCompliancePercent</text>
+        </inputExpression>
+      </input>
+      <input id="Input_6OQoWlnX" label="Issue Resolution Time (days)">
+        <inputExpression id="InputExpression_DEvfXFGW" typeRef="number">
+          <text>resolutionTimeDays</text>
+        </inputExpression>
+      </input>
+      <input id="Input_OLSgbJ8D" label="Regulatory Compliance">
+        <inputExpression id="InputExpression_jwq2yw6d" typeRef="boolean">
+          <text>regulatoryCompliance</text>
+        </inputExpression>
+      </input>
+      <output id="Output_dhqxKLIi" label="Certification Level" name="certificationLevel" typeRef="string"/>
+      <output id="Output_tpn3rQW0" label="Validity Period (months)" name="validityMonths" typeRef="number"/>
+      <rule id="DecisionRule_0Tfurk3o">
+        <inputEntry id="UnaryTests_4YRQBGns">
+          <text>&gt;= 95</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_zUOdKHxZ">
+          <text>&gt;= 99</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_jbbKdc7G">
+          <text>&lt;= 2</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_XQeVBupF">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_ECAbIcxd">
+          <text>"PLATINUM"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_PNfgckMQ">
+          <text>24</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_jFqxaCbo">
+        <inputEntry id="UnaryTests_6fuARdrb">
+          <text>&gt;= 90</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1wrUZxuJ">
+          <text>&gt;= 95</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_ahhenGJM">
+          <text>&lt;= 5</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_FoSjhEeZ">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_KSOMtcvv">
+          <text>"GOLD"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_zY8XNc62">
+          <text>18</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_QS7VzcDJ">
+        <inputEntry id="UnaryTests_mMS9P78q">
+          <text>&gt;= 85</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_DvcccTWh">
+          <text>&gt;= 90</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_KbmG4xuT">
+          <text>&lt;= 10</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_vQuP68pS">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_17eTy9cV">
+          <text>"SILVER"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_H06OxrTb">
+          <text>12</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_xiFqnGpA">
+        <inputEntry id="UnaryTests_2JD5fVXQ">
+          <text>&gt;= 80</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_Zhm2bvFz">
+          <text>&gt;= 85</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_dOcRmlIK">
+          <text>&lt;= 15</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_Nc1tD0yG">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_nggidgWn">
+          <text>"BRONZE"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_YVZR1UgD">
+          <text>6</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_QWXkrHfa">
+        <inputEntry id="UnaryTests_SWw1tjKp">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_zjMpEmgl">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_qcfHmpsr">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_ptts67QN">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_Nz6EtHZ3">
+          <text>"PROVISIONAL"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_wuPG2ecz">
+          <text>3</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="certification-criteria">
+        <dc:Bounds height="80" width="180" x="160" y="100"/>
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
+

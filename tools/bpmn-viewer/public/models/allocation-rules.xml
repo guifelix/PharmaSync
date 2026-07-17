@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_HPgzI4NW" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="bpmn-sdk" exporterVersion="0.0.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <decision id="allocation-rules" name="Allocation Rules Decision">
+    <decisionTable id="DecisionTable_21pQqnUN" hitPolicy="FIRST">
+      <input id="Input_yil9oSCA" label="Site Type">
+        <inputExpression id="InputExpression_gsfbZ7S2" typeRef="string">
+          <text>siteType</text>
+        </inputExpression>
+      </input>
+      <input id="Input_dlEaHq8Z" label="Patient Acuity">
+        <inputExpression id="InputExpression_Rb3UanKL" typeRef="string">
+          <text>patientAcuity</text>
+        </inputExpression>
+      </input>
+      <input id="Input_FpQH5AQE" label="Current Stock %">
+        <inputExpression id="InputExpression_CqX2pPr0" typeRef="number">
+          <text>stockPercent</text>
+        </inputExpression>
+      </input>
+      <output id="Output_kd2syTgw" label="Allocation Priority" name="allocationPriority" typeRef="string"/>
+      <output id="Output_WjKoHTgZ" label="Allocation %" name="allocationPercent" typeRef="number"/>
+      <rule id="DecisionRule_rx5EhGiB">
+        <inputEntry id="UnaryTests_5ezP6E54">
+          <text>"HOSPITAL"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_a9u16L9S">
+          <text>"CRITICAL"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_SyhZ9p6V">
+          <text>&lt;= 20</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_SmeSTPvr">
+          <text>"P1"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_bIshcVR5">
+          <text>100</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_e3AqFZna">
+        <inputEntry id="UnaryTests_MAjSu9kI">
+          <text>"HOSPITAL"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_ER3uBPLP">
+          <text>"HIGH"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_z21jzFB8">
+          <text>&lt;= 30</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_Wf9phas6">
+          <text>"P2"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_CGf7PN0F">
+          <text>80</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_Cxc2tUjj">
+        <inputEntry id="UnaryTests_9g6tQkbf">
+          <text>"HOSPITAL"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_8Qfvcazo">
+          <text>"MEDIUM"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_Nkd9jmvc">
+          <text>&lt;= 50</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_ExpIHF2C">
+          <text>"P3"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_w3ioWMxe">
+          <text>60</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_cNHXLApL">
+        <inputEntry id="UnaryTests_F7C4p5Q1">
+          <text>"PHARMACY"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_IhM2uzvl">
+          <text>"CRITICAL"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_xLRmBNtU">
+          <text>&lt;= 30</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_zm28tWiH">
+          <text>"P2"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_lrOF5mjp">
+          <text>90</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_3Zh7Mdyy">
+        <inputEntry id="UnaryTests_tvuDCJa3">
+          <text>"PHARMACY"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_Le3sxYU0">
+          <text>"HIGH"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_CthgrPTa">
+          <text>&lt;= 50</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_aspw2pdc">
+          <text>"P3"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_aYkm5g8Z">
+          <text>70</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_vzAJy2oj">
+        <inputEntry id="UnaryTests_TrI6YC3V">
+          <text>"DISTRIBUTION_CENTER"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_45KpFSYD">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_fsenXbed">
+          <text>&lt;= 40</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_uplmIc2h">
+          <text>"P3"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_vYr4flIK">
+          <text>70</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_mtNc73gP">
+        <inputEntry id="UnaryTests_5gLjiMEV">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_ytax3nQI">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_DgmLQvCU">
+          <text>&gt; 80</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_G8OUa57r">
+          <text>"P5"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0bduxeKD">
+          <text>10</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_aAq23yCA">
+        <inputEntry id="UnaryTests_hc4ch89E">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_VnjvXn2n">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_nsWZQKsZ">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_MjCP1sO1">
+          <text>"P4"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_QeYfzyvY">
+          <text>50</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="allocation-rules">
+        <dc:Bounds height="80" width="180" x="160" y="100"/>
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
+

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="compliance-signoff" name="Compliance Signoff" isExecutable="true">
+    <bpmn:startEvent id="signoff-requested" name="Signoff Requested">
+      <bpmn:outgoing>Flow_s6zuaVx8</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="load-evidence" name="Load Evidence Package">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="evidence-loader" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_s6zuaVx8</bpmn:incoming>
+      <bpmn:outgoing>Flow_tHPCTTSb</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="signoff" name="Compliance Officer Signoff">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="compliance-signoff-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_tHPCTTSb</bpmn:incoming>
+      <bpmn:outgoing>Flow_eSjXFPLT</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="signoff-decision" name="Signed or Rejected?">
+      <bpmn:incoming>Flow_eSjXFPLT</bpmn:incoming>
+      <bpmn:outgoing>Flow_e3DJIKnD</bpmn:outgoing>
+      <bpmn:outgoing>Flow_ZHtyJb5j</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="record-signoff" name="Record Signoff">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="signoff-recorder" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_e3DJIKnD</bpmn:incoming>
+      <bpmn:outgoing>Flow_EbRBMAeo</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="signed" name="Signed">
+      <bpmn:incoming>Flow_EbRBMAeo</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="record-rejection" name="Record Rejection">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="rejection-recorder" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ZHtyJb5j</bpmn:incoming>
+      <bpmn:outgoing>Flow_wILMmBJa</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="rejected" name="Rejected">
+      <bpmn:incoming>Flow_wILMmBJa</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_s6zuaVx8" sourceRef="signoff-requested" targetRef="load-evidence"/>
+    <bpmn:sequenceFlow id="Flow_tHPCTTSb" sourceRef="load-evidence" targetRef="signoff"/>
+    <bpmn:sequenceFlow id="Flow_eSjXFPLT" sourceRef="signoff" targetRef="signoff-decision"/>
+    <bpmn:sequenceFlow id="Flow_e3DJIKnD" sourceRef="signoff-decision" targetRef="record-signoff" name="signed">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= signed</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_EbRBMAeo" sourceRef="record-signoff" targetRef="signed"/>
+    <bpmn:sequenceFlow id="Flow_ZHtyJb5j" sourceRef="signoff-decision" targetRef="record-rejection" name="rejected">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= rejected</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_wILMmBJa" sourceRef="record-rejection" targetRef="rejected"/>
+  </bpmn:process>
+</bpmn:definitions>
+

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="disaster-recovery" name="Disaster Recovery" isExecutable="true">
+    <bpmn:startEvent id="incident-detected" name="Incident Detected">
+      <bpmn:outgoing>Flow_4bfTiBnB</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="assess-impact" name="Assess Impact">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="impact-assessor" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_4bfTiBnB</bpmn:incoming>
+      <bpmn:outgoing>Flow_YMbadj50</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="dr-needed" name="DR Needed?">
+      <bpmn:incoming>Flow_YMbadj50</bpmn:incoming>
+      <bpmn:outgoing>Flow_xJazSkDn</bpmn:outgoing>
+      <bpmn:outgoing>Flow_2TB3oF1d</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="activate-dr" name="Activate DR Plan">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="dr-activator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_xJazSkDn</bpmn:incoming>
+      <bpmn:outgoing>Flow_FFmnzo9c</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="restore-services" name="Restore Services">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="service-restorer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_FFmnzo9c</bpmn:incoming>
+      <bpmn:outgoing>Flow_ltPkplJB</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="verify-restoration" name="Verify Restoration">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="restoration-verifier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ltPkplJB</bpmn:incoming>
+      <bpmn:outgoing>Flow_fZgdm1Gw</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="services-restored" name="Services Restored">
+      <bpmn:incoming>Flow_fZgdm1Gw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="continue-monitoring" name="Continue Monitoring">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="monitor-continuer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_2TB3oF1d</bpmn:incoming>
+      <bpmn:outgoing>Flow_qSqIwwJP</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="monitoring" name="Monitoring">
+      <bpmn:incoming>Flow_qSqIwwJP</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_4bfTiBnB" sourceRef="incident-detected" targetRef="assess-impact"/>
+    <bpmn:sequenceFlow id="Flow_YMbadj50" sourceRef="assess-impact" targetRef="dr-needed"/>
+    <bpmn:sequenceFlow id="Flow_xJazSkDn" sourceRef="dr-needed" targetRef="activate-dr" name="yes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= drNeeded</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_FFmnzo9c" sourceRef="activate-dr" targetRef="restore-services"/>
+    <bpmn:sequenceFlow id="Flow_ltPkplJB" sourceRef="restore-services" targetRef="verify-restoration"/>
+    <bpmn:sequenceFlow id="Flow_fZgdm1Gw" sourceRef="verify-restoration" targetRef="services-restored"/>
+    <bpmn:sequenceFlow id="Flow_2TB3oF1d" sourceRef="dr-needed" targetRef="continue-monitoring" name="no">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= !drNeeded</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_qSqIwwJP" sourceRef="continue-monitoring" targetRef="monitoring"/>
+  </bpmn:process>
+</bpmn:definitions>
+

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="dead-letter" name="Dead Letter Handler" isExecutable="true">
+    <bpmn:startEvent id="dead-letter-received" name="Dead Letter Received">
+      <bpmn:outgoing>Flow_jQpcw53y</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="store-dead-letter" name="Store in Dead Letter Queue">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="dead-letter-store" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_jQpcw53y</bpmn:incoming>
+      <bpmn:outgoing>Flow_QXo1coMy</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="alert-operations" name="Alert Operations Team">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="alert-sender" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_QXo1coMy</bpmn:incoming>
+      <bpmn:outgoing>Flow_FbxGHKWU</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="log-audit" name="Log for Audit">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="audit-logger" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_FbxGHKWU</bpmn:incoming>
+      <bpmn:outgoing>Flow_NL01vPpn</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="dead-letter-handled" name="Dead Letter Handled">
+      <bpmn:incoming>Flow_NL01vPpn</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_jQpcw53y" sourceRef="dead-letter-received" targetRef="store-dead-letter"/>
+    <bpmn:sequenceFlow id="Flow_QXo1coMy" sourceRef="store-dead-letter" targetRef="alert-operations"/>
+    <bpmn:sequenceFlow id="Flow_FbxGHKWU" sourceRef="alert-operations" targetRef="log-audit"/>
+    <bpmn:sequenceFlow id="Flow_NL01vPpn" sourceRef="log-audit" targetRef="dead-letter-handled"/>
+  </bpmn:process>
+</bpmn:definitions>
+

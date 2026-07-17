@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="movement-recording" name="Movement Recording" isExecutable="true">
+    <bpmn:startEvent id="recording-started" name="Recording Started">
+      <bpmn:outgoing>Flow_DezujaC5</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="validate-movement" name="Validate Movement Data">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="movement-validator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_DezujaC5</bpmn:incoming>
+      <bpmn:outgoing>Flow_bwcMZ6cL</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="record-receipt" name="Record Receipt Movement">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="receipt-recorder" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_bwcMZ6cL</bpmn:incoming>
+      <bpmn:outgoing>Flow_Ld2YfdVa</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="record-dispense" name="Record Dispense Movement">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="dispense-recorder" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Ld2YfdVa</bpmn:incoming>
+      <bpmn:outgoing>Flow_u3vf7HGr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="record-correction" name="Record Correction Movement">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="correction-recorder" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_u3vf7HGr</bpmn:incoming>
+      <bpmn:outgoing>Flow_KTziOA4P</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="record-transfer" name="Record Transfer Movement">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="transfer-recorder" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_KTziOA4P</bpmn:incoming>
+      <bpmn:outgoing>Flow_yeyA8KUJ</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="emit-outbox" name="Emit Outbox Event">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="outbox-emitter" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_yeyA8KUJ</bpmn:incoming>
+      <bpmn:outgoing>Flow_IA21Q3mo</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="recording-complete" name="Recording Complete">
+      <bpmn:incoming>Flow_IA21Q3mo</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_DezujaC5" sourceRef="recording-started" targetRef="validate-movement"/>
+    <bpmn:sequenceFlow id="Flow_bwcMZ6cL" sourceRef="validate-movement" targetRef="record-receipt"/>
+    <bpmn:sequenceFlow id="Flow_Ld2YfdVa" sourceRef="record-receipt" targetRef="record-dispense"/>
+    <bpmn:sequenceFlow id="Flow_u3vf7HGr" sourceRef="record-dispense" targetRef="record-correction"/>
+    <bpmn:sequenceFlow id="Flow_KTziOA4P" sourceRef="record-correction" targetRef="record-transfer"/>
+    <bpmn:sequenceFlow id="Flow_yeyA8KUJ" sourceRef="record-transfer" targetRef="emit-outbox"/>
+    <bpmn:sequenceFlow id="Flow_IA21Q3mo" sourceRef="emit-outbox" targetRef="recording-complete"/>
+  </bpmn:process>
+</bpmn:definitions>
+

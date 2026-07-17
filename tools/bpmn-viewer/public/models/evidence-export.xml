@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="evidence-export" name="Evidence Export" isExecutable="true">
+    <bpmn:startEvent id="export-started" name="Export Started">
+      <bpmn:outgoing>Flow_dnnQQcTk</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="validate-request" name="Validate Export Request">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="export-validator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_dnnQQcTk</bpmn:incoming>
+      <bpmn:outgoing>Flow_fmzOU6w7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="check-authorization" name="Check Authorization">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="authorization-checker" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_fmzOU6w7</bpmn:incoming>
+      <bpmn:outgoing>Flow_b82KGlea</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="auth-check" name="Authorized?">
+      <bpmn:incoming>Flow_b82KGlea</bpmn:incoming>
+      <bpmn:outgoing>Flow_b0sgB0Ba</bpmn:outgoing>
+      <bpmn:outgoing>Flow_u4ycXclV</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="prepare-export" name="Prepare Export">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="export-preparer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_b0sgB0Ba</bpmn:incoming>
+      <bpmn:outgoing>Flow_tiLTOmAq</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="deliver-export" name="Deliver Export">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="export-deliverer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_tiLTOmAq</bpmn:incoming>
+      <bpmn:outgoing>Flow_oXpsOYBv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="export-delivered" name="Export Delivered">
+      <bpmn:incoming>Flow_oXpsOYBv</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="log-denial" name="Log Access Denial">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="denial-logger" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_u4ycXclV</bpmn:incoming>
+      <bpmn:outgoing>Flow_AfroWgGQ</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="export-denied" name="Export Denied">
+      <bpmn:incoming>Flow_AfroWgGQ</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_dnnQQcTk" sourceRef="export-started" targetRef="validate-request"/>
+    <bpmn:sequenceFlow id="Flow_fmzOU6w7" sourceRef="validate-request" targetRef="check-authorization"/>
+    <bpmn:sequenceFlow id="Flow_b82KGlea" sourceRef="check-authorization" targetRef="auth-check"/>
+    <bpmn:sequenceFlow id="Flow_b0sgB0Ba" sourceRef="auth-check" targetRef="prepare-export" name="authorized">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= authorized</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_tiLTOmAq" sourceRef="prepare-export" targetRef="deliver-export"/>
+    <bpmn:sequenceFlow id="Flow_oXpsOYBv" sourceRef="deliver-export" targetRef="export-delivered"/>
+    <bpmn:sequenceFlow id="Flow_u4ycXclV" sourceRef="auth-check" targetRef="log-denial" name="unauthorized">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= !authorized</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_AfroWgGQ" sourceRef="log-denial" targetRef="export-denied"/>
+  </bpmn:process>
+</bpmn:definitions>
+

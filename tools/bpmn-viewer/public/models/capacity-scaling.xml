@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="capacity-scaling" name="Capacity Scaling" isExecutable="true">
+    <bpmn:startEvent id="scaling-check" name="Scaling Check">
+      <bpmn:outgoing>Flow_la11lP0q</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="monitor-metrics" name="Monitor Infrastructure Metrics">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="metrics-monitor" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_la11lP0q</bpmn:incoming>
+      <bpmn:outgoing>Flow_sDjhZEa7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="threshold" name="Threshold Breached?">
+      <bpmn:incoming>Flow_sDjhZEa7</bpmn:incoming>
+      <bpmn:outgoing>Flow_86WJLv5C</bpmn:outgoing>
+      <bpmn:outgoing>Flow_z7zbLGqB</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0neE59dj</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="assess-scale-up" name="Assess Scale-Up">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="scale-up-assessor" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_86WJLv5C</bpmn:incoming>
+      <bpmn:outgoing>Flow_4oG5wZyE</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="scale-up" name="Scale Up Resources">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="resource-scaler" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_4oG5wZyE</bpmn:incoming>
+      <bpmn:outgoing>Flow_jPVQsdGs</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="scaled-up" name="Scaled Up">
+      <bpmn:incoming>Flow_jPVQsdGs</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="assess-scale-down" name="Assess Scale-Down">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="scale-down-assessor" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_z7zbLGqB</bpmn:incoming>
+      <bpmn:outgoing>Flow_kOOaBeNM</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="scale-down" name="Scale Down Resources">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="resource-scaler" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_kOOaBeNM</bpmn:incoming>
+      <bpmn:outgoing>Flow_2Kddp74x</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="scaled-down" name="Scaled Down">
+      <bpmn:incoming>Flow_2Kddp74x</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="log-normal" name="Log Normal State">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="normal-logger" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0neE59dj</bpmn:incoming>
+      <bpmn:outgoing>Flow_V4vegYIJ</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="normal" name="Within Threshold">
+      <bpmn:incoming>Flow_V4vegYIJ</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_la11lP0q" sourceRef="scaling-check" targetRef="monitor-metrics"/>
+    <bpmn:sequenceFlow id="Flow_sDjhZEa7" sourceRef="monitor-metrics" targetRef="threshold"/>
+    <bpmn:sequenceFlow id="Flow_86WJLv5C" sourceRef="threshold" targetRef="assess-scale-up" name="over">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= overThreshold</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_4oG5wZyE" sourceRef="assess-scale-up" targetRef="scale-up"/>
+    <bpmn:sequenceFlow id="Flow_jPVQsdGs" sourceRef="scale-up" targetRef="scaled-up"/>
+    <bpmn:sequenceFlow id="Flow_z7zbLGqB" sourceRef="threshold" targetRef="assess-scale-down" name="under">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= underThreshold</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_kOOaBeNM" sourceRef="assess-scale-down" targetRef="scale-down"/>
+    <bpmn:sequenceFlow id="Flow_2Kddp74x" sourceRef="scale-down" targetRef="scaled-down"/>
+    <bpmn:sequenceFlow id="Flow_0neE59dj" sourceRef="threshold" targetRef="log-normal" name="normal">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= withinThreshold</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_V4vegYIJ" sourceRef="log-normal" targetRef="normal"/>
+  </bpmn:process>
+</bpmn:definitions>
+

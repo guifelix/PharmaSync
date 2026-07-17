@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="replenishment-recommendation" name="Replenishment Recommendation" isExecutable="true">
+    <bpmn:startEvent id="recommendation-started" name="Recommendation Started">
+      <bpmn:outgoing>Flow_Ge1Wip9E</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="read-signals" name="Read Shortage Signals">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="signal-reader" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Ge1Wip9E</bpmn:incoming>
+      <bpmn:outgoing>Flow_c23pleGO</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="read-inventory" name="Read Current Inventory">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="inventory-reader" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_c23pleGO</bpmn:incoming>
+      <bpmn:outgoing>Flow_OxO91kQH</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:businessRuleTask id="apply-priority-rules" name="Apply Replenishment Priority Rules">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="replenishment-priority-dmn"/>
+        <zeebe:calledDecision decisionId="replenishment-priority-decision" resultVariable="recommendations"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_OxO91kQH</bpmn:incoming>
+      <bpmn:outgoing>Flow_pid3eW0K</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:exclusiveGateway id="recommendation-check" name="Recommendations Generated?">
+      <bpmn:incoming>Flow_pid3eW0K</bpmn:incoming>
+      <bpmn:outgoing>Flow_xVYBYmcA</bpmn:outgoing>
+      <bpmn:outgoing>Flow_hLc0yfCh</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="create-recommendations" name="Create Replenishment Recommendations">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="recommendation-creator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_xVYBYmcA</bpmn:incoming>
+      <bpmn:outgoing>Flow_zwtApvda</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="publish-recommendations" name="Publish Recommendations">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="recommendation-publisher" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_zwtApvda</bpmn:incoming>
+      <bpmn:outgoing>Flow_GeBjeIGU</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="recommendations-created" name="Recommendations Created">
+      <bpmn:incoming>Flow_GeBjeIGU</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="no-recommendations" name="No Recommendations Needed">
+      <bpmn:incoming>Flow_hLc0yfCh</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_Ge1Wip9E" sourceRef="recommendation-started" targetRef="read-signals"/>
+    <bpmn:sequenceFlow id="Flow_c23pleGO" sourceRef="read-signals" targetRef="read-inventory"/>
+    <bpmn:sequenceFlow id="Flow_OxO91kQH" sourceRef="read-inventory" targetRef="apply-priority-rules"/>
+    <bpmn:sequenceFlow id="Flow_pid3eW0K" sourceRef="apply-priority-rules" targetRef="recommendation-check"/>
+    <bpmn:sequenceFlow id="Flow_xVYBYmcA" sourceRef="recommendation-check" targetRef="create-recommendations" name="yes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= recommendations.length &gt; 0</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_zwtApvda" sourceRef="create-recommendations" targetRef="publish-recommendations"/>
+    <bpmn:sequenceFlow id="Flow_GeBjeIGU" sourceRef="publish-recommendations" targetRef="recommendations-created"/>
+    <bpmn:sequenceFlow id="Flow_hLc0yfCh" sourceRef="recommendation-check" targetRef="no-recommendations" name="no">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= recommendations.length == 0</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+</bpmn:definitions>
+

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="backup-restore" name="Backup and Restore" isExecutable="true">
+    <bpmn:startEvent id="backup-triggered" name="Backup Triggered">
+      <bpmn:outgoing>Flow_Ga6gKWYb</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="determine-scope" name="Determine Backup Scope">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="scope-determiner" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Ga6gKWYb</bpmn:incoming>
+      <bpmn:outgoing>Flow_O3FOwrd1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="run-backup" name="Run Backup">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="backup-runner" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_O3FOwrd1</bpmn:incoming>
+      <bpmn:outgoing>Flow_PNyILSEa</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="verify-backup" name="Verify Backup Integrity">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="backup-verifier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_PNyILSEa</bpmn:incoming>
+      <bpmn:outgoing>Flow_pxa2AIZp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="success" name="Backup Successful?">
+      <bpmn:incoming>Flow_pxa2AIZp</bpmn:incoming>
+      <bpmn:outgoing>Flow_f8yybzER</bpmn:outgoing>
+      <bpmn:outgoing>Flow_K0Fdcvyj</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="log-result" name="Log Backup Result">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="result-logger" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_f8yybzER</bpmn:incoming>
+      <bpmn:outgoing>Flow_OBX7y5Wt</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="backup-complete" name="Backup Complete">
+      <bpmn:incoming>Flow_OBX7y5Wt</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="retry-backup" name="Retry Backup">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="backup-retry" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_K0Fdcvyj</bpmn:incoming>
+      <bpmn:outgoing>Flow_rW8zUxxl</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="retry-initiated" name="Retry Initiated">
+      <bpmn:incoming>Flow_rW8zUxxl</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_Ga6gKWYb" sourceRef="backup-triggered" targetRef="determine-scope"/>
+    <bpmn:sequenceFlow id="Flow_O3FOwrd1" sourceRef="determine-scope" targetRef="run-backup"/>
+    <bpmn:sequenceFlow id="Flow_PNyILSEa" sourceRef="run-backup" targetRef="verify-backup"/>
+    <bpmn:sequenceFlow id="Flow_pxa2AIZp" sourceRef="verify-backup" targetRef="success"/>
+    <bpmn:sequenceFlow id="Flow_f8yybzER" sourceRef="success" targetRef="log-result" name="yes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= success</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_OBX7y5Wt" sourceRef="log-result" targetRef="backup-complete"/>
+    <bpmn:sequenceFlow id="Flow_K0Fdcvyj" sourceRef="success" targetRef="retry-backup" name="no">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= !success</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_rW8zUxxl" sourceRef="retry-backup" targetRef="retry-initiated"/>
+  </bpmn:process>
+</bpmn:definitions>
+

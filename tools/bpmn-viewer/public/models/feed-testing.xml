@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="feed-testing" name="Feed Testing" isExecutable="true">
+    <bpmn:startEvent id="test-started" name="Feed Testing Started">
+      <bpmn:outgoing>Flow_tSIYDk8d</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="setup-test-feed" name="Setup Test Feed">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="test-feed-setup" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_tSIYDk8d</bpmn:incoming>
+      <bpmn:outgoing>Flow_YjPbMXDq</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="send-test-payload" name="Send Test Payload">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="test-payload-sender" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_YjPbMXDq</bpmn:incoming>
+      <bpmn:outgoing>Flow_TDCDpgEe</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="validate-delivery" name="Validate Delivery">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="delivery-validator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_TDCDpgEe</bpmn:incoming>
+      <bpmn:outgoing>Flow_wG3Mc7cY</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="test-pass" name="Test Pass?">
+      <bpmn:incoming>Flow_wG3Mc7cY</bpmn:incoming>
+      <bpmn:outgoing>Flow_3eVU3Chl</bpmn:outgoing>
+      <bpmn:outgoing>Flow_F0FV3gPq</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="approve-feed" name="Approve Feed">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="feed-approver" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_3eVU3Chl</bpmn:incoming>
+      <bpmn:outgoing>Flow_8hbYjDZh</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="feed-approved" name="Feed Approved">
+      <bpmn:incoming>Flow_8hbYjDZh</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="debug-and-retry" name="Debug and Retry">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="debug-retry-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_F0FV3gPq</bpmn:incoming>
+      <bpmn:outgoing>Flow_43qcYZji</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="retry-needed" name="Retry Needed">
+      <bpmn:incoming>Flow_43qcYZji</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_tSIYDk8d" sourceRef="test-started" targetRef="setup-test-feed"/>
+    <bpmn:sequenceFlow id="Flow_YjPbMXDq" sourceRef="setup-test-feed" targetRef="send-test-payload"/>
+    <bpmn:sequenceFlow id="Flow_TDCDpgEe" sourceRef="send-test-payload" targetRef="validate-delivery"/>
+    <bpmn:sequenceFlow id="Flow_wG3Mc7cY" sourceRef="validate-delivery" targetRef="test-pass"/>
+    <bpmn:sequenceFlow id="Flow_3eVU3Chl" sourceRef="test-pass" targetRef="approve-feed" name="pass">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= approved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_8hbYjDZh" sourceRef="approve-feed" targetRef="feed-approved"/>
+    <bpmn:sequenceFlow id="Flow_F0FV3gPq" sourceRef="test-pass" targetRef="debug-and-retry" name="fail">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= !approved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_43qcYZji" sourceRef="debug-and-retry" targetRef="retry-needed"/>
+  </bpmn:process>
+</bpmn:definitions>
+

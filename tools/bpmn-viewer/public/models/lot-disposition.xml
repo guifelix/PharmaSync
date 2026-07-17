@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_snHyR8NS" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="bpmn-sdk" exporterVersion="0.0.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <decision id="lot-disposition" name="Lot Disposition Decision">
+    <decisionTable id="DecisionTable_paArfVDz" hitPolicy="FIRST">
+      <input id="Input_AJEhZ2EC" label="Expiration Status">
+        <inputExpression id="InputExpression_bK5fkj9r" typeRef="string">
+          <text>expirationStatus</text>
+        </inputExpression>
+      </input>
+      <input id="Input_QqwMCHrN" label="Quality Test Result">
+        <inputExpression id="InputExpression_ZCtC2Wk0" typeRef="string">
+          <text>qualityResult</text>
+        </inputExpression>
+      </input>
+      <input id="Input_2j2nmG2o" label="Regulatory Hold">
+        <inputExpression id="InputExpression_GHdD5q3L" typeRef="boolean">
+          <text>regulatoryHold</text>
+        </inputExpression>
+      </input>
+      <output id="Output_PQZKY6pH" label="Disposition" name="disposition" typeRef="string"/>
+      <output id="Output_vySUKYpH" label="Required Actions" name="requiredActions" typeRef="string"/>
+      <rule id="DecisionRule_N0LsZh34">
+        <inputEntry id="UnaryTests_SykY0roe">
+          <text>"EXPIRED"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_B3BXmSQc">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_dB5qxptU">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_rnhPsbjQ">
+          <text>"DISPOSE"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_aTliszmo">
+          <text>"DOCUMENT_DISPOSAL,NOTIFY_REGULATORY"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_XdHxsLpi">
+        <inputEntry id="UnaryTests_gNKIGRcD">
+          <text>"NEAR_EXPIRY"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_TBB6gNBt">
+          <text>"FAILED"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_oVQx2MGg">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_ZtQY6HkM">
+          <text>"QUARANTINE"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_FDQgmOyP">
+          <text>"QUALITY_REVIEW,NOTIFY_REGULATORY"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_wqSt2VCh">
+        <inputEntry id="UnaryTests_dhCf5Mjy">
+          <text>"NEAR_EXPIRY"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_5OCbYPa2">
+          <text>"PASSED"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_ZK2fyGDi">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_f7QDrDNg">
+          <text>"QUARANTINE"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_OfVecwM2">
+          <text>"REGULATORY_REVIEW"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_91OKh2Z4">
+        <inputEntry id="UnaryTests_r2bkW8Cm">
+          <text>"NEAR_EXPIRY"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_cZKUPiJC">
+          <text>"PASSED"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_xNGjkHiU">
+          <text>false</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_pMe0l8Wp">
+          <text>"PRIORITIZE_DISPENSING"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_dTQHduUS">
+          <text>"ACCELERATE_DISPENSING"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_t1n4DQhM">
+        <inputEntry id="UnaryTests_1faCgEtZ">
+          <text>"ACTIVE"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_5H8CLkhz">
+          <text>"FAILED"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_Q78Y8hZt">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_f3tMVqhd">
+          <text>"QUARANTINE"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_23QmSZP3">
+          <text>"QUALITY_INVESTIGATION"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_pom8rbPt">
+        <inputEntry id="UnaryTests_2YlbzmNM">
+          <text>"ACTIVE"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_Gb4awb5y">
+          <text>"PASSED"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_GMdxm7lW">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_cBX9ubQ3">
+          <text>"RELEASE"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_eb6ChGnC">
+          <text>"STANDARD_DISTRIBUTION"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="lot-disposition">
+        <dc:Bounds height="80" width="180" x="160" y="100"/>
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
+

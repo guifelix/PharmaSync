@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="data-sharing-agreement" name="Data Sharing Agreement" isExecutable="true">
+    <bpmn:startEvent id="agreement-started" name="Agreement Initiated">
+      <bpmn:outgoing>Flow_dzgicS9F</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="draft-agreement" name="Draft Agreement">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="agreement-draft-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_dzgicS9F</bpmn:incoming>
+      <bpmn:outgoing>Flow_jSh9Z24h</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="review-party-a" name="Review by Party A">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="party-a-review-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_jSh9Z24h</bpmn:incoming>
+      <bpmn:outgoing>Flow_69fPPd8e</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="review-party-b" name="Review by Party B">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="party-b-review-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_69fPPd8e</bpmn:incoming>
+      <bpmn:outgoing>Flow_SNfEXau0</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="signed" name="Signed by All?">
+      <bpmn:incoming>Flow_SNfEXau0</bpmn:incoming>
+      <bpmn:outgoing>Flow_IF3CXgnd</bpmn:outgoing>
+      <bpmn:outgoing>Flow_IIPkr3DF</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="activate-agreement" name="Activate Agreement">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="agreement-activator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_IF3CXgnd</bpmn:incoming>
+      <bpmn:outgoing>Flow_XBwRhoPh</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="activated" name="Agreement Active">
+      <bpmn:incoming>Flow_XBwRhoPh</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="renegotiate" name="Renegotiate Terms">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="renegotiation-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_IIPkr3DF</bpmn:incoming>
+      <bpmn:outgoing>Flow_ddOY6Pzb</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="renegotiating" name="Renegotiating">
+      <bpmn:incoming>Flow_ddOY6Pzb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_dzgicS9F" sourceRef="agreement-started" targetRef="draft-agreement"/>
+    <bpmn:sequenceFlow id="Flow_jSh9Z24h" sourceRef="draft-agreement" targetRef="review-party-a"/>
+    <bpmn:sequenceFlow id="Flow_69fPPd8e" sourceRef="review-party-a" targetRef="review-party-b"/>
+    <bpmn:sequenceFlow id="Flow_SNfEXau0" sourceRef="review-party-b" targetRef="signed"/>
+    <bpmn:sequenceFlow id="Flow_IF3CXgnd" sourceRef="signed" targetRef="activate-agreement" name="yes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= signed</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_XBwRhoPh" sourceRef="activate-agreement" targetRef="activated"/>
+    <bpmn:sequenceFlow id="Flow_IIPkr3DF" sourceRef="signed" targetRef="renegotiate" name="no">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= !signed</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_ddOY6Pzb" sourceRef="renegotiate" targetRef="renegotiating"/>
+  </bpmn:process>
+</bpmn:definitions>
+

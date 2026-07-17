@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="go-live-approval" name="Go-Live Approval" isExecutable="true">
+    <bpmn:startEvent id="go-live-started" name="Go-Live Started">
+      <bpmn:outgoing>Flow_47xUArFE</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="verify-certification" name="Verify Certification">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="certification-verifier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_47xUArFE</bpmn:incoming>
+      <bpmn:outgoing>Flow_zThzOm2X</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="verify-feed" name="Verify Feed Test">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="feed-verifier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_zThzOm2X</bpmn:incoming>
+      <bpmn:outgoing>Flow_RZkFxMl7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="verify-sla" name="Verify SLA Commitments">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="sla-verifier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_RZkFxMl7</bpmn:incoming>
+      <bpmn:outgoing>Flow_IT7wNTfD</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="all-clear" name="All Clear?">
+      <bpmn:incoming>Flow_IT7wNTfD</bpmn:incoming>
+      <bpmn:outgoing>Flow_0K3HH2jP</bpmn:outgoing>
+      <bpmn:outgoing>Flow_WBWxudFB</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="schedule-go-live" name="Schedule Go-Live">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="go-live-schedule-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0K3HH2jP</bpmn:incoming>
+      <bpmn:outgoing>Flow_h4uPb9Go</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="notify-partner" name="Notify Partner">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="partner-notifier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_h4uPb9Go</bpmn:incoming>
+      <bpmn:outgoing>Flow_Avsh7e1L</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="go-live-complete" name="Go-Live Complete">
+      <bpmn:incoming>Flow_Avsh7e1L</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="escalate-issues" name="Escalate Blocking Issues">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="escalation-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_WBWxudFB</bpmn:incoming>
+      <bpmn:outgoing>Flow_CuJ7SYoS</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="issues-escalated" name="Issues Escalated">
+      <bpmn:incoming>Flow_CuJ7SYoS</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_47xUArFE" sourceRef="go-live-started" targetRef="verify-certification"/>
+    <bpmn:sequenceFlow id="Flow_zThzOm2X" sourceRef="verify-certification" targetRef="verify-feed"/>
+    <bpmn:sequenceFlow id="Flow_RZkFxMl7" sourceRef="verify-feed" targetRef="verify-sla"/>
+    <bpmn:sequenceFlow id="Flow_IT7wNTfD" sourceRef="verify-sla" targetRef="all-clear"/>
+    <bpmn:sequenceFlow id="Flow_0K3HH2jP" sourceRef="all-clear" targetRef="schedule-go-live" name="yes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= approved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_h4uPb9Go" sourceRef="schedule-go-live" targetRef="notify-partner"/>
+    <bpmn:sequenceFlow id="Flow_Avsh7e1L" sourceRef="notify-partner" targetRef="go-live-complete"/>
+    <bpmn:sequenceFlow id="Flow_WBWxudFB" sourceRef="all-clear" targetRef="escalate-issues" name="issues">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= !approved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_CuJ7SYoS" sourceRef="escalate-issues" targetRef="issues-escalated"/>
+  </bpmn:process>
+</bpmn:definitions>
+

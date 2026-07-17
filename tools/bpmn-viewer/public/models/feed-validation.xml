@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="feed-validation" name="Feed Payload Validation" isExecutable="true">
+    <bpmn:startEvent id="validation-started" name="Validation Started">
+      <bpmn:outgoing>Flow_cZYwAKsR</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="validate-schema" name="Validate Schema">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="schema-validator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_cZYwAKsR</bpmn:incoming>
+      <bpmn:outgoing>Flow_mSFxZej3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="validate-required-fields" name="Validate Required Fields">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="required-fields-validator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_mSFxZej3</bpmn:incoming>
+      <bpmn:outgoing>Flow_jXmOMWJn</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="validate-data-types" name="Validate Data Types">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="data-types-validator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_jXmOMWJn</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cq9O0tz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="validate-business-constraints" name="Validate Business Constraints">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="business-constraints-validator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1cq9O0tz</bpmn:incoming>
+      <bpmn:outgoing>Flow_TFvOGR4q</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="validation-result" name="All Valid?">
+      <bpmn:incoming>Flow_TFvOGR4q</bpmn:incoming>
+      <bpmn:outgoing>Flow_HxqGnH0S</bpmn:outgoing>
+      <bpmn:outgoing>Flow_kxH2S4M0</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="validation-passed" name="Validation Passed">
+      <bpmn:incoming>Flow_HxqGnH0S</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="collect-errors" name="Collect Validation Errors">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="error-collector" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_kxH2S4M0</bpmn:incoming>
+      <bpmn:outgoing>Flow_ueQ50jbi</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="validation-failed" name="Validation Failed">
+      <bpmn:incoming>Flow_ueQ50jbi</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_cZYwAKsR" sourceRef="validation-started" targetRef="validate-schema"/>
+    <bpmn:sequenceFlow id="Flow_mSFxZej3" sourceRef="validate-schema" targetRef="validate-required-fields"/>
+    <bpmn:sequenceFlow id="Flow_jXmOMWJn" sourceRef="validate-required-fields" targetRef="validate-data-types"/>
+    <bpmn:sequenceFlow id="Flow_1cq9O0tz" sourceRef="validate-data-types" targetRef="validate-business-constraints"/>
+    <bpmn:sequenceFlow id="Flow_TFvOGR4q" sourceRef="validate-business-constraints" targetRef="validation-result"/>
+    <bpmn:sequenceFlow id="Flow_HxqGnH0S" sourceRef="validation-result" targetRef="validation-passed" name="valid">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= valid</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_kxH2S4M0" sourceRef="validation-result" targetRef="collect-errors" name="invalid">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= invalid</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_ueQ50jbi" sourceRef="collect-errors" targetRef="validation-failed"/>
+  </bpmn:process>
+</bpmn:definitions>
+

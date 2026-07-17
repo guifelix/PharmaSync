@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="shortage-detection" name="Shortage Detection" isExecutable="true">
+    <bpmn:startEvent id="detection-started" name="Detection Started">
+      <bpmn:outgoing>Flow_c7GFICow</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="read-stock" name="Read Current Stock Levels">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="stock-reader" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_c7GFICow</bpmn:incoming>
+      <bpmn:outgoing>Flow_80R0x1R8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="read-demand" name="Read Demand Forecasts">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="demand-reader" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_80R0x1R8</bpmn:incoming>
+      <bpmn:outgoing>Flow_OaYuIK0g</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:businessRuleTask id="apply-thresholds" name="Apply Shortage Thresholds">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="shortage-threshold-dmn"/>
+        <zeebe:calledDecision decisionId="shortage-threshold-decision" resultVariable="shortageSignals"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_OaYuIK0g</bpmn:incoming>
+      <bpmn:outgoing>Flow_cqpRaM7w</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:exclusiveGateway id="shortage-check" name="Shortages Detected?">
+      <bpmn:incoming>Flow_cqpRaM7w</bpmn:incoming>
+      <bpmn:outgoing>Flow_hh5I4x1p</bpmn:outgoing>
+      <bpmn:outgoing>Flow_vLF6tSbs</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="create-signals" name="Create Shortage Signals">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="signal-creator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_hh5I4x1p</bpmn:incoming>
+      <bpmn:outgoing>Flow_4D8X5GXl</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="publish-signals" name="Publish Signals to Queue">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="signal-publisher" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_4D8X5GXl</bpmn:incoming>
+      <bpmn:outgoing>Flow_wTDUnyck</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="signals-created" name="Signals Created">
+      <bpmn:incoming>Flow_wTDUnyck</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="no-shortages" name="No Shortages">
+      <bpmn:incoming>Flow_vLF6tSbs</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_c7GFICow" sourceRef="detection-started" targetRef="read-stock"/>
+    <bpmn:sequenceFlow id="Flow_80R0x1R8" sourceRef="read-stock" targetRef="read-demand"/>
+    <bpmn:sequenceFlow id="Flow_OaYuIK0g" sourceRef="read-demand" targetRef="apply-thresholds"/>
+    <bpmn:sequenceFlow id="Flow_cqpRaM7w" sourceRef="apply-thresholds" targetRef="shortage-check"/>
+    <bpmn:sequenceFlow id="Flow_hh5I4x1p" sourceRef="shortage-check" targetRef="create-signals" name="yes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= shortageSignals.length &gt; 0</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_4D8X5GXl" sourceRef="create-signals" targetRef="publish-signals"/>
+    <bpmn:sequenceFlow id="Flow_wTDUnyck" sourceRef="publish-signals" targetRef="signals-created"/>
+    <bpmn:sequenceFlow id="Flow_vLF6tSbs" sourceRef="shortage-check" targetRef="no-shortages" name="no">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= shortageSignals.length == 0</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+</bpmn:definitions>
+

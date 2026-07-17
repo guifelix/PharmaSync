@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_JSRxlJkU" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="bpmn-sdk" exporterVersion="0.0.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <decision id="replenishment-priority" name="Replenishment Priority Decision">
+    <decisionTable id="DecisionTable_v0UrDj6M" hitPolicy="FIRST">
+      <input id="Input_PtZF5mEl" label="Shortage Level">
+        <inputExpression id="InputExpression_YFFNb1wu" typeRef="string">
+          <text>shortageLevel</text>
+        </inputExpression>
+      </input>
+      <input id="Input_NbkQcqh0" label="Clinical Criticality">
+        <inputExpression id="InputExpression_BnhcvLGu" typeRef="string">
+          <text>clinicalCriticality</text>
+        </inputExpression>
+      </input>
+      <input id="Input_DSdTmSj6" label="Lead Time (days)">
+        <inputExpression id="InputExpression_efu7atJl" typeRef="number">
+          <text>leadTimeDays</text>
+        </inputExpression>
+      </input>
+      <output id="Output_Ia5bIAuV" label="Priority" name="priority" typeRef="string"/>
+      <output id="Output_ff48FnNC" label="Action" name="action" typeRef="string"/>
+      <rule id="DecisionRule_VfYwBJ1O">
+        <inputEntry id="UnaryTests_eIZMppy7">
+          <text>"CRITICAL"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_JblaSc0J">
+          <text>"LIFE_SAVING"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_e3HKsDe9">
+          <text>&lt;= 7</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_BLQskO87">
+          <text>"P1"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_qv7fzF25">
+          <text>"EMERGENCY_AIR_SHIPMENT"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_RmdsbzLC">
+        <inputEntry id="UnaryTests_HPqkj7Us">
+          <text>"CRITICAL"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_8jKlcrvs">
+          <text>"HIGH"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_p6ys67VQ">
+          <text>&lt;= 14</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_T6O84Bem">
+          <text>"P1"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_HvpGHNYp">
+          <text>"EXPEDITED_SHIPMENT"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_I3Tnb2T0">
+        <inputEntry id="UnaryTests_ABjgniQW">
+          <text>"HIGH"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_Fo44o90n">
+          <text>"LIFE_SAVING"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0h8fcurw">
+          <text>&lt;= 14</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_t7LaFMf7">
+          <text>"P2"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_FROtqFkc">
+          <text>"PRIORITY_SHIPMENT"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_zzqXqie3">
+        <inputEntry id="UnaryTests_6HyWqvR3">
+          <text>"HIGH"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_TNZAYhOX">
+          <text>"HIGH"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_ZZN4ZgPr">
+          <text>&lt;= 30</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1Ohz4F3t">
+          <text>"P2"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_7WDJerhE">
+          <text>"STANDARD_EXPEDITED"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_28r5wztD">
+        <inputEntry id="UnaryTests_9zaFaEFl">
+          <text>"MEDIUM"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_75Kze0oX">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_IG3yPQN6">
+          <text>&lt;= 30</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_eV8cEtxd">
+          <text>"P3"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1Vb4Vnn7">
+          <text>"STANDARD_SHIPMENT"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_bMKHUsy2">
+        <inputEntry id="UnaryTests_6ikPDTEc">
+          <text>"WATCH"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_qvQb0nsV">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_ZYQDiJAi">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_V3oZ3Qgj">
+          <text>"P4"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_dXdaDwbd">
+          <text>"MONITOR"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_pQQmuqJT">
+        <inputEntry id="UnaryTests_x8At6agT">
+          <text>"NONE"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_bre7aa9l">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_r9NTunNp">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_ToLPBylx">
+          <text>"P5"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_tDpyteld">
+          <text>"NO_ACTION"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="replenishment-priority">
+        <dc:Bounds height="80" width="180" x="160" y="100"/>
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
+

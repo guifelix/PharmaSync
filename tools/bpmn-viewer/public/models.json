@@ -1,0 +1,452 @@
+{
+  "models": [
+    {
+      "id": "data-sharing-agreement",
+      "name": "Data Sharing Agreement",
+      "path": "cross-org/data-sharing-agreement.bpmn.ts",
+      "category": "cross-org",
+      "subdomain": null,
+      "filename": "data-sharing-agreement.bpmn.ts"
+    },
+    {
+      "id": "joint-recall",
+      "name": "Joint Recall",
+      "path": "cross-org/joint-recall.bpmn.ts",
+      "category": "cross-org",
+      "subdomain": null,
+      "filename": "joint-recall.bpmn.ts"
+    },
+    {
+      "id": "partner-feed-certification",
+      "name": "Partner Feed Certification",
+      "path": "cross-org/partner-feed-certification.bpmn.ts",
+      "category": "cross-org",
+      "subdomain": null,
+      "filename": "partner-feed-certification.bpmn.ts"
+    },
+    {
+      "id": "sla-monitoring",
+      "name": "Sla Monitoring",
+      "path": "cross-org/sla-monitoring.bpmn.ts",
+      "category": "cross-org",
+      "subdomain": null,
+      "filename": "sla-monitoring.bpmn.ts"
+    },
+    {
+      "id": "audit-trigger",
+      "name": "Audit Trigger",
+      "path": "dmn/compliance/audit-trigger.dmn.ts",
+      "category": "dmn",
+      "subdomain": "compliance",
+      "filename": "audit-trigger.dmn.ts"
+    },
+    {
+      "id": "evidence-requirements",
+      "name": "Evidence Requirements",
+      "path": "dmn/compliance/evidence-requirements.dmn.ts",
+      "category": "dmn",
+      "subdomain": "compliance",
+      "filename": "evidence-requirements.dmn.ts"
+    },
+    {
+      "id": "retention-policy",
+      "name": "Retention Policy",
+      "path": "dmn/compliance/retention-policy.dmn.ts",
+      "category": "dmn",
+      "subdomain": "compliance",
+      "filename": "retention-policy.dmn.ts"
+    },
+    {
+      "id": "allocation-rules",
+      "name": "Allocation Rules",
+      "path": "dmn/inventory/allocation-rules.dmn.ts",
+      "category": "dmn",
+      "subdomain": "inventory",
+      "filename": "allocation-rules.dmn.ts"
+    },
+    {
+      "id": "correction-validation",
+      "name": "Correction Validation",
+      "path": "dmn/inventory/correction-validation.dmn.ts",
+      "category": "dmn",
+      "subdomain": "inventory",
+      "filename": "correction-validation.dmn.ts"
+    },
+    {
+      "id": "lot-disposition",
+      "name": "Lot Disposition",
+      "path": "dmn/inventory/lot-disposition.dmn.ts",
+      "category": "dmn",
+      "subdomain": "inventory",
+      "filename": "lot-disposition.dmn.ts"
+    },
+    {
+      "id": "certification-criteria",
+      "name": "Certification Criteria",
+      "path": "dmn/partner/certification-criteria.dmn.ts",
+      "category": "dmn",
+      "subdomain": "partner",
+      "filename": "certification-criteria.dmn.ts"
+    },
+    {
+      "id": "data-quality",
+      "name": "Data Quality",
+      "path": "dmn/partner/data-quality.dmn.ts",
+      "category": "dmn",
+      "subdomain": "partner",
+      "filename": "data-quality.dmn.ts"
+    },
+    {
+      "id": "feed-sla",
+      "name": "Feed Sla",
+      "path": "dmn/partner/feed-sla.dmn.ts",
+      "category": "dmn",
+      "subdomain": "partner",
+      "filename": "feed-sla.dmn.ts"
+    },
+    {
+      "id": "expiry-windows",
+      "name": "Expiry Windows",
+      "path": "dmn/signals/expiry-windows.dmn.ts",
+      "category": "dmn",
+      "subdomain": "signals",
+      "filename": "expiry-windows.dmn.ts"
+    },
+    {
+      "id": "overstock-threshold",
+      "name": "Overstock Threshold",
+      "path": "dmn/signals/overstock-threshold.dmn.ts",
+      "category": "dmn",
+      "subdomain": "signals",
+      "filename": "overstock-threshold.dmn.ts"
+    },
+    {
+      "id": "replenishment-priority",
+      "name": "Replenishment Priority",
+      "path": "dmn/signals/replenishment-priority.dmn.ts",
+      "category": "dmn",
+      "subdomain": "signals",
+      "filename": "replenishment-priority.dmn.ts"
+    },
+    {
+      "id": "shortage-threshold",
+      "name": "Shortage Threshold",
+      "path": "dmn/signals/shortage-threshold.dmn.ts",
+      "category": "dmn",
+      "subdomain": "signals",
+      "filename": "shortage-threshold.dmn.ts"
+    },
+    {
+      "id": "audit-package-approval",
+      "name": "Audit Package Approval",
+      "path": "human/evidence/audit-package-approval.bpmn.ts",
+      "category": "human",
+      "subdomain": "evidence",
+      "filename": "audit-package-approval.bpmn.ts"
+    },
+    {
+      "id": "compliance-signoff",
+      "name": "Compliance Signoff",
+      "path": "human/evidence/compliance-signoff.bpmn.ts",
+      "category": "human",
+      "subdomain": "evidence",
+      "filename": "compliance-signoff.bpmn.ts"
+    },
+    {
+      "id": "evidence-review",
+      "name": "Evidence Review",
+      "path": "human/evidence/evidence-review.bpmn.ts",
+      "category": "human",
+      "subdomain": "evidence",
+      "filename": "evidence-review.bpmn.ts"
+    },
+    {
+      "id": "escalation",
+      "name": "Escalation",
+      "path": "human/exceptions/escalation.bpmn.ts",
+      "category": "human",
+      "subdomain": "exceptions",
+      "filename": "escalation.bpmn.ts"
+    },
+    {
+      "id": "manual-correction",
+      "name": "Manual Correction",
+      "path": "human/exceptions/manual-correction.bpmn.ts",
+      "category": "human",
+      "subdomain": "exceptions",
+      "filename": "manual-correction.bpmn.ts"
+    },
+    {
+      "id": "override-approval",
+      "name": "Override Approval",
+      "path": "human/exceptions/override-approval.bpmn.ts",
+      "category": "human",
+      "subdomain": "exceptions",
+      "filename": "override-approval.bpmn.ts"
+    },
+    {
+      "id": "feed-testing",
+      "name": "Feed Testing",
+      "path": "human/onboarding/feed-testing.bpmn.ts",
+      "category": "human",
+      "subdomain": "onboarding",
+      "filename": "feed-testing.bpmn.ts"
+    },
+    {
+      "id": "go-live-approval",
+      "name": "Go Live Approval",
+      "path": "human/onboarding/go-live-approval.bpmn.ts",
+      "category": "human",
+      "subdomain": "onboarding",
+      "filename": "go-live-approval.bpmn.ts"
+    },
+    {
+      "id": "partner-certification",
+      "name": "Partner Certification",
+      "path": "human/onboarding/partner-certification.bpmn.ts",
+      "category": "human",
+      "subdomain": "onboarding",
+      "filename": "partner-certification.bpmn.ts"
+    },
+    {
+      "id": "payload-remediation",
+      "name": "Payload Remediation",
+      "path": "human/quarantine/payload-remediation.bpmn.ts",
+      "category": "human",
+      "subdomain": "quarantine",
+      "filename": "payload-remediation.bpmn.ts"
+    },
+    {
+      "id": "quarantine-review",
+      "name": "Quarantine Review",
+      "path": "human/quarantine/quarantine-review.bpmn.ts",
+      "category": "human",
+      "subdomain": "quarantine",
+      "filename": "quarantine-review.bpmn.ts"
+    },
+    {
+      "id": "reprocess-decision",
+      "name": "Reprocess Decision",
+      "path": "human/quarantine/reprocess-decision.bpmn.ts",
+      "category": "human",
+      "subdomain": "quarantine",
+      "filename": "reprocess-decision.bpmn.ts"
+    },
+    {
+      "id": "backup-restore",
+      "name": "Backup Restore",
+      "path": "operational/backup-restore.bpmn.ts",
+      "category": "operational",
+      "subdomain": null,
+      "filename": "backup-restore.bpmn.ts"
+    },
+    {
+      "id": "capacity-scaling",
+      "name": "Capacity Scaling",
+      "path": "operational/capacity-scaling.bpmn.ts",
+      "category": "operational",
+      "subdomain": null,
+      "filename": "capacity-scaling.bpmn.ts"
+    },
+    {
+      "id": "disaster-recovery",
+      "name": "Disaster Recovery",
+      "path": "operational/disaster-recovery.bpmn.ts",
+      "category": "operational",
+      "subdomain": null,
+      "filename": "disaster-recovery.bpmn.ts"
+    },
+    {
+      "id": "platform-deployment",
+      "name": "Platform Deployment",
+      "path": "operational/platform-deployment.bpmn.ts",
+      "category": "operational",
+      "subdomain": null,
+      "filename": "platform-deployment.bpmn.ts"
+    },
+    {
+      "id": "secret-rotation",
+      "name": "Secret Rotation",
+      "path": "operational/secret-rotation.bpmn.ts",
+      "category": "operational",
+      "subdomain": null,
+      "filename": "secret-rotation.bpmn.ts"
+    },
+    {
+      "id": "dea-reporting",
+      "name": "Dea Reporting",
+      "path": "regulatory/dea-reporting.bpmn.ts",
+      "category": "regulatory",
+      "subdomain": null,
+      "filename": "dea-reporting.bpmn.ts"
+    },
+    {
+      "id": "fda-submission",
+      "name": "Fda Submission",
+      "path": "regulatory/fda-submission.bpmn.ts",
+      "category": "regulatory",
+      "subdomain": null,
+      "filename": "fda-submission.bpmn.ts"
+    },
+    {
+      "id": "hipaa-breach-notification",
+      "name": "Hipaa Breach Notification",
+      "path": "regulatory/hipaa-breach-notification.bpmn.ts",
+      "category": "regulatory",
+      "subdomain": null,
+      "filename": "hipaa-breach-notification.bpmn.ts"
+    },
+    {
+      "id": "recall-initiation",
+      "name": "Recall Initiation",
+      "path": "regulatory/recall-initiation.bpmn.ts",
+      "category": "regulatory",
+      "subdomain": null,
+      "filename": "recall-initiation.bpmn.ts"
+    },
+    {
+      "id": "evidence-collection",
+      "name": "Evidence Collection",
+      "path": "system/evidence/evidence-collection.bpmn.ts",
+      "category": "system",
+      "subdomain": "evidence",
+      "filename": "evidence-collection.bpmn.ts"
+    },
+    {
+      "id": "evidence-export",
+      "name": "Evidence Export",
+      "path": "system/evidence/evidence-export.bpmn.ts",
+      "category": "system",
+      "subdomain": "evidence",
+      "filename": "evidence-export.bpmn.ts"
+    },
+    {
+      "id": "evidence-packaging",
+      "name": "Evidence Packaging",
+      "path": "system/evidence/evidence-packaging.bpmn.ts",
+      "category": "system",
+      "subdomain": "evidence",
+      "filename": "evidence-packaging.bpmn.ts"
+    },
+    {
+      "id": "canonical-mapping",
+      "name": "Canonical Mapping",
+      "path": "system/ingestion/canonical-mapping.bpmn.ts",
+      "category": "system",
+      "subdomain": "ingestion",
+      "filename": "canonical-mapping.bpmn.ts"
+    },
+    {
+      "id": "feed-ingestion",
+      "name": "Feed Ingestion",
+      "path": "system/ingestion/feed-ingestion.bpmn.ts",
+      "category": "system",
+      "subdomain": "ingestion",
+      "filename": "feed-ingestion.bpmn.ts"
+    },
+    {
+      "id": "feed-validation",
+      "name": "Feed Validation",
+      "path": "system/ingestion/feed-validation.bpmn.ts",
+      "category": "system",
+      "subdomain": "ingestion",
+      "filename": "feed-validation.bpmn.ts"
+    },
+    {
+      "id": "idempotency-check",
+      "name": "Idempotency Check",
+      "path": "system/ingestion/idempotency-check.bpmn.ts",
+      "category": "system",
+      "subdomain": "ingestion",
+      "filename": "idempotency-check.bpmn.ts"
+    },
+    {
+      "id": "quarantine-handling",
+      "name": "Quarantine Handling",
+      "path": "system/ingestion/quarantine-handling.bpmn.ts",
+      "category": "system",
+      "subdomain": "ingestion",
+      "filename": "quarantine-handling.bpmn.ts"
+    },
+    {
+      "id": "correction-workflow",
+      "name": "Correction Workflow",
+      "path": "system/inventory/correction-workflow.bpmn.ts",
+      "category": "system",
+      "subdomain": "inventory",
+      "filename": "correction-workflow.bpmn.ts"
+    },
+    {
+      "id": "movement-recording",
+      "name": "Movement Recording",
+      "path": "system/inventory/movement-recording.bpmn.ts",
+      "category": "system",
+      "subdomain": "inventory",
+      "filename": "movement-recording.bpmn.ts"
+    },
+    {
+      "id": "stock-adjustment",
+      "name": "Stock Adjustment",
+      "path": "system/inventory/stock-adjustment.bpmn.ts",
+      "category": "system",
+      "subdomain": "inventory",
+      "filename": "stock-adjustment.bpmn.ts"
+    },
+    {
+      "id": "dead-letter",
+      "name": "Dead Letter",
+      "path": "system/outbox/dead-letter.bpmn.ts",
+      "category": "system",
+      "subdomain": "outbox",
+      "filename": "dead-letter.bpmn.ts"
+    },
+    {
+      "id": "outbox-publisher",
+      "name": "Outbox Publisher",
+      "path": "system/outbox/outbox-publisher.bpmn.ts",
+      "category": "system",
+      "subdomain": "outbox",
+      "filename": "outbox-publisher.bpmn.ts"
+    },
+    {
+      "id": "retry-handling",
+      "name": "Retry Handling",
+      "path": "system/outbox/retry-handling.bpmn.ts",
+      "category": "system",
+      "subdomain": "outbox",
+      "filename": "retry-handling.bpmn.ts"
+    },
+    {
+      "id": "expiry-risk-detection",
+      "name": "Expiry Risk Detection",
+      "path": "system/signals/expiry-risk-detection.bpmn.ts",
+      "category": "system",
+      "subdomain": "signals",
+      "filename": "expiry-risk-detection.bpmn.ts"
+    },
+    {
+      "id": "overstock-detection",
+      "name": "Overstock Detection",
+      "path": "system/signals/overstock-detection.bpmn.ts",
+      "category": "system",
+      "subdomain": "signals",
+      "filename": "overstock-detection.bpmn.ts"
+    },
+    {
+      "id": "replenishment-recommendation",
+      "name": "Replenishment Recommendation",
+      "path": "system/signals/replenishment-recommendation.bpmn.ts",
+      "category": "system",
+      "subdomain": "signals",
+      "filename": "replenishment-recommendation.bpmn.ts"
+    },
+    {
+      "id": "shortage-detection",
+      "name": "Shortage Detection",
+      "path": "system/signals/shortage-detection.bpmn.ts",
+      "category": "system",
+      "subdomain": "signals",
+      "filename": "shortage-detection.bpmn.ts"
+    }
+  ]
+}

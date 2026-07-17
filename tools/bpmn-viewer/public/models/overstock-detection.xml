@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="overstock-detection" name="Overstock Detection" isExecutable="true">
+    <bpmn:startEvent id="detection-started" name="Detection Started">
+      <bpmn:outgoing>Flow_FLoIH2ME</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="read-stock" name="Read Current Stock Levels">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="stock-reader" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_FLoIH2ME</bpmn:incoming>
+      <bpmn:outgoing>Flow_VUVxyOBr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:businessRuleTask id="apply-thresholds" name="Apply Overstock Thresholds">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="overstock-threshold-dmn"/>
+        <zeebe:calledDecision decisionId="overstock-threshold-decision" resultVariable="overstockSignals"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_VUVxyOBr</bpmn:incoming>
+      <bpmn:outgoing>Flow_psLwXpeT</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:exclusiveGateway id="overstock-check" name="Overstock Detected?">
+      <bpmn:incoming>Flow_psLwXpeT</bpmn:incoming>
+      <bpmn:outgoing>Flow_s0DVe0cX</bpmn:outgoing>
+      <bpmn:outgoing>Flow_8upXB3xx</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="create-signals" name="Create Overstock Signals">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="signal-creator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_s0DVe0cX</bpmn:incoming>
+      <bpmn:outgoing>Flow_j5orN7XO</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="publish-signals" name="Publish Signals to Queue">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="signal-publisher" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_j5orN7XO</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zRVTrKg</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="signals-created" name="Signals Created">
+      <bpmn:incoming>Flow_0zRVTrKg</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="no-overstock" name="No Overstock">
+      <bpmn:incoming>Flow_8upXB3xx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_FLoIH2ME" sourceRef="detection-started" targetRef="read-stock"/>
+    <bpmn:sequenceFlow id="Flow_VUVxyOBr" sourceRef="read-stock" targetRef="apply-thresholds"/>
+    <bpmn:sequenceFlow id="Flow_psLwXpeT" sourceRef="apply-thresholds" targetRef="overstock-check"/>
+    <bpmn:sequenceFlow id="Flow_s0DVe0cX" sourceRef="overstock-check" targetRef="create-signals" name="yes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= overstockSignals.length &gt; 0</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_j5orN7XO" sourceRef="create-signals" targetRef="publish-signals"/>
+    <bpmn:sequenceFlow id="Flow_0zRVTrKg" sourceRef="publish-signals" targetRef="signals-created"/>
+    <bpmn:sequenceFlow id="Flow_8upXB3xx" sourceRef="overstock-check" targetRef="no-overstock" name="no">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= overstockSignals.length == 0</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+</bpmn:definitions>
+

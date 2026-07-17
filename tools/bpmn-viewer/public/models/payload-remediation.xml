@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="payload-remediation" name="Payload Remediation" isExecutable="true">
+    <bpmn:startEvent id="remediation-started" name="Remediation Started">
+      <bpmn:outgoing>Flow_41uN7hCl</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="load-payload" name="Load Original Payload">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="payload-loader" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_41uN7hCl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dgoF5mf</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="select-remediation" name="Select Remediation Action">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="remediation-options-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0dgoF5mf</bpmn:incoming>
+      <bpmn:outgoing>Flow_rwxty4g9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="apply-remediation" name="Apply Remediation">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="remediation-applier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_rwxty4g9</bpmn:incoming>
+      <bpmn:outgoing>Flow_LUE5Ownx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="validate-remediated" name="Validate Remediated Payload">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="remediated-validator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_LUE5Ownx</bpmn:incoming>
+      <bpmn:outgoing>Flow_gbO45i13</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="validation-result" name="Valid?">
+      <bpmn:incoming>Flow_gbO45i13</bpmn:incoming>
+      <bpmn:outgoing>Flow_bvMwJ4Bm</bpmn:outgoing>
+      <bpmn:outgoing>Flow_lfSFW9qa</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="reprocess" name="Reprocess Payload">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="payload-reprocessor" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_bvMwJ4Bm</bpmn:incoming>
+      <bpmn:outgoing>Flow_0N6DxQfa</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="reprocessed" name="Reprocessed">
+      <bpmn:incoming>Flow_0N6DxQfa</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="retry-remediation" name="Retry Remediation">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="remediation-retry-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_lfSFW9qa</bpmn:incoming>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_41uN7hCl" sourceRef="remediation-started" targetRef="load-payload"/>
+    <bpmn:sequenceFlow id="Flow_0dgoF5mf" sourceRef="load-payload" targetRef="select-remediation"/>
+    <bpmn:sequenceFlow id="Flow_rwxty4g9" sourceRef="select-remediation" targetRef="apply-remediation"/>
+    <bpmn:sequenceFlow id="Flow_LUE5Ownx" sourceRef="apply-remediation" targetRef="validate-remediated"/>
+    <bpmn:sequenceFlow id="Flow_gbO45i13" sourceRef="validate-remediated" targetRef="validation-result"/>
+    <bpmn:sequenceFlow id="Flow_bvMwJ4Bm" sourceRef="validation-result" targetRef="reprocess" name="valid">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= valid</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0N6DxQfa" sourceRef="reprocess" targetRef="reprocessed"/>
+    <bpmn:sequenceFlow id="Flow_lfSFW9qa" sourceRef="validation-result" targetRef="retry-remediation" name="invalid">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= !valid</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+</bpmn:definitions>
+

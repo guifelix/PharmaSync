@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="canonical-mapping" name="Canonical Mapping" isExecutable="true">
+    <bpmn:startEvent id="mapping-started" name="Mapping Started">
+      <bpmn:outgoing>Flow_5WE2uLfE</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="extract-fields" name="Extract Partner Fields">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="field-extractor" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_5WE2uLfE</bpmn:incoming>
+      <bpmn:outgoing>Flow_3TK2NhjU</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="map-medication" name="Map Medication Identifiers">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="medication-mapper" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_3TK2NhjU</bpmn:incoming>
+      <bpmn:outgoing>Flow_imXkwRTc</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="map-lot" name="Map Lot Information">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="lot-mapper" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_imXkwRTc</bpmn:incoming>
+      <bpmn:outgoing>Flow_njSnXgmS</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="map-location" name="Map Location">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="location-mapper" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_njSnXgmS</bpmn:incoming>
+      <bpmn:outgoing>Flow_EpiAVVtv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="map-movement" name="Map Movement Events">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="movement-mapper" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_EpiAVVtv</bpmn:incoming>
+      <bpmn:outgoing>Flow_8LW20Z8N</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="validate-canonical" name="Validate Canonical Model">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="canonical-validator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_8LW20Z8N</bpmn:incoming>
+      <bpmn:outgoing>Flow_cPcZYzw2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="mapping-complete" name="Mapping Complete">
+      <bpmn:incoming>Flow_cPcZYzw2</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_5WE2uLfE" sourceRef="mapping-started" targetRef="extract-fields"/>
+    <bpmn:sequenceFlow id="Flow_3TK2NhjU" sourceRef="extract-fields" targetRef="map-medication"/>
+    <bpmn:sequenceFlow id="Flow_imXkwRTc" sourceRef="map-medication" targetRef="map-lot"/>
+    <bpmn:sequenceFlow id="Flow_njSnXgmS" sourceRef="map-lot" targetRef="map-location"/>
+    <bpmn:sequenceFlow id="Flow_EpiAVVtv" sourceRef="map-location" targetRef="map-movement"/>
+    <bpmn:sequenceFlow id="Flow_8LW20Z8N" sourceRef="map-movement" targetRef="validate-canonical"/>
+    <bpmn:sequenceFlow id="Flow_cPcZYzw2" sourceRef="validate-canonical" targetRef="mapping-complete"/>
+  </bpmn:process>
+</bpmn:definitions>
+

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="idempotency-check" name="Idempotency Check" isExecutable="true">
+    <bpmn:startEvent id="idempotency-started" name="Idempotency Check Started">
+      <bpmn:outgoing>Flow_5glbdL5D</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="compute-hash" name="Compute Payload Hash">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="hash-computer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_5glbdL5D</bpmn:incoming>
+      <bpmn:outgoing>Flow_u1Bk1gkN</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="check-source-id" name="Check Source Event ID">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="source-id-checker" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_u1Bk1gkN</bpmn:incoming>
+      <bpmn:outgoing>Flow_FozlDSJa</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="check-partner-event-id" name="Check Partner Event ID">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="partner-event-id-checker" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_FozlDSJa</bpmn:incoming>
+      <bpmn:outgoing>Flow_xagknohr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="duplicate-check" name="Duplicate?">
+      <bpmn:incoming>Flow_xagknohr</bpmn:incoming>
+      <bpmn:outgoing>Flow_bAQ3cjXb</bpmn:outgoing>
+      <bpmn:outgoing>Flow_I6ekdJAK</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="mark-duplicate" name="Mark as Duplicate">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="duplicate-marker" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_bAQ3cjXb</bpmn:incoming>
+      <bpmn:outgoing>Flow_nN5eKb31</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="duplicate-found" name="Duplicate Found">
+      <bpmn:incoming>Flow_nN5eKb31</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="store-idempotency-key" name="Store Idempotency Key">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="idempotency-key-store" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_I6ekdJAK</bpmn:incoming>
+      <bpmn:outgoing>Flow_ozclUJS8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="new-event" name="New Event">
+      <bpmn:incoming>Flow_ozclUJS8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_5glbdL5D" sourceRef="idempotency-started" targetRef="compute-hash"/>
+    <bpmn:sequenceFlow id="Flow_u1Bk1gkN" sourceRef="compute-hash" targetRef="check-source-id"/>
+    <bpmn:sequenceFlow id="Flow_FozlDSJa" sourceRef="check-source-id" targetRef="check-partner-event-id"/>
+    <bpmn:sequenceFlow id="Flow_xagknohr" sourceRef="check-partner-event-id" targetRef="duplicate-check"/>
+    <bpmn:sequenceFlow id="Flow_bAQ3cjXb" sourceRef="duplicate-check" targetRef="mark-duplicate" name="duplicate">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= duplicate</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_nN5eKb31" sourceRef="mark-duplicate" targetRef="duplicate-found"/>
+    <bpmn:sequenceFlow id="Flow_I6ekdJAK" sourceRef="duplicate-check" targetRef="store-idempotency-key" name="new">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= new</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_ozclUJS8" sourceRef="store-idempotency-key" targetRef="new-event"/>
+  </bpmn:process>
+</bpmn:definitions>
+

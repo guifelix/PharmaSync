@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="manual-correction" name="Manual Correction" isExecutable="true">
+    <bpmn:startEvent id="correction-req" name="Correction Requested">
+      <bpmn:outgoing>Flow_50UF0yQ9</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="identify-issue" name="Identify Issue">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="issue-identification-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_50UF0yQ9</bpmn:incoming>
+      <bpmn:outgoing>Flow_t0R5f5Vs</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="auto-fixable" name="Auto-Fixable?">
+      <bpmn:incoming>Flow_t0R5f5Vs</bpmn:incoming>
+      <bpmn:outgoing>Flow_yV6JurFq</bpmn:outgoing>
+      <bpmn:outgoing>Flow_FiI877iq</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="apply-auto-correction" name="Apply Auto-Correction">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="auto-correction-applier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_yV6JurFq</bpmn:incoming>
+      <bpmn:outgoing>Flow_BDtpb1L0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="auto-corrected" name="Auto-Corrected">
+      <bpmn:incoming>Flow_BDtpb1L0</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="manual-correction" name="Manual Correction">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="manual-correction-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_FiI877iq</bpmn:incoming>
+      <bpmn:outgoing>Flow_cxkI7r2m</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="manually-corrected" name="Manually Corrected">
+      <bpmn:incoming>Flow_cxkI7r2m</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="log-audit" name="Log Audit Trail">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="audit-logger" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_lnvh6A0r</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="correction-complete" name="Correction Complete">
+      <bpmn:incoming>Flow_lnvh6A0r</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_50UF0yQ9" sourceRef="correction-req" targetRef="identify-issue"/>
+    <bpmn:sequenceFlow id="Flow_t0R5f5Vs" sourceRef="identify-issue" targetRef="auto-fixable"/>
+    <bpmn:sequenceFlow id="Flow_yV6JurFq" sourceRef="auto-fixable" targetRef="apply-auto-correction" name="yes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= autoFixable</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_BDtpb1L0" sourceRef="apply-auto-correction" targetRef="auto-corrected"/>
+    <bpmn:sequenceFlow id="Flow_FiI877iq" sourceRef="auto-fixable" targetRef="manual-correction" name="no">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= !autoFixable</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_cxkI7r2m" sourceRef="manual-correction" targetRef="manually-corrected"/>
+    <bpmn:sequenceFlow id="Flow_lnvh6A0r" sourceRef="log-audit" targetRef="correction-complete"/>
+  </bpmn:process>
+</bpmn:definitions>
+

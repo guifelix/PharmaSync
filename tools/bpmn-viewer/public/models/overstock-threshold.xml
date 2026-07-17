@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_eIkOze2a" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="bpmn-sdk" exporterVersion="0.0.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <decision id="overstock-threshold" name="Overstock Threshold Decision">
+    <decisionTable id="DecisionTable_R604ehpY" hitPolicy="FIRST">
+      <input id="Input_ADkdWImj" label="Current Stock">
+        <inputExpression id="InputExpression_rTfSAeep" typeRef="number">
+          <text>currentStock</text>
+        </inputExpression>
+      </input>
+      <input id="Input_hqgh8Gpu" label="Upper Threshold">
+        <inputExpression id="InputExpression_bsyxSuvp" typeRef="number">
+          <text>upperThreshold</text>
+        </inputExpression>
+      </input>
+      <input id="Input_2oYXAebh" label="Demand Forecast (30 days)">
+        <inputExpression id="InputExpression_oQB8TvYF" typeRef="number">
+          <text>demandForecast</text>
+        </inputExpression>
+      </input>
+      <input id="Input_EjEKk4OM" label="Shelf Life Remaining (days)">
+        <inputExpression id="InputExpression_wmAasM2D" typeRef="number">
+          <text>shelfLifeRemaining</text>
+        </inputExpression>
+      </input>
+      <output id="Output_FSWrmMIx" label="Overstock Level" name="overstockLevel" typeRef="string"/>
+      <output id="Output_QOvkFiTx" label="Recommended Action" name="recommendedAction" typeRef="string"/>
+      <rule id="DecisionRule_ctJebLmu">
+        <inputEntry id="UnaryTests_KocE9aBg">
+          <text>&gt; upperThreshold</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_iiYa5Lqz">
+          <text>&lt;= 30</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_47TdNvNm">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_vr7gY5Ky">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_ZYyuOdRl">
+          <text>"CRITICAL"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_M0LDtFXw">
+          <text>"IMMEDIATE_REDUCTION"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_xredDwlg">
+        <inputEntry id="UnaryTests_rnBb9tmy">
+          <text>&gt; upperThreshold</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_qbdeWiln">
+          <text>&lt;= 90</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_sBPQbDfl">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_nhYpmwDb">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_AnwiRW22">
+          <text>"HIGH"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_pucMm2dc">
+          <text>"ACCELERATE_DISPENSING"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_Iir7OqjN">
+        <inputEntry id="UnaryTests_gIvcFNgw">
+          <text>&gt; upperThreshold</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_2KYBQv0l">
+          <text>&gt; 90</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_931Jeg58">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_Np5vVKST">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_8jmhT8ki">
+          <text>"MEDIUM"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_WpqBAh95">
+          <text>"SCHEDULE_REDUCTION"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_fTITRmWf">
+        <inputEntry id="UnaryTests_GrIUhSPh">
+          <text>&lt;= upperThreshold</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_f5IO12p4">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_xYQW9fdi">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_2unrngUp">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_DbT7KO8b">
+          <text>"NONE"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_vJ9bfib8">
+          <text>"NO_ACTION"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="overstock-threshold">
+        <dc:Bounds height="80" width="180" x="160" y="100"/>
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
+

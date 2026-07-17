@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_qAuXVQ30" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="bpmn-sdk" exporterVersion="0.0.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <decision id="retention-policy" name="Retention Policy Decision">
+    <decisionTable id="DecisionTable_fmv51Wsp" hitPolicy="FIRST">
+      <input id="Input_y9qtKhpl" label="Evidence Type">
+        <inputExpression id="InputExpression_aWjHH4CS" typeRef="string">
+          <text>evidenceType</text>
+        </inputExpression>
+      </input>
+      <input id="Input_SLPLV65h" label="Regulatory Domain">
+        <inputExpression id="InputExpression_09QXVU5j" typeRef="string">
+          <text>regulatoryDomain</text>
+        </inputExpression>
+      </input>
+      <input id="Input_EcZRNId8" label="Risk Level">
+        <inputExpression id="InputExpression_yZrpgHam" typeRef="string">
+          <text>riskLevel</text>
+        </inputExpression>
+      </input>
+      <output id="Output_KbV6xxLN" label="Retention Period" name="retentionPeriod" typeRef="string"/>
+      <output id="Output_zTeb41kf" label="Archive Location" name="archiveLocation" typeRef="string"/>
+      <rule id="DecisionRule_X786xRyM">
+        <inputEntry id="UnaryTests_SdpMwHta">
+          <text>"AUDIT_PACKAGE"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_Shi27dQN">
+          <text>"FDA"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_Coz043V8">
+          <text>"HIGH"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_J12Ngvae">
+          <text>"10_YEARS"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_AZgQtgPB">
+          <text>"COLD_STORAGE"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_ZLFZ076k">
+        <inputEntry id="UnaryTests_DRKweK3Y">
+          <text>"AUDIT_PACKAGE"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_lWS4IvIQ">
+          <text>"STATE"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_tP6kayIc">
+          <text>"HIGH"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_ZyjDhx0F">
+          <text>"7_YEARS"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_a41k11b2">
+          <text>"COLD_STORAGE"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_H7FZ5Wm2">
+        <inputEntry id="UnaryTests_6WdgJNRx">
+          <text>"AUDIT_PACKAGE"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_7nSGVJYa">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_tjfoVjzA">
+          <text>"MEDIUM"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_HwwrZGBQ">
+          <text>"5_YEARS"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_hUwCT6ZV">
+          <text>"WARM_STORAGE"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_jpZ0gktA">
+        <inputEntry id="UnaryTests_WNXmBzQ9">
+          <text>"QUARANTINE_RECORD"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1DE4887k">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_iZZXWNcD">
+          <text>"HIGH"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_yu7FoGIr">
+          <text>"7_YEARS"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1pq65GCw">
+          <text>"COLD_STORAGE"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_iKEczJrF">
+        <inputEntry id="UnaryTests_CRhzqPUS">
+          <text>"QUARANTINE_RECORD"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_5xNGGtD5">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_UXWjKeMy">
+          <text>"MEDIUM"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_UXhHFokx">
+          <text>"5_YEARS"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_w3qFXhnA">
+          <text>"WARM_STORAGE"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_FpMbRKAI">
+        <inputEntry id="UnaryTests_Ppw2RbAN">
+          <text>"CORRECTION_RECORD"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_qRcXNhpG">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_33Jt4T69">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_cPxuuTbk">
+          <text>"10_YEARS"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_omDRWTDo">
+          <text>"COLD_STORAGE"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_WpuE3U3H">
+        <inputEntry id="UnaryTests_z79nbEzM">
+          <text>"DISPENSE_RECORD"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_HfNhFv11">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_qY8bvsIU">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_INufTMGk">
+          <text>"7_YEARS"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_7Ah2gLZN">
+          <text>"WARM_STORAGE"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_aLRgiSgX">
+        <inputEntry id="UnaryTests_cP5lWBzU">
+          <text>"RECEIPT_RECORD"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_4JQgBG1t">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_YilcOgfe">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_U7bzpMBL">
+          <text>"5_YEARS"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_36j5APIL">
+          <text>"WARM_STORAGE"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_qh6LPCRG">
+        <inputEntry id="UnaryTests_v0hJz7Wl">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_FRBtgMl2">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_zUUZgatS">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_dEypkUQW">
+          <text>"3_YEARS"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_lnNhhrfY">
+          <text>"WARM_STORAGE"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="retention-policy">
+        <dc:Bounds height="80" width="180" x="160" y="100"/>
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
+

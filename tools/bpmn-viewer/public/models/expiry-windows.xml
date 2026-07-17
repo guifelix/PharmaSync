@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_BguqaPgr" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="bpmn-sdk" exporterVersion="0.0.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <decision id="expiry-windows" name="Expiry Window Decision">
+    <decisionTable id="DecisionTable_HeMYARI3" hitPolicy="FIRST">
+      <input id="Input_udNGuYbh" label="Days Until Expiry">
+        <inputExpression id="InputExpression_HLBUtWWT" typeRef="number">
+          <text>daysUntilExpiry</text>
+        </inputExpression>
+      </input>
+      <input id="Input_EZxvzFMY" label="Lot Quantity">
+        <inputExpression id="InputExpression_SxZMEW1R" typeRef="number">
+          <text>lotQuantity</text>
+        </inputExpression>
+      </input>
+      <input id="Input_aX2gCNpn" label="30-Day Demand Forecast">
+        <inputExpression id="InputExpression_CgTPjm8M" typeRef="number">
+          <text>demandForecast</text>
+        </inputExpression>
+      </input>
+      <output id="Output_Ns6TUznp" label="Expiry Risk Level" name="expiryRisk" typeRef="string"/>
+      <output id="Output_mHQ6WA9b" label="Recommended Action" name="recommendedAction" typeRef="string"/>
+      <rule id="DecisionRule_ckt9sHS8">
+        <inputEntry id="UnaryTests_deqyqCZG">
+          <text>&lt;= 30</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_381NHHD7">
+          <text>&gt; demandForecast * 2</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_dpRmgLIC">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_RP7jlzrY">
+          <text>"CRITICAL"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_osNOSfbS">
+          <text>"IMMEDIATE_DISPOSAL_OR_DONATION"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_H8m9bVsl">
+        <inputEntry id="UnaryTests_ODHmyRuW">
+          <text>&lt;= 30</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_CVY472Sj">
+          <text>&gt; demandForecast</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_e23arHLC">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_2C569L8T">
+          <text>"HIGH"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1LpgzFux">
+          <text>"PRIORITIZE_DISPENSING"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_HsimMr6n">
+        <inputEntry id="UnaryTests_dJq2UCwk">
+          <text>&lt;= 60</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_juhLdwd3">
+          <text>&gt; demandForecast * 1.5</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_VNidKj7J">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_8hFEByzQ">
+          <text>"MEDIUM"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_cRX9rawG">
+          <text>"ACCELERATE_DISPENSING"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_XtxTkXnT">
+        <inputEntry id="UnaryTests_DRPpu1CW">
+          <text>&lt;= 90</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_yTgcpnxv">
+          <text>&gt; demandForecast</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_bWLhnURL">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_w4LcSTNZ">
+          <text>"WATCH"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_bt79kEP1">
+          <text>"MONITOR_CLOSELY"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_fTKZoign">
+        <inputEntry id="UnaryTests_D74X0vaz">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_inFD8ESr">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_2N3swtj3">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_bM99SLOX">
+          <text>"NONE"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_rJWJstkt">
+          <text>"NO_ACTION"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="expiry-windows">
+        <dc:Bounds height="80" width="180" x="160" y="100"/>
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
+

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="reprocess-decision" name="Reprocess Decision" isExecutable="true">
+    <bpmn:startEvent id="decision-started" name="Decision Started">
+      <bpmn:outgoing>Flow_dBGedBdJ</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="decide-action" name="Decide: Reprocess or Reject">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="reprocess-decision-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_dBGedBdJ</bpmn:incoming>
+      <bpmn:outgoing>Flow_K9IAQB2k</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="decision" name="Reprocess or Reject?">
+      <bpmn:incoming>Flow_K9IAQB2k</bpmn:incoming>
+      <bpmn:outgoing>Flow_ZWLzFX1t</bpmn:outgoing>
+      <bpmn:outgoing>Flow_E87i5YJN</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="trigger-reprocess" name="Trigger Reprocess">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="reprocess-trigger" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ZWLzFX1t</bpmn:incoming>
+      <bpmn:outgoing>Flow_jVx2gqfJ</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="reprocess-triggered" name="Reprocess Triggered">
+      <bpmn:incoming>Flow_jVx2gqfJ</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="finalize-rejection" name="Finalize Rejection">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="rejection-finalizer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_E87i5YJN</bpmn:incoming>
+      <bpmn:outgoing>Flow_1H6aVEPg</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="rejected" name="Permanently Rejected">
+      <bpmn:incoming>Flow_1H6aVEPg</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_dBGedBdJ" sourceRef="decision-started" targetRef="decide-action"/>
+    <bpmn:sequenceFlow id="Flow_K9IAQB2k" sourceRef="decide-action" targetRef="decision"/>
+    <bpmn:sequenceFlow id="Flow_ZWLzFX1t" sourceRef="decision" targetRef="trigger-reprocess" name="reprocess">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= reprocess</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_jVx2gqfJ" sourceRef="trigger-reprocess" targetRef="reprocess-triggered"/>
+    <bpmn:sequenceFlow id="Flow_E87i5YJN" sourceRef="decision" targetRef="finalize-rejection" name="reject">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= reject</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1H6aVEPg" sourceRef="finalize-rejection" targetRef="rejected"/>
+  </bpmn:process>
+</bpmn:definitions>
+

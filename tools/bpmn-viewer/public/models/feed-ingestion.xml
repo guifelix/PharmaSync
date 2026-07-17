@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="integration-gateway-ingestion" name="Integration Gateway Feed Ingestion" isExecutable="true">
+    <bpmn:startEvent id="feed-received" name="Feed Received">
+      <bpmn:outgoing>Flow_ccjlQirc</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="receive-feed" name="Receive Partner Feed">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="feed-adapter" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ccjlQirc</bpmn:incoming>
+      <bpmn:outgoing>Flow_4lTqJAS5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="validate-payload" name="Validate Payload">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="payload-validator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_4lTqJAS5</bpmn:incoming>
+      <bpmn:outgoing>Flow_Ver5NOpf</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="validation-result" name="Valid?">
+      <bpmn:incoming>Flow_Ver5NOpf</bpmn:incoming>
+      <bpmn:outgoing>Flow_9QbhgXPu</bpmn:outgoing>
+      <bpmn:outgoing>Flow_NfG0zhTx</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="map-canonical" name="Map to Canonical Model">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="canonical-mapper" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_9QbhgXPu</bpmn:incoming>
+      <bpmn:outgoing>Flow_pL5qiih8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="check-idempotency" name="Check Idempotency">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="idempotency-checker" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_pL5qiih8</bpmn:incoming>
+      <bpmn:outgoing>Flow_5CXEWRmD</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="idempotency-result" name="New Event?">
+      <bpmn:incoming>Flow_5CXEWRmD</bpmn:incoming>
+      <bpmn:outgoing>Flow_2i3D46rN</bpmn:outgoing>
+      <bpmn:outgoing>Flow_B4MfJY0Q</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:parallelGateway id="publish-fork">
+      <bpmn:incoming>Flow_2i3D46rN</bpmn:incoming>
+      <bpmn:outgoing>Flow_rWG7w6w9</bpmn:outgoing>
+      <bpmn:outgoing>Flow_LwKec9jL</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:serviceTask id="publish-queue" name="Publish to Queue/Outbox">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="integration-event-publisher" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_rWG7w6w9</bpmn:incoming>
+      <bpmn:outgoing>Flow_z3oOXdlD</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="submit-inventory" name="Submit to Inventory API">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="inventory-api-client" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_LwKec9jL</bpmn:incoming>
+      <bpmn:outgoing>Flow_autAt4KU</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:parallelGateway id="publish-join">
+      <bpmn:incoming>Flow_z3oOXdlD</bpmn:incoming>
+      <bpmn:incoming>Flow_autAt4KU</bpmn:incoming>
+      <bpmn:outgoing>Flow_EvvcYkGN</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:endEvent id="ingested" name="Ingested">
+      <bpmn:incoming>Flow_EvvcYkGN</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="quarantine-duplicate" name="Quarantine as Duplicate">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="quarantine-writer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_B4MfJY0Q</bpmn:incoming>
+      <bpmn:outgoing>Flow_YsicDXbT</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="duplicate-quarantined" name="Duplicate Quarantined">
+      <bpmn:incoming>Flow_YsicDXbT</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="quarantine-invalid" name="Quarantine Invalid Payload">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="quarantine-writer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_NfG0zhTx</bpmn:incoming>
+      <bpmn:outgoing>Flow_hKmV4eMj</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="invalid-quarantined" name="Invalid Quarantined">
+      <bpmn:incoming>Flow_hKmV4eMj</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_ccjlQirc" sourceRef="feed-received" targetRef="receive-feed"/>
+    <bpmn:sequenceFlow id="Flow_4lTqJAS5" sourceRef="receive-feed" targetRef="validate-payload"/>
+    <bpmn:sequenceFlow id="Flow_Ver5NOpf" sourceRef="validate-payload" targetRef="validation-result"/>
+    <bpmn:sequenceFlow id="Flow_9QbhgXPu" sourceRef="validation-result" targetRef="map-canonical" name="valid">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= valid</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_pL5qiih8" sourceRef="map-canonical" targetRef="check-idempotency"/>
+    <bpmn:sequenceFlow id="Flow_5CXEWRmD" sourceRef="check-idempotency" targetRef="idempotency-result"/>
+    <bpmn:sequenceFlow id="Flow_2i3D46rN" sourceRef="idempotency-result" targetRef="publish-fork" name="new">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= new</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_rWG7w6w9" sourceRef="publish-fork" targetRef="publish-queue" name="queue"/>
+    <bpmn:sequenceFlow id="Flow_LwKec9jL" sourceRef="publish-fork" targetRef="submit-inventory" name="inventory"/>
+    <bpmn:sequenceFlow id="Flow_z3oOXdlD" sourceRef="publish-queue" targetRef="publish-join"/>
+    <bpmn:sequenceFlow id="Flow_autAt4KU" sourceRef="submit-inventory" targetRef="publish-join"/>
+    <bpmn:sequenceFlow id="Flow_EvvcYkGN" sourceRef="publish-join" targetRef="ingested"/>
+    <bpmn:sequenceFlow id="Flow_B4MfJY0Q" sourceRef="idempotency-result" targetRef="quarantine-duplicate" name="duplicate">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= duplicate</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_YsicDXbT" sourceRef="quarantine-duplicate" targetRef="duplicate-quarantined"/>
+    <bpmn:sequenceFlow id="Flow_NfG0zhTx" sourceRef="validation-result" targetRef="quarantine-invalid" name="invalid">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= invalid</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_hKmV4eMj" sourceRef="quarantine-invalid" targetRef="invalid-quarantined"/>
+  </bpmn:process>
+</bpmn:definitions>
+

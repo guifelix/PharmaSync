@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="sla-monitoring" name="SLA Monitoring" isExecutable="true">
+    <bpmn:startEvent id="monitoring-start" name="Monitoring Start">
+      <bpmn:outgoing>Flow_6RChO8q5</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="collect-metrics" name="Collect Partner Metrics">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="metrics-collector" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_6RChO8q5</bpmn:incoming>
+      <bpmn:outgoing>Flow_VSYIdEjE</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="compare-vs-sla" name="Compare vs SLA Targets">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="sla-comparator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_VSYIdEjE</bpmn:incoming>
+      <bpmn:outgoing>Flow_lIivtdjx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="breach" name="SLA Breach?">
+      <bpmn:incoming>Flow_lIivtdjx</bpmn:incoming>
+      <bpmn:outgoing>Flow_Y8gtRSKj</bpmn:outgoing>
+      <bpmn:outgoing>Flow_2MR2pg61</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="alert-parties" name="Alert All Parties">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="party-alerter" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Y8gtRSKj</bpmn:incoming>
+      <bpmn:outgoing>Flow_QRVR6NP8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="escalate-breach" name="Escalate Breach">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="breach-escalation-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_QRVR6NP8</bpmn:incoming>
+      <bpmn:outgoing>Flow_uElrgKoa</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="breach-escalated" name="Breach Escalated">
+      <bpmn:incoming>Flow_uElrgKoa</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="log-report" name="Log Compliance Report">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="report-logger" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_2MR2pg61</bpmn:incoming>
+      <bpmn:outgoing>Flow_zY2LCVam</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="compliant" name="Compliant">
+      <bpmn:incoming>Flow_zY2LCVam</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_6RChO8q5" sourceRef="monitoring-start" targetRef="collect-metrics"/>
+    <bpmn:sequenceFlow id="Flow_VSYIdEjE" sourceRef="collect-metrics" targetRef="compare-vs-sla"/>
+    <bpmn:sequenceFlow id="Flow_lIivtdjx" sourceRef="compare-vs-sla" targetRef="breach"/>
+    <bpmn:sequenceFlow id="Flow_Y8gtRSKj" sourceRef="breach" targetRef="alert-parties" name="yes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= breached</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_QRVR6NP8" sourceRef="alert-parties" targetRef="escalate-breach"/>
+    <bpmn:sequenceFlow id="Flow_uElrgKoa" sourceRef="escalate-breach" targetRef="breach-escalated"/>
+    <bpmn:sequenceFlow id="Flow_2MR2pg61" sourceRef="breach" targetRef="log-report" name="no">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= !breached</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_zY2LCVam" sourceRef="log-report" targetRef="compliant"/>
+  </bpmn:process>
+</bpmn:definitions>
+

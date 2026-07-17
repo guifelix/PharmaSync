@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="platform-deployment" name="Platform Deployment" isExecutable="true">
+    <bpmn:startEvent id="deploy-req" name="Deployment Requested">
+      <bpmn:outgoing>Flow_e5uqtlyn</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="build-artifact" name="Build Artifact">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="artifact-builder" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_e5uqtlyn</bpmn:incoming>
+      <bpmn:outgoing>Flow_oBHucgIs</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="run-tests" name="Run Automated Tests">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="test-runner" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_oBHucgIs</bpmn:incoming>
+      <bpmn:outgoing>Flow_92actyIh</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="tests-pass" name="Tests Pass?">
+      <bpmn:incoming>Flow_92actyIh</bpmn:incoming>
+      <bpmn:outgoing>Flow_cCfAXZBS</bpmn:outgoing>
+      <bpmn:outgoing>Flow_mlY299n5</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="approve-deploy" name="Approve Deployment">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="deploy-approval-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_cCfAXZBS</bpmn:incoming>
+      <bpmn:outgoing>Flow_HPW1Pmha</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="deploy-staging" name="Deploy to Staging">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="staging-deployer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_HPW1Pmha</bpmn:incoming>
+      <bpmn:outgoing>Flow_s3DqYmhf</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="verify-staging" name="Verify Staging">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="staging-verifier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_s3DqYmhf</bpmn:incoming>
+      <bpmn:outgoing>Flow_mDxDaeqb</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="deploy-production" name="Deploy to Production">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="production-deployer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_mDxDaeqb</bpmn:incoming>
+      <bpmn:outgoing>Flow_KWMiTuWL</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="deployed" name="Deployed to Production">
+      <bpmn:incoming>Flow_KWMiTuWL</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="fix-issues" name="Fix Build Issues">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="build-fixer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_mlY299n5</bpmn:incoming>
+      <bpmn:outgoing>Flow_Xtw1Aj8s</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="fix-needed" name="Fixes Needed">
+      <bpmn:incoming>Flow_Xtw1Aj8s</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_e5uqtlyn" sourceRef="deploy-req" targetRef="build-artifact"/>
+    <bpmn:sequenceFlow id="Flow_oBHucgIs" sourceRef="build-artifact" targetRef="run-tests"/>
+    <bpmn:sequenceFlow id="Flow_92actyIh" sourceRef="run-tests" targetRef="tests-pass"/>
+    <bpmn:sequenceFlow id="Flow_cCfAXZBS" sourceRef="tests-pass" targetRef="approve-deploy" name="pass">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= passed</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_HPW1Pmha" sourceRef="approve-deploy" targetRef="deploy-staging"/>
+    <bpmn:sequenceFlow id="Flow_s3DqYmhf" sourceRef="deploy-staging" targetRef="verify-staging"/>
+    <bpmn:sequenceFlow id="Flow_mDxDaeqb" sourceRef="verify-staging" targetRef="deploy-production"/>
+    <bpmn:sequenceFlow id="Flow_KWMiTuWL" sourceRef="deploy-production" targetRef="deployed"/>
+    <bpmn:sequenceFlow id="Flow_mlY299n5" sourceRef="tests-pass" targetRef="fix-issues" name="fail">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= !passed</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Xtw1Aj8s" sourceRef="fix-issues" targetRef="fix-needed"/>
+  </bpmn:process>
+</bpmn:definitions>
+

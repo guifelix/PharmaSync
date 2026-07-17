@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="override-approval" name="Override Approval" isExecutable="true">
+    <bpmn:startEvent id="override-req" name="Override Requested">
+      <bpmn:outgoing>Flow_ZXAobofM</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="request-override" name="Request Override">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="override-request-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ZXAobofM</bpmn:incoming>
+      <bpmn:outgoing>Flow_OZr5LfX9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="validate-context" name="Validate Context">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="context-validator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_OZr5LfX9</bpmn:incoming>
+      <bpmn:outgoing>Flow_V5adGWX1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="assess-risk" name="Assess Risk">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="risk-assessor" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_V5adGWX1</bpmn:incoming>
+      <bpmn:outgoing>Flow_Z9V5vbSH</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="approved" name="Approved?">
+      <bpmn:incoming>Flow_Z9V5vbSH</bpmn:incoming>
+      <bpmn:outgoing>Flow_kTYcspK5</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Q8sNSD3n</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="apply-override" name="Apply Override">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="override-apply-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_kTYcspK5</bpmn:incoming>
+      <bpmn:outgoing>Flow_lpKUEYUD</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="override-applied" name="Override Applied">
+      <bpmn:incoming>Flow_lpKUEYUD</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="notify-requester" name="Notify Requester">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="denial-notification-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Q8sNSD3n</bpmn:incoming>
+      <bpmn:outgoing>Flow_qH8AWXwY</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="denied" name="Denied">
+      <bpmn:incoming>Flow_qH8AWXwY</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_ZXAobofM" sourceRef="override-req" targetRef="request-override"/>
+    <bpmn:sequenceFlow id="Flow_OZr5LfX9" sourceRef="request-override" targetRef="validate-context"/>
+    <bpmn:sequenceFlow id="Flow_V5adGWX1" sourceRef="validate-context" targetRef="assess-risk"/>
+    <bpmn:sequenceFlow id="Flow_Z9V5vbSH" sourceRef="assess-risk" targetRef="approved"/>
+    <bpmn:sequenceFlow id="Flow_kTYcspK5" sourceRef="approved" targetRef="apply-override" name="yes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= approved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_lpKUEYUD" sourceRef="apply-override" targetRef="override-applied"/>
+    <bpmn:sequenceFlow id="Flow_Q8sNSD3n" sourceRef="approved" targetRef="notify-requester" name="no">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= !approved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_qH8AWXwY" sourceRef="notify-requester" targetRef="denied"/>
+  </bpmn:process>
+</bpmn:definitions>
+

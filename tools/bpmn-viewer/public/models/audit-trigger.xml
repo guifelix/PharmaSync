@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_UKpQROR2" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="bpmn-sdk" exporterVersion="0.0.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <decision id="audit-trigger" name="Audit Trigger Decision">
+    <decisionTable id="DecisionTable_guCJHtSu" hitPolicy="FIRST">
+      <input id="Input_LnlFb9Af" label="Event Type">
+        <inputExpression id="InputExpression_H59nEbbA" typeRef="string">
+          <text>eventType</text>
+        </inputExpression>
+      </input>
+      <input id="Input_K4ua0lfy" label="Severity">
+        <inputExpression id="InputExpression_T9m7uQkn" typeRef="string">
+          <text>severity</text>
+        </inputExpression>
+      </input>
+      <input id="Input_OFRImgBP" label="Frequency (24h)">
+        <inputExpression id="InputExpression_hAG6HQMn" typeRef="number">
+          <text>frequency24h</text>
+        </inputExpression>
+      </input>
+      <output id="Output_2eDL9o89" label="Trigger Audit" name="triggerAudit" typeRef="boolean"/>
+      <output id="Output_ghPXaYX0" label="Audit Type" name="auditType" typeRef="string"/>
+      <rule id="DecisionRule_KHavQByA">
+        <inputEntry id="UnaryTests_lF6qIehp">
+          <text>"CORRECTION"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_Wrw9eUqO">
+          <text>"HIGH"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_shCil4sS">
+          <text>&gt;= 3</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_dgtdX9nK">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_XvpJPYsm">
+          <text>"FULL_AUDIT"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_is2uZpSD">
+        <inputEntry id="UnaryTests_atJNBe7A">
+          <text>"QUARANTINE"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_qsGGEJ8D">
+          <text>"CRITICAL"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_daLNG6xP">
+          <text>&gt;= 1</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_fcObZWtf">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_g8doiS4d">
+          <text>"FULL_AUDIT"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_bVez9Jet">
+        <inputEntry id="UnaryTests_Fk2iFFln">
+          <text>"CORRECTION"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_pHYLFqET">
+          <text>"MEDIUM"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0JsZVIVI">
+          <text>&gt;= 5</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_k8r0aO8W">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_Oh195FDK">
+          <text>"TARGETED_AUDIT"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_lgVk2NVa">
+        <inputEntry id="UnaryTests_Iy5YSELw">
+          <text>"DISPENSE"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_AJJhj7ER">
+          <text>"HIGH"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_IxlmWbag">
+          <text>&gt;= 10</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_gLjEFo8f">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_iOcynogo">
+          <text>"TARGETED_AUDIT"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_U3Fcso0N">
+        <inputEntry id="UnaryTests_iUyVBRn8">
+          <text>"RECEIPT"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_TVmMhxGs">
+          <text>"HIGH"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_KBEdBDpH">
+          <text>&gt;= 5</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_qO2FGuYB">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_efW5mgnc">
+          <text>"TARGETED_AUDIT"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_13Wikowg">
+        <inputEntry id="UnaryTests_wJ1AN9qa">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_jbHfHWax">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_th5avh0N">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_17Sa3RUL">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_Dm09YLmC">
+          <text>"NONE"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="audit-trigger">
+        <dc:Bounds height="80" width="180" x="160" y="100"/>
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
+

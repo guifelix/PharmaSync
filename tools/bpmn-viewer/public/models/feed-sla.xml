@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_fTlUJB1X" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="bpmn-sdk" exporterVersion="0.0.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <decision id="feed-sla" name="Feed SLA Decision">
+    <decisionTable id="DecisionTable_virHqaKS" hitPolicy="FIRST">
+      <input id="Input_sZlbWgQc" label="Feed Format">
+        <inputExpression id="InputExpression_277tfK71" typeRef="string">
+          <text>feedFormat</text>
+        </inputExpression>
+      </input>
+      <input id="Input_IqQwguCF" label="Delivery Timeliness (hours)">
+        <inputExpression id="InputExpression_kyiQMN4p" typeRef="number">
+          <text>deliveryTimelinessHours</text>
+        </inputExpression>
+      </input>
+      <input id="Input_ER6V9k9S" label="Data Quality Score">
+        <inputExpression id="InputExpression_DrewVH6W" typeRef="number">
+          <text>dataQualityScore</text>
+        </inputExpression>
+      </input>
+      <input id="Input_QgDTUPgW" label="Completeness %">
+        <inputExpression id="InputExpression_G6ogZVLB" typeRef="number">
+          <text>completenessPercent</text>
+        </inputExpression>
+      </input>
+      <output id="Output_LhmI62sw" label="SLA Met" name="slaMet" typeRef="boolean"/>
+      <output id="Output_n5iQSMKK" label="Penalty" name="penalty" typeRef="string"/>
+      <rule id="DecisionRule_1b0aqWpM">
+        <inputEntry id="UnaryTests_Op0Vkvlu">
+          <text>"JSON"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_iH4ZEgO3">
+          <text>&lt;= 2</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_pGmrZp3y">
+          <text>&gt;= 95</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_HqOxXa1b">
+          <text>&gt;= 99</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_UdsDo1nf">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_jLiHTsrh">
+          <text>"NONE"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_CgQtihEY">
+        <inputEntry id="UnaryTests_QEWEcriq">
+          <text>"CSV"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_habGd6mG">
+          <text>&lt;= 4</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_ix3wQFkC">
+          <text>&gt;= 90</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_5LF9NiVg">
+          <text>&gt;= 95</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_BkHNRtQL">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_ferhYu5o">
+          <text>"NONE"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_C8QrVbQS">
+        <inputEntry id="UnaryTests_jCjdOJFW">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_9Fh7xL48">
+          <text>&lt;= 8</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_RpdGEGDq">
+          <text>&gt;= 80</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_PT00SeKn">
+          <text>&gt;= 90</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_SL46gJun">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_ZdFR9qsn">
+          <text>"WARNING"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_vNn80072">
+        <inputEntry id="UnaryTests_PPjnqnDu">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_JxA2iBfU">
+          <text>&lt;= 24</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_XP7cP5Bl">
+          <text>&gt;= 70</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_GBGNSm2x">
+          <text>&gt;= 80</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_aU7dTAR5">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_gSbWVsbH">
+          <text>"PENALTY_5%"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_RS1kMwYl">
+        <inputEntry id="UnaryTests_OZOjb1nW">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_PnzUBLIz">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1Xen610m">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_H57iVGSb">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_Zprl7y4v">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_ucFov93C">
+          <text>"PENALTY_10%_AND_REVIEW"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="feed-sla">
+        <dc:Bounds height="80" width="180" x="160" y="100"/>
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
+

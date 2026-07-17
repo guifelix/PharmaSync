@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="evidence-review" name="Evidence Review" isExecutable="true">
+    <bpmn:startEvent id="review-started" name="Review Started">
+      <bpmn:outgoing>Flow_ZmRedn22</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="load-evidence" name="Load Evidence Package">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="evidence-loader" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ZmRedn22</bpmn:incoming>
+      <bpmn:outgoing>Flow_CzAJsmef</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="review-evidence" name="Review Evidence Package">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="evidence-review-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_CzAJsmef</bpmn:incoming>
+      <bpmn:outgoing>Flow_Sb5aKyCd</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="review-decision" name="Approve or Request Changes?">
+      <bpmn:incoming>Flow_Sb5aKyCd</bpmn:incoming>
+      <bpmn:outgoing>Flow_Yktzys7X</bpmn:outgoing>
+      <bpmn:outgoing>Flow_dUoOZKKp</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="mark-approved" name="Mark as Approved">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="approval-marker" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Yktzys7X</bpmn:incoming>
+      <bpmn:outgoing>Flow_Y83xj8Yj</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="approved" name="Approved">
+      <bpmn:incoming>Flow_Y83xj8Yj</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="request-changes" name="Request Changes">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="change-request-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_dUoOZKKp</bpmn:incoming>
+      <bpmn:outgoing>Flow_bxwmG4UK</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="changes-requested" name="Changes Requested">
+      <bpmn:incoming>Flow_bxwmG4UK</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_ZmRedn22" sourceRef="review-started" targetRef="load-evidence"/>
+    <bpmn:sequenceFlow id="Flow_CzAJsmef" sourceRef="load-evidence" targetRef="review-evidence"/>
+    <bpmn:sequenceFlow id="Flow_Sb5aKyCd" sourceRef="review-evidence" targetRef="review-decision"/>
+    <bpmn:sequenceFlow id="Flow_Yktzys7X" sourceRef="review-decision" targetRef="mark-approved" name="approve">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= approve</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Y83xj8Yj" sourceRef="mark-approved" targetRef="approved"/>
+    <bpmn:sequenceFlow id="Flow_dUoOZKKp" sourceRef="review-decision" targetRef="request-changes" name="changes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= changes</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_bxwmG4UK" sourceRef="request-changes" targetRef="changes-requested"/>
+  </bpmn:process>
+</bpmn:definitions>
+

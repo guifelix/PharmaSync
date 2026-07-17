@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="evidence-collection" name="Evidence Collection" isExecutable="true">
+    <bpmn:startEvent id="collection-started" name="Collection Started">
+      <bpmn:outgoing>Flow_XdzUb6MM</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="collect-inventory-events" name="Collect Inventory Events">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="inventory-event-collector" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_XdzUb6MM</bpmn:incoming>
+      <bpmn:outgoing>Flow_Vl12tgmO</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="collect-integration-events" name="Collect Integration Events">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="integration-event-collector" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Vl12tgmO</bpmn:incoming>
+      <bpmn:outgoing>Flow_3k6HMo9D</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="collect-signal-events" name="Collect Signal Events">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="signal-event-collector" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_3k6HMo9D</bpmn:incoming>
+      <bpmn:outgoing>Flow_Hefyjfye</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="collect-correction-events" name="Collect Correction Events">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="correction-event-collector" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Hefyjfye</bpmn:incoming>
+      <bpmn:outgoing>Flow_szgIK2Fv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="enrich-trace-ids" name="Enrich with Trace IDs">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="trace-enricher" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_szgIK2Fv</bpmn:incoming>
+      <bpmn:outgoing>Flow_R40yrBf0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="collection-complete" name="Collection Complete">
+      <bpmn:incoming>Flow_R40yrBf0</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_XdzUb6MM" sourceRef="collection-started" targetRef="collect-inventory-events"/>
+    <bpmn:sequenceFlow id="Flow_Vl12tgmO" sourceRef="collect-inventory-events" targetRef="collect-integration-events"/>
+    <bpmn:sequenceFlow id="Flow_3k6HMo9D" sourceRef="collect-integration-events" targetRef="collect-signal-events"/>
+    <bpmn:sequenceFlow id="Flow_Hefyjfye" sourceRef="collect-signal-events" targetRef="collect-correction-events"/>
+    <bpmn:sequenceFlow id="Flow_szgIK2Fv" sourceRef="collect-correction-events" targetRef="enrich-trace-ids"/>
+    <bpmn:sequenceFlow id="Flow_R40yrBf0" sourceRef="enrich-trace-ids" targetRef="collection-complete"/>
+  </bpmn:process>
+</bpmn:definitions>
+

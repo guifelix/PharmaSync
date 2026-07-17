@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="evidence-packaging" name="Evidence Packaging" isExecutable="true">
+    <bpmn:startEvent id="packaging-started" name="Packaging Started">
+      <bpmn:outgoing>Flow_yVX9db6k</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="group-by-scope" name="Group Evidence by Audit Scope">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="evidence-grouper" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_yVX9db6k</bpmn:incoming>
+      <bpmn:outgoing>Flow_sH2dxaS6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="generate-package" name="Generate Evidence Package">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="package-generator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_sH2dxaS6</bpmn:incoming>
+      <bpmn:outgoing>Flow_T6ZFOGb1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="sign-package" name="Sign Evidence Package">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="package-signer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_T6ZFOGb1</bpmn:incoming>
+      <bpmn:outgoing>Flow_tz4A0w33</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="store-package" name="Store Evidence Package">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="package-store" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_tz4A0w33</bpmn:incoming>
+      <bpmn:outgoing>Flow_RlUsdjSh</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="packaging-complete" name="Packaging Complete">
+      <bpmn:incoming>Flow_RlUsdjSh</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_yVX9db6k" sourceRef="packaging-started" targetRef="group-by-scope"/>
+    <bpmn:sequenceFlow id="Flow_sH2dxaS6" sourceRef="group-by-scope" targetRef="generate-package"/>
+    <bpmn:sequenceFlow id="Flow_T6ZFOGb1" sourceRef="generate-package" targetRef="sign-package"/>
+    <bpmn:sequenceFlow id="Flow_tz4A0w33" sourceRef="sign-package" targetRef="store-package"/>
+    <bpmn:sequenceFlow id="Flow_RlUsdjSh" sourceRef="store-package" targetRef="packaging-complete"/>
+  </bpmn:process>
+</bpmn:definitions>
+

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="partner-feed-certification" name="Partner Feed Certification" isExecutable="true">
+    <bpmn:startEvent id="cert-req" name="Certification Requested">
+      <bpmn:outgoing>Flow_lqPaw8uJ</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="validate-feed-spec" name="Validate Feed Specification">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="feed-spec-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_lqPaw8uJ</bpmn:incoming>
+      <bpmn:outgoing>Flow_5tS4V110</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="test-connectivity" name="Test Connectivity">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="connectivity-tester" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_5tS4V110</bpmn:incoming>
+      <bpmn:outgoing>Flow_dLuzmhMm</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="passed" name="Tests Passed?">
+      <bpmn:incoming>Flow_dLuzmhMm</bpmn:incoming>
+      <bpmn:outgoing>Flow_fyAU1AHd</bpmn:outgoing>
+      <bpmn:outgoing>Flow_5dMUdCXT</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="issue-cert" name="Issue Certification">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="certification-issuer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_fyAU1AHd</bpmn:incoming>
+      <bpmn:outgoing>Flow_uxo9N2kd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="certified" name="Certified">
+      <bpmn:incoming>Flow_uxo9N2kd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="notify-partner" name="Notify Partner of Issues">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="partner-notification-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_5dMUdCXT</bpmn:incoming>
+      <bpmn:outgoing>Flow_pbUamh2h</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="failed" name="Certification Failed">
+      <bpmn:incoming>Flow_pbUamh2h</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_lqPaw8uJ" sourceRef="cert-req" targetRef="validate-feed-spec"/>
+    <bpmn:sequenceFlow id="Flow_5tS4V110" sourceRef="validate-feed-spec" targetRef="test-connectivity"/>
+    <bpmn:sequenceFlow id="Flow_dLuzmhMm" sourceRef="test-connectivity" targetRef="passed"/>
+    <bpmn:sequenceFlow id="Flow_fyAU1AHd" sourceRef="passed" targetRef="issue-cert" name="pass">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= passed</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_uxo9N2kd" sourceRef="issue-cert" targetRef="certified"/>
+    <bpmn:sequenceFlow id="Flow_5dMUdCXT" sourceRef="passed" targetRef="notify-partner" name="fail">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= !passed</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_pbUamh2h" sourceRef="notify-partner" targetRef="failed"/>
+  </bpmn:process>
+</bpmn:definitions>
+

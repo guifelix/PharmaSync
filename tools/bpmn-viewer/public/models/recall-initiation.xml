@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="recall-initiation" name="Recall Initiation" isExecutable="true">
+    <bpmn:startEvent id="issue-detected" name="Issue Detected">
+      <bpmn:outgoing>Flow_PzZIOwPG</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="assess-severity" name="Assess Severity">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="severity-assessor" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_PzZIOwPG</bpmn:incoming>
+      <bpmn:outgoing>Flow_AyJrynX7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="classification" name="Recall Class?">
+      <bpmn:incoming>Flow_AyJrynX7</bpmn:incoming>
+      <bpmn:outgoing>Flow_upfj5yzd</bpmn:outgoing>
+      <bpmn:outgoing>Flow_KgIegsNT</bpmn:outgoing>
+      <bpmn:outgoing>Flow_QNpbMEsc</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="notify-fda-urgent" name="Notify FDA - Urgent">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="fda-urgent-notifier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_upfj5yzd</bpmn:incoming>
+      <bpmn:outgoing>Flow_Qc8RonMn</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="fda-notified-class1" name="FDA Notified - Class I">
+      <bpmn:incoming>Flow_Qc8RonMn</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="notify-fda-standard" name="Notify FDA - Standard">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="fda-standard-notifier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_KgIegsNT</bpmn:incoming>
+      <bpmn:outgoing>Flow_pUqrHdsS</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="fda-notified-class2" name="FDA Notified - Class II">
+      <bpmn:incoming>Flow_pUqrHdsS</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="notify-fda-minimal" name="Notify FDA - Minimal">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="fda-minimal-notifier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_QNpbMEsc</bpmn:incoming>
+      <bpmn:outgoing>Flow_O9DxEAUN</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="fda-notified-class3" name="FDA Notified - Class III">
+      <bpmn:incoming>Flow_O9DxEAUN</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="notify-partners" name="Notify Partners">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="partner-notifier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_QaIBU771</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="track-returns" name="Track Returns">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="returns-tracker" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_QaIBU771</bpmn:incoming>
+      <bpmn:outgoing>Flow_mcCSSpwa</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="recall-active" name="Recall Active">
+      <bpmn:incoming>Flow_mcCSSpwa</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_PzZIOwPG" sourceRef="issue-detected" targetRef="assess-severity"/>
+    <bpmn:sequenceFlow id="Flow_AyJrynX7" sourceRef="assess-severity" targetRef="classification"/>
+    <bpmn:sequenceFlow id="Flow_upfj5yzd" sourceRef="classification" targetRef="notify-fda-urgent" name="class1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= recallClass = "I"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Qc8RonMn" sourceRef="notify-fda-urgent" targetRef="fda-notified-class1"/>
+    <bpmn:sequenceFlow id="Flow_KgIegsNT" sourceRef="classification" targetRef="notify-fda-standard" name="class2">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= recallClass = "II"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_pUqrHdsS" sourceRef="notify-fda-standard" targetRef="fda-notified-class2"/>
+    <bpmn:sequenceFlow id="Flow_QNpbMEsc" sourceRef="classification" targetRef="notify-fda-minimal" name="class3">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= recallClass = "III"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_O9DxEAUN" sourceRef="notify-fda-minimal" targetRef="fda-notified-class3"/>
+    <bpmn:sequenceFlow id="Flow_QaIBU771" sourceRef="notify-partners" targetRef="track-returns"/>
+    <bpmn:sequenceFlow id="Flow_mcCSSpwa" sourceRef="track-returns" targetRef="recall-active"/>
+  </bpmn:process>
+</bpmn:definitions>
+

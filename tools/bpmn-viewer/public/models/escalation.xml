@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="escalation" name="Escalation" isExecutable="true">
+    <bpmn:startEvent id="escalation-triggered" name="Escalation Triggered">
+      <bpmn:outgoing>Flow_EVINt0t5</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="triage-issue" name="Triage Issue">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="triage-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_EVINt0t5</bpmn:incoming>
+      <bpmn:outgoing>Flow_4imgixGX</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="assign-level" name="Assign Escalation Level">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="level-assigner" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_4imgixGX</bpmn:incoming>
+      <bpmn:outgoing>Flow_nRZ19REg</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="level" name="Escalation Level?">
+      <bpmn:incoming>Flow_nRZ19REg</bpmn:incoming>
+      <bpmn:outgoing>Flow_JnXdjcGs</bpmn:outgoing>
+      <bpmn:outgoing>Flow_8jeuJBFm</bpmn:outgoing>
+      <bpmn:outgoing>Flow_e9IPtFeG</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="level1-resolve" name="Level 1 Resolution">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="level1-resolution-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_JnXdjcGs</bpmn:incoming>
+      <bpmn:outgoing>Flow_8BwK6s7x</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="level1-resolved" name="Level 1 Resolved">
+      <bpmn:incoming>Flow_8BwK6s7x</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="level2-resolve" name="Level 2 Resolution">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="level2-resolution-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_8jeuJBFm</bpmn:incoming>
+      <bpmn:outgoing>Flow_Vz0NjL56</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="level2-resolved" name="Level 2 Resolved">
+      <bpmn:incoming>Flow_Vz0NjL56</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="level3-resolve" name="Level 3 Resolution">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="level3-resolution-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_e9IPtFeG</bpmn:incoming>
+      <bpmn:outgoing>Flow_b7id67vE</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="level3-resolved" name="Level 3 Resolved">
+      <bpmn:incoming>Flow_b7id67vE</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_EVINt0t5" sourceRef="escalation-triggered" targetRef="triage-issue"/>
+    <bpmn:sequenceFlow id="Flow_4imgixGX" sourceRef="triage-issue" targetRef="assign-level"/>
+    <bpmn:sequenceFlow id="Flow_nRZ19REg" sourceRef="assign-level" targetRef="level"/>
+    <bpmn:sequenceFlow id="Flow_JnXdjcGs" sourceRef="level" targetRef="level1-resolve" name="level1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= level = "L1"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_8BwK6s7x" sourceRef="level1-resolve" targetRef="level1-resolved"/>
+    <bpmn:sequenceFlow id="Flow_8jeuJBFm" sourceRef="level" targetRef="level2-resolve" name="level2">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= level = "L2"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Vz0NjL56" sourceRef="level2-resolve" targetRef="level2-resolved"/>
+    <bpmn:sequenceFlow id="Flow_e9IPtFeG" sourceRef="level" targetRef="level3-resolve" name="level3">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= level = "L3"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_b7id67vE" sourceRef="level3-resolve" targetRef="level3-resolved"/>
+  </bpmn:process>
+</bpmn:definitions>
+

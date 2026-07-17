@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="retry-handling" name="Retry Handling" isExecutable="true">
+    <bpmn:startEvent id="retry-started" name="Retry Started">
+      <bpmn:outgoing>Flow_kwtMLOse</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="calculate-delay" name="Calculate Retry Delay">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="delay-calculator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_kwtMLOse</bpmn:incoming>
+      <bpmn:outgoing>Flow_anE51X18</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:intermediateCatchEvent id="wait-delay" name="Wait for Retry Delay">
+      <bpmn:incoming>Flow_anE51X18</bpmn:incoming>
+      <bpmn:outgoing>Flow_a1RC4xV5</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration>PT1M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:serviceTask id="retry-operation" name="Retry Operation">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="operation-retrier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_a1RC4xV5</bpmn:incoming>
+      <bpmn:outgoing>Flow_ttqMdMAy</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="retry-complete" name="Retry Complete">
+      <bpmn:incoming>Flow_ttqMdMAy</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_kwtMLOse" sourceRef="retry-started" targetRef="calculate-delay"/>
+    <bpmn:sequenceFlow id="Flow_anE51X18" sourceRef="calculate-delay" targetRef="wait-delay"/>
+    <bpmn:sequenceFlow id="Flow_a1RC4xV5" sourceRef="wait-delay" targetRef="retry-operation"/>
+    <bpmn:sequenceFlow id="Flow_ttqMdMAy" sourceRef="retry-operation" targetRef="retry-complete"/>
+  </bpmn:process>
+</bpmn:definitions>
+

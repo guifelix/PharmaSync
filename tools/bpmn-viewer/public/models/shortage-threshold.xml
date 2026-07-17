@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_tIugfbWv" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="bpmn-sdk" exporterVersion="0.0.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <decision id="shortage-threshold" name="Shortage Threshold Decision">
+    <decisionTable id="DecisionTable_iu6QKDY0" hitPolicy="FIRST">
+      <input id="Input_wr2iEEiR" label="Current Stock">
+        <inputExpression id="InputExpression_MEStChzL" typeRef="number">
+          <text>currentStock</text>
+        </inputExpression>
+      </input>
+      <input id="Input_7uecsNsr" label="Shortage Threshold">
+        <inputExpression id="InputExpression_Os9dQ0qf" typeRef="number">
+          <text>threshold</text>
+        </inputExpression>
+      </input>
+      <input id="Input_7ZmPQ5oV" label="Demand Forecast (30 days)">
+        <inputExpression id="InputExpression_aSA6QGrp" typeRef="number">
+          <text>demandForecast</text>
+        </inputExpression>
+      </input>
+      <input id="Input_ZrNwmhi6" label="Days of Supply">
+        <inputExpression id="InputExpression_2hStVxdp" typeRef="number">
+          <text>daysOfSupply</text>
+        </inputExpression>
+      </input>
+      <output id="Output_DheynFaf" label="Shortage Level" name="shortageLevel" typeRef="string"/>
+      <output id="Output_yRo8ZM8d" label="Recommended Action" name="recommendedAction" typeRef="string"/>
+      <rule id="DecisionRule_MrGfoOpI">
+        <inputEntry id="UnaryTests_PsjaJkDJ">
+          <text>&lt; threshold</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_7Kroigc6">
+          <text>&lt; 7</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_zUohCjSd">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_MvxlQqEw">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_Oatlq5hl">
+          <text>"CRITICAL"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_88H9gkxU">
+          <text>"IMMEDIATE_REORDER"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_DxZc1xew">
+        <inputEntry id="UnaryTests_HBJe5uWG">
+          <text>&lt; threshold</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_lSB5B5i6">
+          <text>&gt;= 7 &amp;&amp; &lt; 14</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_4s8Z7seF">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_S6CG4cd0">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_xdNfzBza">
+          <text>"HIGH"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_BF34ggBM">
+          <text>"URGENT_REORDER"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_yzOgzYof">
+        <inputEntry id="UnaryTests_YOTGBW4Q">
+          <text>&lt; threshold</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_vS9jNYEE">
+          <text>&gt;= 14</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_03AiTpd8">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_rKa9fzVd">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_Dx0HJROT">
+          <text>"MEDIUM"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_eJtUUL4v">
+          <text>"SCHEDULE_REORDER"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_cNNvUZ3p">
+        <inputEntry id="UnaryTests_9UDVKVAC">
+          <text>&gt;= threshold</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_Y9cg0bTI">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_DuOX7O9m">
+          <text>&gt; currentStock * 0.8</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_muf7hXt1">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_Fc68l8bh">
+          <text>"WATCH"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_HsD3OZxM">
+          <text>"MONITOR_CLOSELY"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1DOXypLb">
+        <inputEntry id="UnaryTests_FBtoSFe4">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_KLliJSgv">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_20xgs8DC">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_3J6GJhDL">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_u3UUz6zC">
+          <text>"NONE"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_NPHiPqNL">
+          <text>"NO_ACTION"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="shortage-threshold">
+        <dc:Bounds height="80" width="180" x="160" y="100"/>
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
+

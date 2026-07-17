@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="quarantine-review" name="Quarantine Review" isExecutable="true">
+    <bpmn:startEvent id="review-requested" name="Review Requested">
+      <bpmn:outgoing>Flow_pgZNTb3S</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="assign-engineer" name="Assign Integration Engineer">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="quarantine-review-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_pgZNTb3S</bpmn:incoming>
+      <bpmn:outgoing>Flow_4T2y1axR</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="review-payload" name="Review Quarantined Payload">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="payload-review-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_4T2y1axR</bpmn:incoming>
+      <bpmn:outgoing>Flow_ucf3x0NJ</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="remediation-decision" name="Remediate or Reject?">
+      <bpmn:incoming>Flow_ucf3x0NJ</bpmn:incoming>
+      <bpmn:outgoing>Flow_F0jC01Np</bpmn:outgoing>
+      <bpmn:outgoing>Flow_mDpZyYvZ</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="remediate-payload" name="Remediate Payload">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="remediation-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_F0jC01Np</bpmn:incoming>
+      <bpmn:outgoing>Flow_WEbbKLZu</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="reprocess-payload" name="Reprocess Payload">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="payload-reprocessor" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_WEbbKLZu</bpmn:incoming>
+      <bpmn:outgoing>Flow_PulOxsxe</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="reprocessed" name="Reprocessed">
+      <bpmn:incoming>Flow_PulOxsxe</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="mark-rejected" name="Mark as Rejected">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="rejection-marker" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_mDpZyYvZ</bpmn:incoming>
+      <bpmn:outgoing>Flow_YfsNkNfh</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="rejected" name="Rejected">
+      <bpmn:incoming>Flow_YfsNkNfh</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_pgZNTb3S" sourceRef="review-requested" targetRef="assign-engineer"/>
+    <bpmn:sequenceFlow id="Flow_4T2y1axR" sourceRef="assign-engineer" targetRef="review-payload"/>
+    <bpmn:sequenceFlow id="Flow_ucf3x0NJ" sourceRef="review-payload" targetRef="remediation-decision"/>
+    <bpmn:sequenceFlow id="Flow_F0jC01Np" sourceRef="remediation-decision" targetRef="remediate-payload" name="remediate">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= remediate</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_WEbbKLZu" sourceRef="remediate-payload" targetRef="reprocess-payload"/>
+    <bpmn:sequenceFlow id="Flow_PulOxsxe" sourceRef="reprocess-payload" targetRef="reprocessed"/>
+    <bpmn:sequenceFlow id="Flow_mDpZyYvZ" sourceRef="remediation-decision" targetRef="mark-rejected" name="reject">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= reject</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_YfsNkNfh" sourceRef="mark-rejected" targetRef="rejected"/>
+  </bpmn:process>
+</bpmn:definitions>
+

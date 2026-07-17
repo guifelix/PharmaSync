@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="quarantine-handling" name="Quarantine Handling" isExecutable="true">
+    <bpmn:startEvent id="quarantine-started" name="Quarantine Started">
+      <bpmn:outgoing>Flow_oUkVSIAS</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="store-payload" name="Store Rejected Payload">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="payload-store" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_oUkVSIAS</bpmn:incoming>
+      <bpmn:outgoing>Flow_wKtx6hTq</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="record-error" name="Record Error Details">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="error-recorder" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_wKtx6hTq</bpmn:incoming>
+      <bpmn:outgoing>Flow_2ILt2Pe5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="store-trace" name="Store Trace Metadata">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="trace-store" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_2ILt2Pe5</bpmn:incoming>
+      <bpmn:outgoing>Flow_4EW62Cub</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="notify-engineer" name="Notify Integration Engineer">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="notification-sender" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_4EW62Cub</bpmn:incoming>
+      <bpmn:outgoing>Flow_GqXO21oN</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="quarantine-complete" name="Quarantine Complete">
+      <bpmn:incoming>Flow_GqXO21oN</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_oUkVSIAS" sourceRef="quarantine-started" targetRef="store-payload"/>
+    <bpmn:sequenceFlow id="Flow_wKtx6hTq" sourceRef="store-payload" targetRef="record-error"/>
+    <bpmn:sequenceFlow id="Flow_2ILt2Pe5" sourceRef="record-error" targetRef="store-trace"/>
+    <bpmn:sequenceFlow id="Flow_4EW62Cub" sourceRef="store-trace" targetRef="notify-engineer"/>
+    <bpmn:sequenceFlow id="Flow_GqXO21oN" sourceRef="notify-engineer" targetRef="quarantine-complete"/>
+  </bpmn:process>
+</bpmn:definitions>
+

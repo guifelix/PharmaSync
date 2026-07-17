@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="outbox-publisher" name="Outbox Publisher" isExecutable="true">
+    <bpmn:startEvent id="publisher-started" name="Publisher Started">
+      <bpmn:outgoing>Flow_rcK4eReE</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="claim-batch" name="Claim Outbox Batch">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="outbox-claimer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_rcK4eReE</bpmn:incoming>
+      <bpmn:outgoing>Flow_iEd4cOO7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="process-record" name="Process Outbox Record">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="outbox-processor" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_iEd4cOO7</bpmn:incoming>
+      <bpmn:outgoing>Flow_etjvSdjk</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="process-result" name="Success?">
+      <bpmn:incoming>Flow_etjvSdjk</bpmn:incoming>
+      <bpmn:outgoing>Flow_I1GGkoY0</bpmn:outgoing>
+      <bpmn:outgoing>Flow_cBR3Vfag</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="acknowledge-record" name="Acknowledge Record">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="outbox-acknowledger" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_I1GGkoY0</bpmn:incoming>
+      <bpmn:outgoing>Flow_cIGwfdJl</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="record-acknowledged" name="Record Acknowledged">
+      <bpmn:incoming>Flow_cIGwfdJl</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="handle-failure" name="Handle Failure">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="failure-handler" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_cBR3Vfag</bpmn:incoming>
+      <bpmn:outgoing>Flow_c7xHizEz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="retry-check" name="Retry?">
+      <bpmn:incoming>Flow_c7xHizEz</bpmn:incoming>
+      <bpmn:outgoing>Flow_RLzRvQXO</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Nq7mHW0o</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="schedule-retry" name="Schedule Retry">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="retry-scheduler" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_RLzRvQXO</bpmn:incoming>
+      <bpmn:outgoing>Flow_TmpIiFjG</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="retry-scheduled" name="Retry Scheduled">
+      <bpmn:incoming>Flow_TmpIiFjG</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="move-to-dead-letter" name="Move to Dead Letter">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="dead-letter-mover" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Nq7mHW0o</bpmn:incoming>
+      <bpmn:outgoing>Flow_r8PJsfDn</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="record-dead-lettered" name="Record Dead Lettered">
+      <bpmn:incoming>Flow_r8PJsfDn</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_rcK4eReE" sourceRef="publisher-started" targetRef="claim-batch"/>
+    <bpmn:sequenceFlow id="Flow_iEd4cOO7" sourceRef="claim-batch" targetRef="process-record"/>
+    <bpmn:sequenceFlow id="Flow_etjvSdjk" sourceRef="process-record" targetRef="process-result"/>
+    <bpmn:sequenceFlow id="Flow_I1GGkoY0" sourceRef="process-result" targetRef="acknowledge-record" name="success">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= success</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_cIGwfdJl" sourceRef="acknowledge-record" targetRef="record-acknowledged"/>
+    <bpmn:sequenceFlow id="Flow_cBR3Vfag" sourceRef="process-result" targetRef="handle-failure" name="failure">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= failure</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_c7xHizEz" sourceRef="handle-failure" targetRef="retry-check"/>
+    <bpmn:sequenceFlow id="Flow_RLzRvQXO" sourceRef="retry-check" targetRef="schedule-retry" name="retry">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= retryable</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_TmpIiFjG" sourceRef="schedule-retry" targetRef="retry-scheduled"/>
+    <bpmn:sequenceFlow id="Flow_Nq7mHW0o" sourceRef="retry-check" targetRef="move-to-dead-letter" name="dead-letter">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= !retryable</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_r8PJsfDn" sourceRef="move-to-dead-letter" targetRef="record-dead-lettered"/>
+  </bpmn:process>
+</bpmn:definitions>
+

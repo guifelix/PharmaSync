@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="dea-reporting" name="DEA Reporting" isExecutable="true">
+    <bpmn:startEvent id="reporting-cycle" name="Reporting Cycle">
+      <bpmn:outgoing>Flow_nS8E6W64</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="collect-transactions" name="Collect Transaction Data">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="transaction-collector" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_nS8E6W64</bpmn:incoming>
+      <bpmn:outgoing>Flow_2kD5SUxO</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="validate-compliance" name="Validate Compliance">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="compliance-validator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_2kD5SUxO</bpmn:incoming>
+      <bpmn:outgoing>Flow_EyQaCJGA</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="compliant" name="Data Compliant?">
+      <bpmn:incoming>Flow_EyQaCJGA</bpmn:incoming>
+      <bpmn:outgoing>Flow_LkmCBtHX</bpmn:outgoing>
+      <bpmn:outgoing>Flow_gOrxZPD4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="submit-report" name="Submit DEA Report">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="dea-submitter" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_LkmCBtHX</bpmn:incoming>
+      <bpmn:outgoing>Flow_VEPu6wod</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="archive-report" name="Archive Report">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="report-archiver" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_VEPu6wod</bpmn:incoming>
+      <bpmn:outgoing>Flow_9SaMyViY</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="report-filed" name="Report Filed">
+      <bpmn:incoming>Flow_9SaMyViY</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="flag-for-review" name="Flag for Review">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="dea-flag-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_gOrxZPD4</bpmn:incoming>
+      <bpmn:outgoing>Flow_F54BHwfq</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="flagged" name="Flagged for Review">
+      <bpmn:incoming>Flow_F54BHwfq</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_nS8E6W64" sourceRef="reporting-cycle" targetRef="collect-transactions"/>
+    <bpmn:sequenceFlow id="Flow_2kD5SUxO" sourceRef="collect-transactions" targetRef="validate-compliance"/>
+    <bpmn:sequenceFlow id="Flow_EyQaCJGA" sourceRef="validate-compliance" targetRef="compliant"/>
+    <bpmn:sequenceFlow id="Flow_LkmCBtHX" sourceRef="compliant" targetRef="submit-report" name="yes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= compliant</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_VEPu6wod" sourceRef="submit-report" targetRef="archive-report"/>
+    <bpmn:sequenceFlow id="Flow_9SaMyViY" sourceRef="archive-report" targetRef="report-filed"/>
+    <bpmn:sequenceFlow id="Flow_gOrxZPD4" sourceRef="compliant" targetRef="flag-for-review" name="no">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= !compliant</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_F54BHwfq" sourceRef="flag-for-review" targetRef="flagged"/>
+  </bpmn:process>
+</bpmn:definitions>
+

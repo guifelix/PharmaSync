@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_vzXUbxvt" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="bpmn-sdk" exporterVersion="0.0.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <decision id="evidence-requirements" name="Evidence Requirements Decision">
+    <decisionTable id="DecisionTable_Zme5E30l" hitPolicy="FIRST">
+      <input id="Input_H4yIOlU7" label="Audit Type">
+        <inputExpression id="InputExpression_rv3E3XDf" typeRef="string">
+          <text>auditType</text>
+        </inputExpression>
+      </input>
+      <input id="Input_oXUadj4s" label="Risk Level">
+        <inputExpression id="InputExpression_OSya8Il5" typeRef="string">
+          <text>riskLevel</text>
+        </inputExpression>
+      </input>
+      <input id="Input_80sMCC0O" label="Regulatory Domain">
+        <inputExpression id="InputExpression_uORYgtd6" typeRef="string">
+          <text>regulatoryDomain</text>
+        </inputExpression>
+      </input>
+      <output id="Output_DJqb4Kns" label="Evidence Package" name="evidencePackage" typeRef="string"/>
+      <output id="Output_J5ciS8d1" label="Retention Period" name="retentionPeriod" typeRef="string"/>
+      <rule id="DecisionRule_3fd8Z7vS">
+        <inputEntry id="UnaryTests_PugH5JNS">
+          <text>"FDA_INSPECTION"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_EhGBBoAp">
+          <text>"HIGH"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_Gw2gw8zJ">
+          <text>"DRUG_SUPPLY"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1QTPMSs0">
+          <text>"FULL_PACKAGE"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_qISAzd0U">
+          <text>"10_YEARS"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_7mwM4bpO">
+        <inputEntry id="UnaryTests_Inev67Cv">
+          <text>"STATE_INSPECTION"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_Vh3IvbNX">
+          <text>"HIGH"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_hPjuaQMk">
+          <text>"DRUG_SUPPLY"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_ewrDmozy">
+          <text>"FULL_PACKAGE"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_tr9IGihB">
+          <text>"7_YEARS"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_ipYZOjw7">
+        <inputEntry id="UnaryTests_F475wojp">
+          <text>"INTERNAL_AUDIT"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_3JDrB8mz">
+          <text>"MEDIUM"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_3LZZefKM">
+          <text>"DRUG_SUPPLY"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_FFjf8cL4">
+          <text>"STANDARD_PACKAGE"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1e1uRVMb">
+          <text>"5_YEARS"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_vRuMalVj">
+        <inputEntry id="UnaryTests_YcPB3sV0">
+          <text>"INTERNAL_AUDIT"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_M3Mq3hTI">
+          <text>"LOW"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_2N0iV8sh">
+          <text>"DRUG_SUPPLY"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_ABRfjA3g">
+          <text>"MINIMAL_PACKAGE"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_e394Bkys">
+          <text>"3_YEARS"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_Ospq4MqX">
+        <inputEntry id="UnaryTests_7ZC6doUj">
+          <text>"COMPLIANCE_REVIEW"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_rsKTnsQ1">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_6nGBrpJl">
+          <text>"DRUG_SUPPLY"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_nUui0dnd">
+          <text>"TARGETED_PACKAGE"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_hYr28BWU">
+          <text>"5_YEARS"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_ikgHYhYp">
+        <inputEntry id="UnaryTests_XUgdnXiB">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_rYqAKE25">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_EktC8qqY">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_xlXLdxA3">
+          <text>"STANDARD_PACKAGE"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_dxdc7xPd">
+          <text>"5_YEARS"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="evidence-requirements">
+        <dc:Bounds height="80" width="180" x="160" y="100"/>
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
+

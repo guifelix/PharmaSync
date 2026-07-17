@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="hipaa-breach-notification" name="HIPAA Breach Notification" isExecutable="true">
+    <bpmn:startEvent id="breach-detected" name="Breach Detected">
+      <bpmn:outgoing>Flow_hEGE7dLO</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="assess-breach" name="Assess Breach Scope">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="breach-assessor" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_hEGE7dLO</bpmn:incoming>
+      <bpmn:outgoing>Flow_9ZgaFKKB</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="phi-check" name="PHI Involved?">
+      <bpmn:incoming>Flow_9ZgaFKKB</bpmn:incoming>
+      <bpmn:outgoing>Flow_q6lOlnT7</bpmn:outgoing>
+      <bpmn:outgoing>Flow_eYORyHqQ</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="assess-risk" name="Assess Risk of Harm">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="risk-assessor" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_q6lOlnT7</bpmn:incoming>
+      <bpmn:outgoing>Flow_FbmdHeQd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="risk-level" name="Risk Level?">
+      <bpmn:incoming>Flow_FbmdHeQd</bpmn:incoming>
+      <bpmn:outgoing>Flow_RgXwnj6D</bpmn:outgoing>
+      <bpmn:outgoing>Flow_2Lk2RWsy</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="notify-individuals" name="Notify Affected Individuals">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="notification-sender" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_RgXwnj6D</bpmn:incoming>
+      <bpmn:outgoing>Flow_yff7M9yz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="notify-hhs" name="Notify HHS (60 days)">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="hhs-notifier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_yff7M9yz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1TYiOkuX</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="notify-media" name="Notify Media (if >500)">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="media-notifier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1TYiOkuX</bpmn:incoming>
+      <bpmn:outgoing>Flow_PhFeHBl3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="notification-complete" name="Notifications Complete">
+      <bpmn:incoming>Flow_PhFeHBl3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="document-assessment" name="Document Risk Assessment">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="documentation-writer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_2Lk2RWsy</bpmn:incoming>
+      <bpmn:outgoing>Flow_gunVguEu</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="documented" name="Assessment Documented">
+      <bpmn:incoming>Flow_gunVguEu</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="document-no-phi" name="Document No PHI Breach">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="documentation-writer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_eYORyHqQ</bpmn:incoming>
+      <bpmn:outgoing>Flow_EWK96DgH</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="no-phi-breach" name="No PHI Breach">
+      <bpmn:incoming>Flow_EWK96DgH</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_hEGE7dLO" sourceRef="breach-detected" targetRef="assess-breach"/>
+    <bpmn:sequenceFlow id="Flow_9ZgaFKKB" sourceRef="assess-breach" targetRef="phi-check"/>
+    <bpmn:sequenceFlow id="Flow_q6lOlnT7" sourceRef="phi-check" targetRef="assess-risk" name="yes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= phiInvolved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_FbmdHeQd" sourceRef="assess-risk" targetRef="risk-level"/>
+    <bpmn:sequenceFlow id="Flow_RgXwnj6D" sourceRef="risk-level" targetRef="notify-individuals" name="high">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= riskLevel = "HIGH"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_yff7M9yz" sourceRef="notify-individuals" targetRef="notify-hhs"/>
+    <bpmn:sequenceFlow id="Flow_1TYiOkuX" sourceRef="notify-hhs" targetRef="notify-media"/>
+    <bpmn:sequenceFlow id="Flow_PhFeHBl3" sourceRef="notify-media" targetRef="notification-complete"/>
+    <bpmn:sequenceFlow id="Flow_2Lk2RWsy" sourceRef="risk-level" targetRef="document-assessment" name="low">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= riskLevel = "LOW"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_gunVguEu" sourceRef="document-assessment" targetRef="documented"/>
+    <bpmn:sequenceFlow id="Flow_eYORyHqQ" sourceRef="phi-check" targetRef="document-no-phi" name="no">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= !phiInvolved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_EWK96DgH" sourceRef="document-no-phi" targetRef="no-phi-breach"/>
+  </bpmn:process>
+</bpmn:definitions>
+

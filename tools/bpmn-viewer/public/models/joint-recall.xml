@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="joint-recall" name="Joint Recall" isExecutable="true">
+    <bpmn:startEvent id="recall-initiated" name="Recall Initiated">
+      <bpmn:outgoing>Flow_AjVFg3gm</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="notify-all-parties" name="Notify All Partners">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="mass-notifier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_AjVFg3gm</bpmn:incoming>
+      <bpmn:outgoing>Flow_95A8fsi3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="coordinate-actions" name="Coordinate Recall Actions">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="recall-coordination-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_95A8fsi3</bpmn:incoming>
+      <bpmn:outgoing>Flow_8fMwUQrb</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="track-progress" name="Track Recall Progress">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="progress-tracker" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_8fMwUQrb</bpmn:incoming>
+      <bpmn:outgoing>Flow_Tpo2kpyq</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="complete" name="Recall Complete?">
+      <bpmn:incoming>Flow_Tpo2kpyq</bpmn:incoming>
+      <bpmn:outgoing>Flow_wjKHdRI1</bpmn:outgoing>
+      <bpmn:outgoing>Flow_hVy5vQD9</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="finalize-report" name="Finalize Recall Report">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="report-finalizer" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_wjKHdRI1</bpmn:incoming>
+      <bpmn:outgoing>Flow_y1IpJV8F</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="recall-finalized" name="Recall Finalized">
+      <bpmn:incoming>Flow_y1IpJV8F</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="follow-up" name="Follow Up on Outstanding">
+      <bpmn:extensionElements>
+        <zeebe:userTask/>
+        <zeebe:formDefinition formId="recall-followup-form"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_hVy5vQD9</bpmn:incoming>
+      <bpmn:outgoing>Flow_fdc5Mum6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="pending-followup" name="Pending Follow-Up">
+      <bpmn:incoming>Flow_fdc5Mum6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_AjVFg3gm" sourceRef="recall-initiated" targetRef="notify-all-parties"/>
+    <bpmn:sequenceFlow id="Flow_95A8fsi3" sourceRef="notify-all-parties" targetRef="coordinate-actions"/>
+    <bpmn:sequenceFlow id="Flow_8fMwUQrb" sourceRef="coordinate-actions" targetRef="track-progress"/>
+    <bpmn:sequenceFlow id="Flow_Tpo2kpyq" sourceRef="track-progress" targetRef="complete"/>
+    <bpmn:sequenceFlow id="Flow_wjKHdRI1" sourceRef="complete" targetRef="finalize-report" name="yes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= completed</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_y1IpJV8F" sourceRef="finalize-report" targetRef="recall-finalized"/>
+    <bpmn:sequenceFlow id="Flow_hVy5vQD9" sourceRef="complete" targetRef="follow-up" name="no">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= !completed</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_fdc5Mum6" sourceRef="follow-up" targetRef="pending-followup"/>
+  </bpmn:process>
+</bpmn:definitions>
+

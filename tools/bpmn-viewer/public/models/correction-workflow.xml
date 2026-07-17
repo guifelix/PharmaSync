@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="correction-workflow" name="Correction Workflow" isExecutable="true">
+    <bpmn:startEvent id="correction-started" name="Correction Started">
+      <bpmn:outgoing>Flow_GrUswLE4</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="validate-correction" name="Validate Correction Data">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="correction-validator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_GrUswLE4</bpmn:incoming>
+      <bpmn:outgoing>Flow_MY8L5gaz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="apply-correction" name="Apply Correction">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="correction-applier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_MY8L5gaz</bpmn:incoming>
+      <bpmn:outgoing>Flow_diwWNNuW</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="record-quantities" name="Record Before/After Quantities">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="quantity-recorder" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_diwWNNuW</bpmn:incoming>
+      <bpmn:outgoing>Flow_LYoRwWWe</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="record-actor-reason" name="Record Actor and Reason">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="actor-reason-recorder" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_LYoRwWWe</bpmn:incoming>
+      <bpmn:outgoing>Flow_ypC8BL2f</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="emit-audit" name="Emit Audit Event">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="audit-emitter" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ypC8BL2f</bpmn:incoming>
+      <bpmn:outgoing>Flow_bOGmnSQt</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="correction-complete" name="Correction Complete">
+      <bpmn:incoming>Flow_bOGmnSQt</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_GrUswLE4" sourceRef="correction-started" targetRef="validate-correction"/>
+    <bpmn:sequenceFlow id="Flow_MY8L5gaz" sourceRef="validate-correction" targetRef="apply-correction"/>
+    <bpmn:sequenceFlow id="Flow_diwWNNuW" sourceRef="apply-correction" targetRef="record-quantities"/>
+    <bpmn:sequenceFlow id="Flow_LYoRwWWe" sourceRef="record-quantities" targetRef="record-actor-reason"/>
+    <bpmn:sequenceFlow id="Flow_ypC8BL2f" sourceRef="record-actor-reason" targetRef="emit-audit"/>
+    <bpmn:sequenceFlow id="Flow_bOGmnSQt" sourceRef="emit-audit" targetRef="correction-complete"/>
+  </bpmn:process>
+</bpmn:definitions>
+

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_wzj6aD1R" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="bpmn-sdk" exporterVersion="0.0.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <decision id="correction-validation" name="Correction Validation Decision">
+    <decisionTable id="DecisionTable_8zRSOGrb" hitPolicy="FIRST">
+      <input id="Input_A9B0l7OC" label="Correction Type">
+        <inputExpression id="InputExpression_ZY0axbKe" typeRef="string">
+          <text>correctionType</text>
+        </inputExpression>
+      </input>
+      <input id="Input_IIb2iq4V" label="Quantity Delta">
+        <inputExpression id="InputExpression_4jCXRc0W" typeRef="number">
+          <text>quantityDelta</text>
+        </inputExpression>
+      </input>
+      <input id="Input_21lKJ2oe" label="Actor Role">
+        <inputExpression id="InputExpression_uDiMesgZ" typeRef="string">
+          <text>actorRole</text>
+        </inputExpression>
+      </input>
+      <input id="Input_YNAT1bp8" label="Requires Approval">
+        <inputExpression id="InputExpression_jBizGAtV" typeRef="boolean">
+          <text>requiresApproval</text>
+        </inputExpression>
+      </input>
+      <output id="Output_aPfZsadW" label="Validation Result" name="validationResult" typeRef="string"/>
+      <output id="Output_oXI2kB8n" label="Required Approvers" name="requiredApprovers" typeRef="string"/>
+      <rule id="DecisionRule_4hjbccGD">
+        <inputEntry id="UnaryTests_awqs3DbP">
+          <text>"RECEIPT"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_CBTdLNpt">
+          <text>&lt;= 0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_meVhpCHM">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_zXgkm7xV">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_U3An62PV">
+          <text>"REJECTED"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_u3NFgxxn">
+          <text>"NONE"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_kv3n9ASw">
+        <inputEntry id="UnaryTests_5ejvMdrL">
+          <text>"DISPENSE"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_Vwgy16ek">
+          <text>&lt; 0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_aBig2Mu2">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_zeVqYyJ1">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_fyNYi9Ry">
+          <text>"REJECTED"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_qHluwYkx">
+          <text>"NONE"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_tRzmUJya">
+        <inputEntry id="UnaryTests_ldyqHZG9">
+          <text>"CORRECTION"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_RfweDeVm">
+          <text>&gt; 1000</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_jUNcc3ft">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_QLGnv2Al">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_Mfe3pm9M">
+          <text>"REQUIRES_APPROVAL"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_3aw22vwa">
+          <text>"PHARMACY_MANAGER,COMPLIANCE_OFFICER"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_rgcaxFuT">
+        <inputEntry id="UnaryTests_OtweT0jV">
+          <text>"CORRECTION"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_AAX1aYie">
+          <text>&gt; 1000</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_PrbAmkbb">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_r0bErS0x">
+          <text>false</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_rwm0v8nB">
+          <text>"REJECTED"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_ieiQgfK9">
+          <text>"NONE"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_SxEi9ntG">
+        <inputEntry id="UnaryTests_3KbQtUd9">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_gWQSrbOW">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_kdLOcfOn">
+          <text>"PHARMACIST"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_F68v5PLV">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_R4bHmxBW">
+          <text>"AUTO_APPROVED"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_k6MIOFG8">
+          <text>"NONE"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_eLUL0mwn">
+        <inputEntry id="UnaryTests_6vxFeY5b">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_N8RChELX">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_OzqR83i7">
+          <text>"INVENTORY_MANAGER"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_ItleMxf1">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_Fooe3n38">
+          <text>"AUTO_APPROVED"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_r7voHSXd">
+          <text>"NONE"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_rsNwfng4">
+        <inputEntry id="UnaryTests_T0YS0XXm">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_tHjsp1Zp">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_wCMeTJox">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_hpQW84qC">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_QrwV8NSh">
+          <text>"REQUIRES_APPROVAL"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_2p8QW3jv">
+          <text>"PHARMACY_MANAGER"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="correction-validation">
+        <dc:Bounds height="80" width="180" x="160" y="100"/>
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
+

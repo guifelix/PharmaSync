@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="@bpmnkit/core" exporterVersion="0.0.23" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="stock-adjustment" name="Stock Adjustment" isExecutable="true">
+    <bpmn:startEvent id="adjustment-started" name="Adjustment Started">
+      <bpmn:outgoing>Flow_w1KNlzEt</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="validate-adjustment" name="Validate Adjustment Data">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="adjustment-validator" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_w1KNlzEt</bpmn:incoming>
+      <bpmn:outgoing>Flow_Saaqqlo1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="apply-adjustment" name="Apply Adjustment">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="adjustment-applier" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Saaqqlo1</bpmn:incoming>
+      <bpmn:outgoing>Flow_gEoobFWf</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="record-quantities" name="Record Before/After Quantities">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="quantity-recorder" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_gEoobFWf</bpmn:incoming>
+      <bpmn:outgoing>Flow_oftQkrAT</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="record-actor-reason" name="Record Actor and Reason">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="actor-reason-recorder" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_oftQkrAT</bpmn:incoming>
+      <bpmn:outgoing>Flow_kbSBycbB</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="emit-audit" name="Emit Audit Event">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="audit-emitter" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_kbSBycbB</bpmn:incoming>
+      <bpmn:outgoing>Flow_L0ztuzcM</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="adjustment-check" name="Adjustment Successful?">
+      <bpmn:incoming>Flow_L0ztuzcM</bpmn:incoming>
+      <bpmn:outgoing>Flow_gcQkxQlQ</bpmn:outgoing>
+      <bpmn:outgoing>Flow_qoDd34MZ</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="adjustment-complete" name="Adjustment Complete">
+      <bpmn:incoming>Flow_gcQkxQlQ</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="reject-adjustment" name="Reject Adjustment">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="adjustment-rejecter" retries="3"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_qoDd34MZ</bpmn:incoming>
+      <bpmn:outgoing>Flow_HSVE05UZ</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="rejected" name="Rejected">
+      <bpmn:incoming>Flow_HSVE05UZ</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_w1KNlzEt" sourceRef="adjustment-started" targetRef="validate-adjustment"/>
+    <bpmn:sequenceFlow id="Flow_Saaqqlo1" sourceRef="validate-adjustment" targetRef="apply-adjustment"/>
+    <bpmn:sequenceFlow id="Flow_gEoobFWf" sourceRef="apply-adjustment" targetRef="record-quantities"/>
+    <bpmn:sequenceFlow id="Flow_oftQkrAT" sourceRef="record-quantities" targetRef="record-actor-reason"/>
+    <bpmn:sequenceFlow id="Flow_kbSBycbB" sourceRef="record-actor-reason" targetRef="emit-audit"/>
+    <bpmn:sequenceFlow id="Flow_L0ztuzcM" sourceRef="emit-audit" targetRef="adjustment-check"/>
+    <bpmn:sequenceFlow id="Flow_gcQkxQlQ" sourceRef="adjustment-check" targetRef="adjustment-complete" name="yes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= adjustmentSuccess == true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_qoDd34MZ" sourceRef="adjustment-check" targetRef="reject-adjustment" name="no">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= adjustmentSuccess == false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_HSVE05UZ" sourceRef="reject-adjustment" targetRef="rejected"/>
+  </bpmn:process>
+</bpmn:definitions>
+
