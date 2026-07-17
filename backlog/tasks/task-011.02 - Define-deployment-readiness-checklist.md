@@ -4,7 +4,7 @@ title: Define deployment readiness checklist
 status: To Do
 assignee: []
 created_date: '2026-07-17 02:22'
-updated_date: '2026-07-17 02:40'
+updated_date: '2026-07-17 02:47'
 labels:
   - story
   - operations
@@ -15,9 +15,8 @@ dependencies:
   - TASK-011.01
   - TASK-009.03
 references:
-  - docs/system-design/production-readiness.md
-  - docs/system-design/security-and-compliance.md
-  - infra/aws/cdk/README.md
+  - docs/adr/0004-compliance-evidence-not-automated-compliance.md
+  - docs/adr/0001-phase-1-pilot-scope.md
 parent_task_id: TASK-011
 priority: medium
 ordinal: 50000
@@ -34,15 +33,21 @@ As a Platform Operator, I want a deployment readiness checklist so pilot release
 - [ ] #1 Checklist covers migrations, env validation, secrets, health checks, backup posture, and rollback
 - [ ] #2 Checklist requires synthetic or de-identified data confirmation
 - [ ] #3 Checklist references encryption, least-privilege IAM, and object-storage controls
+- [ ] #4 Checklist separates Phase 1 pilot minimum controls from future hardening items
+- [ ] #5 Pilot minimum includes env validation, migrations, health checks, backup/restore check, rollback path, log access, object-storage encryption, RDS encryption, and synthetic/de-identified data confirmation
+- [ ] #6 Future hardening section includes formal HIPAA/SOC 2 control mapping, multi-region strategy, advanced IAM review, incident-response exercises, and penetration testing
+- [ ] #7 Checklist requires links to validation evidence for each release
+- [ ] #8 Checklist identifies a human approver role for pilot release readiness
 <!-- AC:END -->
 
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
-1. Draft a deployment readiness checklist from production-readiness and security docs.
-2. Include migrations, env validation, secrets, health checks, backups, rollback, and data-scope confirmation.
-3. Reference encryption, least-privilege IAM, and object-storage controls.
-4. Add release-note expectations and validation evidence requirements.
+1. Split deployment-readiness checklist into Phase 1 pilot minimum and future hardening sections.
+2. Add concrete pilot checks for env, migrations, health, backups, rollback, logs, encryption, IAM, and data-scope confirmation.
+3. Add evidence-link fields and a human approver field for each release.
+4. Keep regulatory wording limited to readiness/evidence support rather than compliance certification.
+5. Cross-link the checklist from production-readiness and security docs.
 <!-- SECTION:PLAN:END -->
 
 ## Definition of Done

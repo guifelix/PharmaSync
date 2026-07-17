@@ -4,18 +4,16 @@ title: Publish inventory events through outbox
 status: To Do
 assignee: []
 created_date: '2026-07-17 02:22'
-updated_date: '2026-07-17 02:39'
+updated_date: '2026-07-17 02:47'
 labels:
   - story
   - eventing
   - R1
-milestone: m-1
+milestone: m-5
 dependencies:
   - TASK-001.03
 references:
-  - docs/adr/0002-queue-outbox-before-kafka.md
-  - apps/worker/src/worker.ts
-  - docs/system-design/production-readiness.md
+  - docs/adr/0005-modular-monolith-monorepo.md
 parent_task_id: TASK-005
 priority: high
 ordinal: 29000
@@ -32,15 +30,21 @@ As a Platform Operator, I want accepted inventory changes published through a tr
 - [ ] #1 Inventory changes and outbox records commit in the same database transaction
 - [ ] #2 Worker processes pending outbox records asynchronously
 - [ ] #3 Failed processing attempts are retried with bounded retry metadata
+- [ ] #4 Outbox record includes id, event_type, aggregate_type, aggregate_id, trace_id, payload JSON, status, attempt_count, available_at, locked_at, locked_by, created_at, and processed_at
+- [ ] #5 Worker claims records with database locking or compare-and-set semantics so two workers do not process the same event concurrently
+- [ ] #6 Retry policy uses bounded exponential backoff and moves exhausted records to a failed status with last_error
+- [ ] #7 Poison records do not block unrelated pending records
+- [ ] #8 Outbox payloads are versioned so future event changes remain compatible
 <!-- AC:END -->
 
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
-1. Define outbox schema and worker processing contract.
-2. Write inventory and outbox records in the same transaction.
-3. Implement async processing with bounded retries and poison-message handling.
-4. Add tests or simulation proving failed processing does not lose events.
+1. Define the outbox table, event envelope, statuses, payload version, and retry/backoff policy before worker logic.
+2. Implement transactional outbox writes alongside inventory or integration state changes.
+3. Implement worker claim/process/ack/fail behavior with database locking or compare-and-set safety.
+4. Add poison-message handling that marks exhausted records failed without blocking other events.
+5. Add concurrency, retry, failure, and transaction rollback tests.
 <!-- SECTION:PLAN:END -->
 
 ## Definition of Done

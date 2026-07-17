@@ -4,12 +4,12 @@ title: Record inventory movements
 status: To Do
 assignee: []
 created_date: '2026-07-17 02:22'
-updated_date: '2026-07-17 02:39'
+updated_date: '2026-07-17 02:47'
 labels:
   - story
   - inventory
   - R1
-milestone: m-1
+milestone: m-5
 dependencies:
   - TASK-003.04
   - TASK-005.01

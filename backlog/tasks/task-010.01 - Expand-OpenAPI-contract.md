@@ -4,12 +4,12 @@ title: Expand OpenAPI contract
 status: To Do
 assignee: []
 created_date: '2026-07-17 02:22'
-updated_date: '2026-07-17 02:40'
+updated_date: '2026-07-17 02:47'
 labels:
   - story
   - contracts
   - R1
-milestone: m-1
+milestone: m-5
 dependencies:
   - TASK-001.03
 references:

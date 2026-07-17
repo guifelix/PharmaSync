@@ -4,11 +4,11 @@ title: 'Epic: API contracts and developer experience'
 status: To Do
 assignee: []
 created_date: '2026-07-17 02:22'
-updated_date: '2026-07-17 02:40'
+updated_date: '2026-07-17 02:47'
 labels:
   - epic
   - developer-experience
-milestone: m-1
+milestone: m-5
 dependencies: []
 references:
   - packages/contracts/openapi/pharmasync.v1.yaml

@@ -4,11 +4,11 @@ title: 'Epic: Integration gateway'
 status: To Do
 assignee: []
 created_date: '2026-07-17 02:22'
-updated_date: '2026-07-17 02:40'
+updated_date: '2026-07-17 02:47'
 labels:
   - epic
   - integration
-milestone: m-1
+milestone: m-5
 dependencies: []
 references:
   - docs/system-design/integration-contracts.md

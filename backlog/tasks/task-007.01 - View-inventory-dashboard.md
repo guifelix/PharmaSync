@@ -4,12 +4,12 @@ title: View inventory dashboard
 status: To Do
 assignee: []
 created_date: '2026-07-17 02:22'
-updated_date: '2026-07-17 02:39'
+updated_date: '2026-07-17 02:47'
 labels:
   - story
   - frontend
   - R1
-milestone: m-1
+milestone: m-6
 dependencies:
   - TASK-003.04
   - TASK-010.01

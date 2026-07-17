@@ -4,12 +4,12 @@ title: Capture audit events
 status: To Do
 assignee: []
 created_date: '2026-07-17 02:22'
-updated_date: '2026-07-17 02:40'
+updated_date: '2026-07-17 02:47'
 labels:
   - story
   - compliance
   - R1
-milestone: m-1
+milestone: m-6
 dependencies:
   - TASK-005.01
   - TASK-002.03

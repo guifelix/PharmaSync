@@ -4,11 +4,11 @@ title: 'Epic: Reliable event processing'
 status: To Do
 assignee: []
 created_date: '2026-07-17 02:22'
-updated_date: '2026-07-17 02:40'
+updated_date: '2026-07-17 02:47'
 labels:
   - epic
   - eventing
-milestone: m-1
+milestone: m-5
 dependencies: []
 references:
   - docs/adr/0002-queue-outbox-before-kafka.md

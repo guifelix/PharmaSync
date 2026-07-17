@@ -4,12 +4,12 @@ title: Preserve trace IDs across events
 status: To Do
 assignee: []
 created_date: '2026-07-17 02:22'
-updated_date: '2026-07-17 02:39'
+updated_date: '2026-07-17 02:47'
 labels:
   - story
   - eventing
   - R1
-milestone: m-1
+milestone: m-6
 dependencies:
   - TASK-004.01
   - TASK-005.01
