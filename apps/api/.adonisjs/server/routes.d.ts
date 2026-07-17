@@ -5,6 +5,7 @@ type ParamValue = string | number | bigint | boolean
 export type ScannedRoutes = {
   ALL: {
     'health.show': { paramsTuple?: []; params?: {} }
+    'partner_feeds.store': { paramsTuple?: []; params?: {} }
     'auth.workforce_auth_context.show': { paramsTuple?: []; params?: {} }
     'auth.new_account.store': { paramsTuple?: []; params?: {} }
     'auth.access_tokens.store': { paramsTuple?: []; params?: {} }
@@ -47,6 +48,7 @@ export type ScannedRoutes = {
     'audit_events.index': { paramsTuple?: []; params?: {} }
   }
   POST: {
+    'partner_feeds.store': { paramsTuple?: []; params?: {} }
     'auth.new_account.store': { paramsTuple?: []; params?: {} }
     'auth.access_tokens.store': { paramsTuple?: []; params?: {} }
     'profile.access_tokens.destroy': { paramsTuple?: []; params?: {} }

@@ -184,6 +184,7 @@ function position(overrides: Partial<StockPositionReference> = {}): StockPositio
     quantityReserved: 20,
     lowStockThreshold: 15,
     transferCorrelationId: 'transfer-alpha-001',
+    traceId: 'trace-stock-alpha-main-amoxicillin',
     updatedAt: observedAt,
     ...overrides,
   }

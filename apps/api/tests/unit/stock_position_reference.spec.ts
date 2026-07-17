@@ -99,6 +99,7 @@ test.group('Stock position reference', () => {
     assert.equal(view.availableQuantity, 10)
     assert.equal(view.expirationStatus, 'near-expiry')
     assert.isTrue(view.isLowStock)
+    assert.equal(view.traceId, 'trace-stock-alpha-main-amoxicillin')
     assert.deepEqual(view.freshness, {
       isStale: true,
       ageMinutes: 120,
@@ -158,6 +159,7 @@ function position(overrides: Partial<StockPositionReference> = {}): StockPositio
     quantityReserved: 10,
     lowStockThreshold: 15,
     transferCorrelationId: null,
+    traceId: 'trace-stock-alpha-main-amoxicillin',
     updatedAt: '2026-07-17T11:00:00.000Z',
     ...overrides,
   }

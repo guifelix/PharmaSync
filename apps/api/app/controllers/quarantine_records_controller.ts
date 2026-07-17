@@ -7,18 +7,21 @@ const pilotQuarantineRecords = [
     organizationId: 'org_alpha',
     siteId: 'site_main',
     reason: 'missing_lot_number',
+    traceId: 'trace-quarantine-alpha-main',
   },
   {
     id: 'qrn_alpha_overflow',
     organizationId: 'org_alpha',
     siteId: 'site_overflow',
     reason: 'duplicate_source_event',
+    traceId: 'trace-quarantine-alpha-overflow',
   },
   {
     id: 'qrn_beta_main',
     organizationId: 'org_beta',
     siteId: 'site_main',
     reason: 'invalid_quantity',
+    traceId: 'trace-quarantine-beta-main',
   },
 ]
 

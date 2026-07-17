@@ -18,6 +18,7 @@ test.group('Stock positions', () => {
           siteId: string
           medicationProductId: string
           lotNumber: string
+          traceId: string
           quantityOnHand: number
           quantityReserved: number
           availableQuantity: number
@@ -27,6 +28,7 @@ test.group('Stock positions', () => {
           siteId: stockPosition.siteId,
           medicationProductId: stockPosition.medicationProductId,
           lotNumber: stockPosition.lotNumber,
+          traceId: stockPosition.traceId,
           quantityOnHand: stockPosition.quantityOnHand,
           quantityReserved: stockPosition.quantityReserved,
           availableQuantity: stockPosition.availableQuantity,
@@ -39,6 +41,7 @@ test.group('Stock positions', () => {
           siteId: 'site_main',
           medicationProductId: 'med_amoxicillin_500',
           lotNumber: 'AMX-2026-08-A',
+          traceId: 'trace-stock-alpha-main-amoxicillin',
           quantityOnHand: 120,
           quantityReserved: 20,
           availableQuantity: 100,
@@ -49,6 +52,7 @@ test.group('Stock positions', () => {
           siteId: 'site_overflow',
           medicationProductId: 'med_atorvastatin_20',
           lotNumber: 'ATO-2027-01-B',
+          traceId: 'trace-stock-alpha-overflow-atorvastatin',
           quantityOnHand: 18,
           quantityReserved: 4,
           availableQuantity: 14,

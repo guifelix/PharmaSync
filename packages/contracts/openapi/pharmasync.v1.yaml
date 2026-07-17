@@ -39,9 +39,23 @@ paths:
   /v1/integration/feeds:
     post:
       summary: Submit a partner inventory feed
+      description: Accepts JSON batches or CSV feeds, archives the raw payload, and returns a trace ID immediately.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PartnerFeedJsonSubmission"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/PartnerFeedCsvSubmission"
       responses:
         "202":
           description: Feed accepted for processing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PartnerFeedAcceptedResponse"
   /api/v1/integration/health:
     get:
       summary: View integration health
@@ -127,6 +141,10 @@ paths:
       responses:
         "200":
           description: Risk signals
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RiskSignalsResponse"
         "403":
           description: Authenticated user lacks the required role permission
   /api/v1/quarantine:
@@ -137,6 +155,10 @@ paths:
       responses:
         "200":
           description: Quarantine records
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuarantineRecordsResponse"
         "403":
           description: Authenticated user lacks the required role permission
   /api/v1/quarantine/{id}/reprocessings:
@@ -163,6 +185,10 @@ paths:
       responses:
         "200":
           description: Audit events
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditEventsResponse"
         "403":
           description: Authenticated user lacks the required role permission
   /api/v1/evidence/packages:
@@ -227,6 +253,110 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/WorkforceAuthContext"
+    PartnerFeedMovement:
+      type: object
+      required:
+        - source_event_id
+        - event_type
+        - site_code
+        - ndc
+        - lot_number
+        - expiration_date
+        - quantity_delta
+        - occurred_at
+      additionalProperties: false
+      properties:
+        source_event_id:
+          type: string
+        event_type:
+          type: string
+        site_code:
+          type: string
+        ndc:
+          type: string
+        lot_number:
+          type: string
+        expiration_date:
+          type: string
+          format: date
+        quantity_delta:
+          type: number
+        occurred_at:
+          type: string
+          format: date-time
+        source_location:
+          type:
+            - string
+            - "null"
+        destination_location:
+          type:
+            - string
+            - "null"
+    PartnerFeedJsonSubmission:
+      type: object
+      required: [format, partner_id, feed_id, submitted_at, movements]
+      additionalProperties: false
+      properties:
+        format:
+          type: string
+          enum: [json]
+        partner_id:
+          type: string
+        feed_id:
+          type: string
+        submitted_at:
+          type: string
+          format: date-time
+        movements:
+          type: array
+          items:
+            $ref: "#/components/schemas/PartnerFeedMovement"
+    PartnerFeedCsvSubmission:
+      type: object
+      required: [format, partner_id, feed_id, submitted_at, csv]
+      additionalProperties: false
+      properties:
+        format:
+          type: string
+          enum: [csv]
+        partner_id:
+          type: string
+        feed_id:
+          type: string
+        submitted_at:
+          type: string
+          format: date-time
+        csv:
+          type: string
+    PartnerFeedAcceptedResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [status, traceId, partnerId, feedId, payloadHash, archivePath, receivedAt, format]
+          additionalProperties: false
+          properties:
+            status:
+              type: string
+              enum: [accepted]
+            traceId:
+              type: string
+            partnerId:
+              type: string
+            feedId:
+              type: string
+            payloadHash:
+              type: string
+            archivePath:
+              type: string
+            receivedAt:
+              type: string
+              format: date-time
+            format:
+              type: string
+              enum: [csv, json]
     MedicationProduct:
       type: object
       required:
@@ -352,6 +482,7 @@ components:
         - expirationDate
         - expirationStatus
         - quantityOnHand
+        - traceId
       additionalProperties: false
       properties:
         id:
@@ -371,6 +502,8 @@ components:
           $ref: "#/components/schemas/ExpirationStatus"
         quantityOnHand:
           type: number
+        traceId:
+          type: string
     StockPositionsResponse:
       type: object
       required: [data, meta]
@@ -380,6 +513,123 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/StockPosition"
+        meta:
+          type: object
+          required: [organizationId, permittedSiteIds, traceId]
+          additionalProperties: false
+          properties:
+            organizationId:
+              type: string
+            permittedSiteIds:
+              type: array
+              items:
+                type: string
+            traceId:
+              type: string
+    RiskSignal:
+      type: object
+      required: [id, organizationId, siteId, traceId, type, severity]
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        organizationId:
+          type: string
+        siteId:
+          type: string
+        traceId:
+          type: string
+        type:
+          type: string
+          enum: [expiration, overstock, shortage]
+        severity:
+          type: string
+          enum: [low, medium, high]
+    RiskSignalsResponse:
+      type: object
+      required: [data, meta]
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/RiskSignal"
+        meta:
+          type: object
+          required: [organizationId, permittedSiteIds, traceId]
+          additionalProperties: false
+          properties:
+            organizationId:
+              type: string
+            permittedSiteIds:
+              type: array
+              items:
+                type: string
+            traceId:
+              type: string
+    QuarantineRecord:
+      type: object
+      required: [id, organizationId, siteId, traceId, reason]
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        organizationId:
+          type: string
+        siteId:
+          type: string
+        traceId:
+          type: string
+        reason:
+          type: string
+    QuarantineRecordsResponse:
+      type: object
+      required: [data, meta]
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuarantineRecord"
+        meta:
+          type: object
+          required: [organizationId, permittedSiteIds, traceId]
+          additionalProperties: false
+          properties:
+            organizationId:
+              type: string
+            permittedSiteIds:
+              type: array
+              items:
+                type: string
+            traceId:
+              type: string
+    AuditEvent:
+      type: object
+      required: [id, organizationId, traceId, action]
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        organizationId:
+          type: string
+        siteId:
+          type:
+            - string
+            - "null"
+        traceId:
+          type: string
+        action:
+          type: string
+    AuditEventsResponse:
+      type: object
+      required: [data, meta]
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditEvent"
         meta:
           type: object
           required: [organizationId, permittedSiteIds, traceId]

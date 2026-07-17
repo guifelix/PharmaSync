@@ -14,6 +14,7 @@ test.group('tenant-aware query scope', () => {
 
     response.assertStatus(200)
     assert.deepEqual(recordIds(response.body().data), ['stock_alpha_main_amoxicillin'])
+    assert.deepEqual(recordTraceIds(response.body().data), ['trace-stock-alpha-main-amoxicillin'])
   })
 
   test('scopes risk signals to the authenticated organization and permitted sites', async ({
@@ -26,6 +27,7 @@ test.group('tenant-aware query scope', () => {
 
     response.assertStatus(200)
     assert.deepEqual(recordIds(response.body().data), ['signal_alpha_main'])
+    assert.deepEqual(recordTraceIds(response.body().data), ['trace-signal-alpha-main'])
   })
 
   test('scopes quarantine records to the authenticated organization and permitted sites', async ({
@@ -38,6 +40,7 @@ test.group('tenant-aware query scope', () => {
 
     response.assertStatus(200)
     assert.deepEqual(recordIds(response.body().data), ['qrn_alpha_main'])
+    assert.deepEqual(recordTraceIds(response.body().data), ['trace-quarantine-alpha-main'])
   })
 
   test('scopes audit events to organization-owned and permitted-site records', async ({
@@ -50,6 +53,7 @@ test.group('tenant-aware query scope', () => {
 
     response.assertStatus(200)
     assert.deepEqual(recordIds(response.body().data), ['audit_alpha_org', 'audit_alpha_main'])
+    assert.deepEqual(recordTraceIds(response.body().data), ['trace-audit-alpha-org', 'trace-audit-alpha-main'])
   })
 
   test('does not leak records from another organization with the same site id', async ({
@@ -87,4 +91,8 @@ function tokenFor({
 
 function recordIds(records: Array<{ id: string }>) {
   return records.map((record) => record.id)
+}
+
+function recordTraceIds(records: Array<{ traceId: string }>) {
+  return records.map((record) => record.traceId)
 }

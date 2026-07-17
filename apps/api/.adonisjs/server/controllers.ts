@@ -13,6 +13,7 @@ export const controllers = {
   IntegrationMappings: () => import('#controllers/integration_mappings_controller'),
   MedicationProducts: () => import('#controllers/medication_products_controller'),
   NewAccount: () => import('#controllers/new_account_controller'),
+  PartnerFeeds: () => import('#controllers/partner_feeds_controller'),
   Profile: () => import('#controllers/profile_controller'),
   QuarantineRecords: () => import('#controllers/quarantine_records_controller'),
   QuarantineReprocessings: () => import('#controllers/quarantine_reprocessings_controller'),

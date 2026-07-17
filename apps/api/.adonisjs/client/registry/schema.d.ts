@@ -19,6 +19,18 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/health_controller').default['show']>>>
     }
   }
+  'partner_feeds.store': {
+    methods: ["POST"]
+    pattern: '/v1/integration/feeds'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/partner_feeds_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/partner_feeds_controller').default['store']>>>
+    }
+  }
   'auth.workforce_auth_context.show': {
     methods: ["GET","HEAD"]
     pattern: '/api/v1/auth/context'

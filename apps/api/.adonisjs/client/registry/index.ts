@@ -12,6 +12,12 @@ const routes = {
     tokens: [{"old":"/health","type":0,"val":"health","end":""}],
     types: placeholder as Registry['health.show']['types'],
   },
+  'partner_feeds.store': {
+    methods: ["POST"],
+    pattern: '/v1/integration/feeds',
+    tokens: [{"old":"/v1/integration/feeds","type":0,"val":"v1","end":""},{"old":"/v1/integration/feeds","type":0,"val":"integration","end":""},{"old":"/v1/integration/feeds","type":0,"val":"feeds","end":""}],
+    types: placeholder as Registry['partner_feeds.store']['types'],
+  },
   'auth.workforce_auth_context.show': {
     methods: ["GET","HEAD"],
     pattern: '/api/v1/auth/context',

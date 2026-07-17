@@ -5,6 +5,9 @@ export interface ApiDefinition {
   health: {
     show: typeof routes['health.show']
   }
+  partnerFeeds: {
+    store: typeof routes['partner_feeds.store']
+  }
   auth: {
     workforceAuthContext: {
       show: typeof routes['auth.workforce_auth_context.show']

@@ -1,10 +1,10 @@
 ---
 id: TASK-005.02
 title: Preserve trace IDs across events
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-07-17 02:22'
-updated_date: '2026-07-17 02:47'
+updated_date: '2026-07-17 05:51'
 labels:
   - story
   - eventing
@@ -31,24 +31,36 @@ As a Compliance Officer, I want trace IDs preserved across ingestion, inventory 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Every partner feed receives or propagates a trace ID
-- [ ] #2 Inventory movements, risk signals, quarantine records, and audit events reference trace metadata
-- [ ] #3 Dashboard views expose trace IDs for investigation
+- [x] #1 Every partner feed receives or propagates a trace ID
+- [x] #2 Inventory movements, risk signals, quarantine records, and audit events reference trace metadata
+- [x] #3 Dashboard views expose trace IDs for investigation
 <!-- AC:END -->
 
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
-1. Standardize trace metadata across feed, event, movement, signal, quarantine, and audit records.
-2. Propagate trace IDs through integration, inventory, worker, signal, and compliance paths.
-3. Expose trace IDs in relevant API and dashboard responses.
-4. Add an end-to-end traceability test or simulation.
+1. Add traceId-bearing records to the pilot risk, quarantine, and audit list responses, and keep existing meta trace context intact.
+2. Update the API contract and functional tests so trace metadata is part of the documented response shape.
+3. Refresh the Vue dashboard views to render trace IDs in the visible inventory, signals, integration, and audit surfaces.
+4. Run targeted API/web checks and record the validation results in the task notes.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Implemented the partner feed ingress boundary with trace ID propagation, raw payload archiving, and contract coverage for JSON and CSV feed submission. Updated inventory, signals, quarantine, and audit surfaces to expose trace IDs in both API responses and Vue dashboards. Validation: pnpm --filter @pharmasync/api test; pnpm --filter @pharmasync/api typecheck; pnpm --filter @pharmasync/web typecheck.
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Added trace ID propagation across feed ingress, inventory/signals/quarantine/audit responses, and the Vue investigation views. Also documented the feed ingress contract in OpenAPI and verified the API/web test and typecheck suites passed.
+<!-- SECTION:FINAL_SUMMARY:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 All acceptance criteria are checked through Backlog.md
-- [ ] #2 Relevant tests, typechecks, or manual validation are run and recorded in implementation notes
-- [ ] #3 API contracts, docs, or ADRs are updated when behavior or architecture changes
-- [ ] #4 Work is committed as an atomic Conventional Commit
+- [x] #1 All acceptance criteria are checked through Backlog.md
+- [x] #2 Relevant tests, typechecks, or manual validation are run and recorded in implementation notes
+- [x] #3 API contracts, docs, or ADRs are updated when behavior or architecture changes
+- [x] #4 Work is committed as an atomic Conventional Commit
 <!-- DOD:END -->

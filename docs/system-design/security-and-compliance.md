@@ -9,6 +9,7 @@ Phase 1 security posture:
 - The authenticated request context must expose user ID, organization ID, permitted site IDs, roles, and request trace ID.
 - Role-based access by organization, site, and responsibility. The Phase 1 permission matrix lives in [Permissions Matrix](permissions-matrix.md).
 - Tenant-aware data access in every inventory, signal, integration, and audit query. Query code must use authenticated organization and permitted-site scope before returning tenant-owned records.
+- Operational dashboard views should surface the trace IDs needed to investigate inventory, signal, quarantine, and audit events end to end.
 - Encryption in transit and at rest.
 - No patient-identifiable data required for the pilot.
 - Append-only audit events for imports, corrections, quarantine actions, exports, and configuration changes.

@@ -117,6 +117,85 @@ a {
   padding: 18px;
 }
 
+.table-panel {
+  overflow-x: auto;
+}
+
+.data-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.data-table caption {
+  caption-side: top;
+  color: #5d6d68;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.data-table th,
+.data-table td {
+  border-bottom: 1px solid #e5ebe8;
+  padding: 12px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.data-table th {
+  color: #2a3935;
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.data-table td {
+  color: #21302d;
+  font-size: 14px;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.trace-id {
+  color: #0f2f2e;
+  font-family:
+    "SFMono-Regular", ui-monospace, "Cascadia Code", "Roboto Mono", monospace;
+  font-size: 12px;
+  word-break: break-word;
+}
+
+.status-chip {
+  background: #dbeae7;
+  border-radius: 999px;
+  color: #0f2f2e;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+}
+
+.status-chip[data-tone='high'],
+.status-chip[data-tone='error'],
+.status-chip[data-tone='quarantined'] {
+  background: #f4d7d7;
+  color: #7a1f1f;
+}
+
+.status-chip[data-tone='medium'] {
+  background: #f4e9c8;
+  color: #6b5210;
+}
+
+.status-chip[data-tone='low'],
+.status-chip[data-tone='accepted'],
+.status-chip[data-tone='fresh'] {
+  background: #dbeae7;
+  color: #0f2f2e;
+}
+
 .metric span {
   color: #667773;
   display: block;

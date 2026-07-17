@@ -17,6 +17,7 @@ export type StockPositionReference = {
   quantityReserved: number
   lowStockThreshold: number
   transferCorrelationId: string | null
+  traceId: string
   updatedAt: string
 }
 
@@ -71,6 +72,7 @@ const demoStockPositionsSeed: StockPositionSeed[] = [
     quantityReserved: 20,
     lowStockThreshold: 30,
     transferCorrelationId: 'transfer-alpha-001',
+    traceId: 'trace-stock-alpha-main-amoxicillin',
     updatedAt: hoursAgo(2),
   },
   {
@@ -87,6 +89,7 @@ const demoStockPositionsSeed: StockPositionSeed[] = [
     quantityReserved: 4,
     lowStockThreshold: 20,
     transferCorrelationId: null,
+    traceId: 'trace-stock-alpha-overflow-atorvastatin',
     updatedAt: minutesAgo(10),
   },
   {
@@ -103,6 +106,7 @@ const demoStockPositionsSeed: StockPositionSeed[] = [
     quantityReserved: 0,
     lowStockThreshold: 15,
     transferCorrelationId: 'transfer-beta-002',
+    traceId: 'trace-stock-beta-main-metformin',
     updatedAt: minutesAgo(5),
   },
 ] satisfies readonly StockPositionSeed[]

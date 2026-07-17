@@ -17,6 +17,7 @@ const AuditEventsController = () => import('#controllers/audit_events_controller
 const EvidencePackagesController = () => import('#controllers/evidence_packages_controller')
 const IntegrationHealthController = () => import('#controllers/integration_health_controller')
 const IntegrationMappingsController = () => import('#controllers/integration_mappings_controller')
+const PartnerFeedsController = () => import('#controllers/partner_feeds_controller')
 const MedicationProductsController = () => import('#controllers/medication_products_controller')
 const QuarantineRecordsController = () => import('#controllers/quarantine_records_controller')
 const QuarantineReprocessingsController = () =>
@@ -31,6 +32,8 @@ router.get('/', () => {
 })
 
 router.get('/health', [HealthController, 'show'])
+
+router.post('/v1/integration/feeds', [PartnerFeedsController, 'store'])
 
 router
   .group(() => {

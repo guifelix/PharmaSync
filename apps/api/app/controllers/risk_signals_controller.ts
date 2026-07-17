@@ -8,6 +8,7 @@ const pilotRiskSignals = [
     siteId: 'site_main',
     type: 'expiration',
     severity: 'medium',
+    traceId: 'trace-signal-alpha-main',
   },
   {
     id: 'signal_alpha_overflow',
@@ -15,6 +16,7 @@ const pilotRiskSignals = [
     siteId: 'site_overflow',
     type: 'overstock',
     severity: 'low',
+    traceId: 'trace-signal-alpha-overflow',
   },
   {
     id: 'signal_beta_main',
@@ -22,6 +24,7 @@ const pilotRiskSignals = [
     siteId: 'site_main',
     type: 'shortage',
     severity: 'high',
+    traceId: 'trace-signal-beta-main',
   },
 ]
 
