@@ -14,9 +14,11 @@
     "@pharmasync/config": "workspace:*",
     "@pharmasync/domain": "workspace:*",
     "@pharmasync/integration": "workspace:*",
-    "@pharmasync/observability": "workspace:*"
+    "@pharmasync/observability": "workspace:*",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
+    "@types/pg": "^8.15.5",
     "typescript": "^5.7.2"
   }
 }

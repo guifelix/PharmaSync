@@ -7,9 +7,20 @@ paths:
   /health:
     get:
       summary: Health check
+      description: Reports API, database, object storage, and worker heartbeat health without returning secrets.
       responses:
         "200":
           description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+        "503":
+          description: One or more dependencies are unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
   /v1/integration/feeds:
     post:
       summary: Submit a partner inventory feed
@@ -40,3 +51,54 @@ paths:
       responses:
         "200":
           description: Audit events
+components:
+  schemas:
+    HealthStatus:
+      type: string
+      enum: [up, down]
+    HealthCheck:
+      type: object
+      required: [name, status, message]
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum: [database, objectStorage, worker]
+        status:
+          $ref: "#/components/schemas/HealthStatus"
+        message:
+          type: string
+        observedAt:
+          type: string
+          format: date-time
+    HealthResponse:
+      type: object
+      required: [status, checkedAt, service, checks]
+      additionalProperties: false
+      properties:
+        status:
+          $ref: "#/components/schemas/HealthStatus"
+        checkedAt:
+          type: string
+          format: date-time
+        service:
+          type: object
+          required: [name, status]
+          additionalProperties: false
+          properties:
+            name:
+              type: string
+            status:
+              type: string
+              enum: [up]
+        checks:
+          type: object
+          required: [database, objectStorage, worker]
+          additionalProperties: false
+          properties:
+            database:
+              $ref: "#/components/schemas/HealthCheck"
+            objectStorage:
+              $ref: "#/components/schemas/HealthCheck"
+            worker:
+              $ref: "#/components/schemas/HealthCheck"
