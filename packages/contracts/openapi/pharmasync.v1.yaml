@@ -76,6 +76,10 @@ paths:
       responses:
         "200":
           description: Current stock positions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StockPositionsResponse"
         "403":
           description: Authenticated user lacks the required role permission
   /api/v1/medication-products:
@@ -321,6 +325,61 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Site"
+        meta:
+          type: object
+          required: [organizationId, permittedSiteIds, traceId]
+          additionalProperties: false
+          properties:
+            organizationId:
+              type: string
+            permittedSiteIds:
+              type: array
+              items:
+                type: string
+            traceId:
+              type: string
+    ExpirationStatus:
+      type: string
+      enum: [expired, near-expiry, ok]
+    StockPosition:
+      type: object
+      required:
+        - id
+        - organizationId
+        - siteId
+        - medicationName
+        - lotNumber
+        - expirationDate
+        - expirationStatus
+        - quantityOnHand
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        organizationId:
+          type: string
+        siteId:
+          type: string
+        medicationName:
+          type: string
+        lotNumber:
+          type: string
+        expirationDate:
+          type: string
+          format: date
+        expirationStatus:
+          $ref: "#/components/schemas/ExpirationStatus"
+        quantityOnHand:
+          type: number
+    StockPositionsResponse:
+      type: object
+      required: [data, meta]
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/StockPosition"
         meta:
           type: object
           required: [organizationId, permittedSiteIds, traceId]

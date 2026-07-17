@@ -5,8 +5,8 @@ Core entities:
 - Organization: tenant boundary for a distributor, facility, or program node. Organizations use stable organization keys that match authenticated tenant context.
 - Site: physical or logical location where inventory is held. Sites belong to one organization and use stable site keys that match permitted-site claims.
 - Medication Product: public reference product, seeded from FDA/openFDA NDC data where possible. Products include the source NDC, normalized NDC, proprietary and nonproprietary names, dosage form, route, labeler, product type, marketing category, active ingredient, strength, and source.
-- Lot: product lot with lot number and expiration date. Lots are visible only through organization-owned stock and movement records.
-- Stock Position: current inventory quantity for a site/product/lot. Stock positions are organization-owned and site-scoped.
+- Lot: product lot with required lot number and expiration date. Lots belong to medication products and are visible only through organization-owned stock and movement records.
+- Stock Position: current inventory quantity for a site/product/lot. Stock positions are organization-owned and site-scoped, and inventory responses expose lot number, expiration date, and expiration status.
 - Inventory Movement: receipt, dispense, transfer, or correction event. Movements are organization-owned and site-scoped when a site applies.
 - Partner Feed: submitted payload from an external system or simulator. Partner feeds are organization-owned and may be site-scoped when source data identifies a site.
 - Quarantine Record: invalid, duplicate, or conflicting payload that requires review. Quarantine records are organization-owned and site-scoped when the source payload maps to a site.
@@ -30,5 +30,12 @@ Medication product lookup rules:
 - Enforce uniqueness on normalized NDC.
 - Support lookup by normalized NDC, proprietary name, nonproprietary name, active ingredient, and labeler.
 - Seed representative public/demo medication product data for local pilot usage before partner feed mapping depends on it.
+
+Lot and expiration rules:
+
+- Lot-tracked stock must include lot number and expiration date.
+- Expiration status uses `expired`, `near-expiry`, or `ok`.
+- The Phase 1 near-expiry window is 90 days.
+- Inventory responses must expose expired and near-expiry lots so operations users can identify items needing action.
 
 Phase 1 must avoid patient-identifiable data. Dispense events should be synthetic or aggregated.

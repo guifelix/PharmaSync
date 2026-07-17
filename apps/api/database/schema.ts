@@ -146,3 +146,22 @@ export class SiteSchema extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 }
+
+export class MedicationLotSchema extends BaseModel {
+  static $columns = ['createdAt', 'expirationDate', 'id', 'lotNumber', 'medicationProductId', 'source', 'updatedAt'] as const
+  $columns = MedicationLotSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column.date()
+  declare expirationDate: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare lotNumber: string
+  @column()
+  declare medicationProductId: number
+  @column()
+  declare source: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
