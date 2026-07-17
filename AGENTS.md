@@ -62,6 +62,7 @@ For any work that creates, modifies, or deletes project files, use this workflow
    - Work in the smallest coherent slice that satisfies the task acceptance criteria.
    - Keep changes aligned with the modular monolith boundaries: domain packages, contracts, Adonis API, Vue app, worker, infra, and docs should change only when the task requires it.
    - Avoid speculative abstractions, premature microservices, and broad refactors outside the active task.
+   - Before adding a new package or writing custom infrastructure code, check the official docs for the packages already in use, such as AdonisJS, Lucid, VineJS, Vue, Nuxt UI, Reka UI, and Vite. Prefer an official `llms.txt`, markdown, raw documentation source, or local package docs/types first; then use web docs when needed. Record the reason when existing packages do not cover the need.
    - Resist accidental complexity from agent-noun abstractions. Before creating a `*Manager`, `*Service`, `*Handler`, `*Processor`, `*Generator`, or similar "thing that does the verb" class, ask whether the behavior belongs as an affordance on the domain object being changed, an action-named listener/job/command, or a plain function/invokable action. Use service-like classes when they genuinely coordinate a workflow, isolate an external dependency, or simplify testing; do not create them only to make code look abstract.
    - Keep trunk releasable: do not leave broken typechecks, failing tests, or half-applied migrations.
 
