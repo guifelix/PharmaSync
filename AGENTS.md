@@ -54,6 +54,8 @@ For any work that creates, modifies, or deletes project files, use this workflow
 4. **TDD / test-first default**
    - Prefer test-first development for business rules, domain behavior, API contracts, integration adapters, security checks, and bug fixes.
    - Follow red-green-refactor: write or update a failing test, make the smallest change that passes, then refactor while tests stay green.
+   - Prefer tests that describe observable behavior, user/API outcomes, database state, emitted events, and side effects over tests that mirror implementation details. Do not mock collaborators just to achieve isolation; use fakes, mocks, and stubs when they make a boundary deterministic or avoid a genuinely slow or unreliable external dependency.
+   - When building a new flow test-first, write the code you wish existed at the call site, then let tests and typechecks reveal the missing model, route, factory, migration, helper, or adapter. Start with a thin walking skeleton through the real boundary before optimizing internals.
    - When strict test-first is not practical, record why in the Backlog implementation notes and add the missing tests in the same task.
 
 5. **Small-batch implementation**
@@ -68,6 +70,7 @@ For any work that creates, modifies, or deletes project files, use this workflow
    - Create more small, resource-focused controllers instead of growing large controllers with many custom actions or optional-parameter branches. Do not funnel distinct user intentions through one action and then reverse-engineer intent from route params; split nested resources, pivot/relationship resources, state-transition resources, and independently edited subresources into dedicated controllers when that makes the workflow clearer.
    - Update OpenAPI contracts before or alongside API behavior changes.
    - Keep shared package types, database migrations/models, API responses, and frontend consumers aligned.
+   - Keep shared packages framework-light. Domain, integration, contracts, config, observability, and testkit packages should avoid importing Adonis, Vue, browser globals, or infrastructure SDKs unless that package is explicitly an adapter. Put framework-specific glue in `apps/api`, `apps/web`, `apps/worker`, or adapter modules.
    - For integration work, preserve trace IDs, idempotency behavior, quarantine behavior, and audit evidence paths.
    - For regulated-data-adjacent work, minimize sensitive data, avoid PHI in fixtures, and audit security-relevant actions.
 
