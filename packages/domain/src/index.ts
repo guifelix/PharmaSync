@@ -44,6 +44,74 @@ export type InventoryMovement = {
   sourceTraceId: string
 }
 
+export type InventoryMovementBaseCommand = {
+  orgId: OrgId
+  siteId: SiteId
+  productId: MedicationProductId
+  lotId: LotId
+  occurredAt: string
+  sourceTraceId: string
+  actorId?: string
+  reason?: string
+}
+
+export type ReceiptInventoryMovementCommand = InventoryMovementBaseCommand & {
+  type: 'receipt'
+  quantity: number
+}
+
+export type DispenseInventoryMovementCommand = InventoryMovementBaseCommand & {
+  type: 'dispense'
+  quantity: number
+}
+
+export type TransferInventoryMovementCommand = InventoryMovementBaseCommand & {
+  type: 'transfer'
+  quantity: number
+  destinationSiteId: SiteId
+  transferCorrelationId: string
+  actorId: string
+}
+
+export type CorrectionInventoryMovementCommand = InventoryMovementBaseCommand & {
+  type: 'correction'
+  actorId: string
+  reason: string
+  beforeQuantityOnHand: number
+  afterQuantityOnHand: number
+}
+
+export type InventoryMovementCommand =
+  | ReceiptInventoryMovementCommand
+  | DispenseInventoryMovementCommand
+  | TransferInventoryMovementCommand
+  | CorrectionInventoryMovementCommand
+
+export type RecordedInventoryMovement = InventoryMovement & {
+  actorId?: string
+  reason?: string
+  destinationSiteId?: SiteId
+  transferCorrelationId?: string
+  transferDirection?: 'source' | 'destination'
+  beforeQuantityOnHand?: number
+  afterQuantityOnHand?: number
+}
+
+export type InventoryOutboxEvent = {
+  id: string
+  eventType: 'inventory.movement.recorded'
+  aggregateType: 'stock-position' | 'stock-transfer'
+  aggregateId: string
+  orgId: OrgId
+  siteId: SiteId
+  sourceTraceId: string
+  occurredAt: string
+  payload: {
+    movements: RecordedInventoryMovement[]
+    updatedStockPositions: Array<Record<string, unknown>>
+  }
+}
+
 export type RiskSignalType = 'expiration' | 'shortage' | 'overstock'
 export type RiskSignalSeverity = 'low' | 'medium' | 'high'
 
