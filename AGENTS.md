@@ -40,29 +40,40 @@ For any work that creates, modifies, or deletes project files, use this workflow
    - Create a new ADR or supersede/update an existing ADR when the change is architecture-significant.
    - Do not use ADRs for ordinary code changes that are already covered by existing decisions.
 
-3. **TDD / test-first default**
+3. **Architecture diagrams**
+   - Treat `architecture/workspace.dsl` as the canonical Structurizr C4 model.
+   - Treat `architecture/d2/*.d2` as companion C4-style diagrams for quick sharing and focused views. Keep them consistent with the canonical model when they represent the same architecture.
+   - Check the C4/D2 diagrams before changing containers, components, external systems, data stores, queues, object storage usage, deployment nodes, auth boundaries, tenant boundaries, integration flows, event flows, trace flows, or audit/evidence flows.
+   - Update `architecture/workspace.dsl` when the implementation changes a system relationship, container/component boundary, external dependency, deployment assumption, or ADR-backed architecture decision.
+   - Update the relevant `architecture/d2/*.d2` file when a companion diagram would otherwise mislead a future reader about the current architecture.
+   - Do not update diagrams for internal function/class refactors, UI-only layout changes, tests-only changes, or endpoint additions that do not change architectural relationships.
+   - After editing `architecture/workspace.dsl`, validate it with the Structurizr CLI command from `architecture/README.md`.
+   - After editing `architecture/d2/*.d2`, regenerate the corresponding SVG output in `architecture/out/`.
+   - Record diagram validation/render commands and results in the active Backlog task notes.
+
+4. **TDD / test-first default**
    - Prefer test-first development for business rules, domain behavior, API contracts, integration adapters, security checks, and bug fixes.
    - Follow red-green-refactor: write or update a failing test, make the smallest change that passes, then refactor while tests stay green.
    - When strict test-first is not practical, record why in the Backlog implementation notes and add the missing tests in the same task.
 
-4. **Small-batch implementation**
+5. **Small-batch implementation**
    - Work in the smallest coherent slice that satisfies the task acceptance criteria.
    - Keep changes aligned with the modular monolith boundaries: domain packages, contracts, Adonis API, Vue app, worker, infra, and docs should change only when the task requires it.
    - Avoid speculative abstractions, premature microservices, and broad refactors outside the active task.
    - Keep trunk releasable: do not leave broken typechecks, failing tests, or half-applied migrations.
 
-5. **Contract and data discipline**
+6. **Contract and data discipline**
    - Update OpenAPI contracts before or alongside API behavior changes.
    - Keep shared package types, database migrations/models, API responses, and frontend consumers aligned.
    - For integration work, preserve trace IDs, idempotency behavior, quarantine behavior, and audit evidence paths.
    - For regulated-data-adjacent work, minimize sensitive data, avoid PHI in fixtures, and audit security-relevant actions.
 
-6. **Validation before handoff**
+7. **Validation before handoff**
    - Run the narrowest relevant check first, then broader checks when the blast radius requires it.
    - Typical checks include `pnpm --filter <package> typecheck`, package tests, `pnpm typecheck`, API contract validation, migration checks, and UI build/accessibility checks when frontend behavior changes.
    - Record validation commands and results in the Backlog task notes.
 
-7. **Task finalization**
+8. **Task finalization**
    - Check acceptance criteria and Definition of Done through the Backlog CLI.
    - Add implementation notes and a final summary.
    - Move the task to `Done` only after the work is implemented, validated, documented, and ready to commit.
