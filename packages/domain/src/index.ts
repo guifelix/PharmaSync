@@ -112,6 +112,27 @@ export type InventoryOutboxEvent = {
   }
 }
 
+export type OutboxStatus = 'pending' | 'processing' | 'processed' | 'failed'
+
+export type OutboxMessage = {
+  id: string
+  eventType: string
+  aggregateType: string
+  aggregateId: string
+  traceId: string
+  payloadVersion: number
+  payload: Record<string, unknown>
+  status: OutboxStatus
+  attemptCount: number
+  availableAt: string
+  lockedAt: string | null
+  lockedBy: string | null
+  processedAt: string | null
+  lastError: string | null
+  createdAt: string
+  updatedAt: string | null
+}
+
 export type RiskSignalType = 'expiration' | 'shortage' | 'overstock'
 export type RiskSignalSeverity = 'low' | 'medium' | 'high'
 

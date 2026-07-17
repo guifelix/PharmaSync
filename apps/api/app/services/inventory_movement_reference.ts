@@ -6,6 +6,7 @@ import type {
   ReceiptInventoryMovementCommand,
   TransferInventoryMovementCommand,
 } from '@pharmasync/domain'
+import { createInventoryOutboxMessage } from '@pharmasync/integration'
 
 import type { StockPositionReference } from '#services/stock_position_reference'
 import { ensureValidStockPosition } from '#services/stock_position_reference'
@@ -14,6 +15,7 @@ export type InventoryMovementResult = {
   updatedStockPosition: StockPositionReference
   movement: RecordedInventoryMovement
   outboxEvent: InventoryOutboxEvent
+  outboxMessage: ReturnType<typeof createInventoryOutboxMessage>
 }
 
 export type InventoryTransferResult = {
@@ -21,6 +23,7 @@ export type InventoryTransferResult = {
   updatedDestinationStockPosition: StockPositionReference
   movements: [RecordedInventoryMovement, RecordedInventoryMovement]
   outboxEvent: InventoryOutboxEvent
+  outboxMessage: ReturnType<typeof createInventoryOutboxMessage>
 }
 
 export function recordReceipt(
@@ -38,8 +41,9 @@ export function recordReceipt(
 
   const movement = movementRecord(stockPosition, command, command.quantity, 'receipt')
   const outboxEvent = outboxForSingleMovement(stockPosition, command, movement, updatedStockPosition)
+  const outboxMessage = createInventoryOutboxMessage(outboxEvent, new Date(command.occurredAt))
 
-  return { updatedStockPosition, movement, outboxEvent }
+  return { updatedStockPosition, movement, outboxEvent, outboxMessage }
 }
 
 export function recordDispense(
@@ -62,8 +66,9 @@ export function recordDispense(
 
   const movement = movementRecord(stockPosition, command, -command.quantity, 'dispense')
   const outboxEvent = outboxForSingleMovement(stockPosition, command, movement, updatedStockPosition)
+  const outboxMessage = createInventoryOutboxMessage(outboxEvent, new Date(command.occurredAt))
 
-  return { updatedStockPosition, movement, outboxEvent }
+  return { updatedStockPosition, movement, outboxEvent, outboxMessage }
 }
 
 export function recordCorrection(
@@ -100,8 +105,9 @@ export function recordCorrection(
     afterQuantityOnHand: command.afterQuantityOnHand,
   }
   const outboxEvent = outboxForSingleMovement(stockPosition, command, movement, updatedStockPosition)
+  const outboxMessage = createInventoryOutboxMessage(outboxEvent, new Date(command.occurredAt))
 
-  return { updatedStockPosition, movement, outboxEvent }
+  return { updatedStockPosition, movement, outboxEvent, outboxMessage }
 }
 
 export function recordTransfer(
@@ -182,12 +188,14 @@ export function recordTransfer(
       updatedStockPositions: [updatedSourceStockPosition, updatedDestinationStockPosition],
     },
   }
+  const outboxMessage = createInventoryOutboxMessage(outboxEvent, new Date(command.occurredAt))
 
   return {
     updatedSourceStockPosition,
     updatedDestinationStockPosition,
     movements: [sourceMovement, destinationMovement],
     outboxEvent,
+    outboxMessage,
   }
 }
 

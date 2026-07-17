@@ -1,4 +1,5 @@
 import type { InventoryMovement } from '@pharmasync/domain'
+export * from './outbox.js'
 
 export type PartnerFeedFormat = 'csv' | 'json'
 

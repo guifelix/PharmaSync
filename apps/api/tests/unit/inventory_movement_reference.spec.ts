@@ -33,6 +33,8 @@ test.group('Inventory movement reference', () => {
     assert.equal(result.movement.quantityDelta, 25)
     assert.equal(result.outboxEvent.eventType, 'inventory.movement.recorded')
     assert.equal(result.outboxEvent.aggregateType, 'stock-position')
+    assert.equal(result.outboxMessage.payloadVersion, 1)
+    assert.equal(result.outboxMessage.status, 'pending')
     assert.deepEqual(result.outboxEvent.payload.movements, [result.movement])
     assert.deepEqual(result.outboxEvent.payload.updatedStockPositions, [result.updatedStockPosition])
   })
@@ -58,6 +60,7 @@ test.group('Inventory movement reference', () => {
     assert.equal(result.updatedStockPosition.quantityOnHand, 85)
     assert.equal(result.movement.type, 'dispense')
     assert.equal(result.movement.quantityDelta, -15)
+    assert.equal(result.outboxMessage.payloadVersion, 1)
     assert.throws(() =>
       recordDispense(position({ quantityOnHand: 10, quantityReserved: 4 }), {
         type: 'dispense',
@@ -101,6 +104,7 @@ test.group('Inventory movement reference', () => {
     assert.equal(result.movement.reason, 'cycle count adjustment')
     assert.equal(result.movement.beforeQuantityOnHand, 100)
     assert.equal(result.movement.afterQuantityOnHand, 92)
+    assert.equal(result.outboxMessage.payloadVersion, 1)
     assert.throws(() =>
       recordCorrection(position({ quantityOnHand: 100, quantityReserved: 20 }), {
         type: 'correction',
@@ -156,6 +160,7 @@ test.group('Inventory movement reference', () => {
     assert.equal(result.movements[1].transferDirection, 'destination')
     assert.equal(result.outboxEvent.aggregateType, 'stock-transfer')
     assert.equal(result.outboxEvent.aggregateId, 'transfer-alpha-001')
+    assert.equal(result.outboxMessage.payloadVersion, 1)
     assert.deepEqual(result.outboxEvent.payload.movements, result.movements)
     assert.deepEqual(result.outboxEvent.payload.updatedStockPositions, [
       result.updatedSourceStockPosition,

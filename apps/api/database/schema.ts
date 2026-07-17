@@ -207,3 +207,57 @@ export class StockPositionSchema extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 }
+
+export class OutboxMessageSchema extends BaseModel {
+  static $columns = [
+    'aggregateId',
+    'aggregateType',
+    'attemptCount',
+    'availableAt',
+    'createdAt',
+    'eventType',
+    'id',
+    'lastError',
+    'lockedAt',
+    'lockedBy',
+    'payload',
+    'payloadVersion',
+    'processedAt',
+    'status',
+    'traceId',
+    'updatedAt',
+  ] as const
+  $columns = OutboxMessageSchema.$columns
+  @column()
+  declare aggregateId: string
+  @column()
+  declare aggregateType: string
+  @column()
+  declare attemptCount: number
+  @column.dateTime()
+  declare availableAt: DateTime
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare eventType: string
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare lastError: string | null
+  @column.dateTime()
+  declare lockedAt: DateTime | null
+  @column()
+  declare lockedBy: string | null
+  @column()
+  declare payload: any
+  @column()
+  declare payloadVersion: number
+  @column.dateTime()
+  declare processedAt: DateTime | null
+  @column()
+  declare status: string
+  @column()
+  declare traceId: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
