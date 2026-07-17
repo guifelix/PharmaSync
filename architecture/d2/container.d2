@@ -1,0 +1,148 @@
+vars: {
+  d2-config: {
+    layout-engine: elk
+  }
+}
+
+classes: {
+  app: {
+    style.fill: "#2d6a4f"
+    style.stroke: "#1b4332"
+    style.font-color: "#ffffff"
+  }
+  data: {
+    shape: cylinder
+    style.fill: "#f4f1de"
+    style.stroke: "#9b8f66"
+  }
+  external: {
+    style.fill: "#e9ecef"
+    style.stroke: "#6c757d"
+  }
+}
+
+pharmaSync: {
+  label: "PharmaSync Protocol Phase 1 POC [Software System]"
+
+  web: {
+    class: app
+    label: |md
+      ## Operations Web App
+      [Vue 3 / Vite / Nuxt UI / Reka UI]
+      Dashboard for inventory, alerts, integration health, recommendations, and compliance evidence.
+    |
+  }
+
+  api: {
+    class: app
+    label: |md
+      ## API Gateway
+      [AdonisJS / REST / OpenAPI]
+      Authenticated entry point for users, partners, and internal APIs.
+    |
+  }
+
+  inventory: {
+    class: app
+    link: "component-inventory-api.d2"
+    label: |md
+      ## Inventory API
+      [AdonisJS / Lucid ORM / PostgreSQL]
+      Medication, lot, expiration, location, and movement system of record.
+    |
+  }
+
+  integration: {
+    class: app
+    link: "component-integration-gateway.d2"
+    label: |md
+      ## Integration Gateway
+      [Workers / ETL]
+      Validates, maps, deduplicates, quarantines, and normalizes partner payloads.
+    |
+  }
+
+  signals: {
+    class: app
+    label: |md
+      ## Signal Service
+      [TypeScript worker / rules engine]
+      Rules-based shortage, overstock, expiry risk, and replenishment signals.
+    |
+  }
+
+  compliance: {
+    class: app
+    label: |md
+      ## Compliance Evidence Service
+      [AdonisJS service module]
+      Evidence capture, policy findings, trace IDs, and review packages.
+    |
+  }
+
+  db: {
+    class: data
+    label: "Operational Database\n[PostgreSQL]"
+  }
+
+  queue: {
+    class: data
+    label: "Workflow Queue and Outbox\n[PostgreSQL outbox + worker queue]"
+  }
+
+  storage: {
+    class: data
+    label: "Evidence and Payload Storage\n[S3-compatible]"
+  }
+}
+
+manufacturer: {
+  class: external
+  label: "Manufacturer ERP/WMS"
+}
+
+ehr: {
+  class: external
+  label: "Hospital EHR / Pharmacy System"
+}
+
+government: {
+  class: external
+  label: "Government Medication Program"
+}
+
+idp: {
+  class: external
+  label: "Identity Provider"
+}
+
+audit: {
+  class: external
+  label: "Audit and Governance Stakeholders"
+}
+
+pharmaSync.web -> pharmaSync.api: "Calls APIs [JSON/HTTPS]"
+pharmaSync.api -> idp: "Authenticates [OIDC/SAML]"
+pharmaSync.api -> pharmaSync.inventory: "Inventory commands and queries"
+pharmaSync.api -> pharmaSync.compliance: "Compliance reports"
+
+manufacturer -> pharmaSync.integration: "Shipment and lot feeds"
+ehr -> pharmaSync.integration: "Stock and utilization feeds"
+government -> pharmaSync.integration: "Program inventory feeds"
+
+pharmaSync.integration -> pharmaSync.inventory: "Normalized inventory events"
+pharmaSync.integration -> pharmaSync.storage: "Archives payloads"
+pharmaSync.integration -> pharmaSync.queue: "Integration events and remediation tasks"
+
+pharmaSync.inventory -> pharmaSync.db: "Reads/writes inventory"
+pharmaSync.inventory -> pharmaSync.queue: "Inventory events"
+pharmaSync.inventory -> pharmaSync.storage: "Bulk import/export artifacts"
+
+pharmaSync.signals -> pharmaSync.queue: "Consumes events"
+pharmaSync.signals -> pharmaSync.db: "Reads history; writes risk signals"
+pharmaSync.signals -> pharmaSync.inventory: "Recommendations"
+
+pharmaSync.compliance -> pharmaSync.queue: "Consumes auditable events"
+pharmaSync.compliance -> pharmaSync.db: "Policy and report metadata"
+pharmaSync.compliance -> pharmaSync.storage: "Evidence packages"
+pharmaSync.compliance -> audit: "Evidence packages for authorized review"

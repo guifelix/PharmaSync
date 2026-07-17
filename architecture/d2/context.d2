@@ -1,0 +1,121 @@
+vars: {
+  d2-config: {
+    layout-engine: elk
+  }
+}
+
+classes: {
+  person: {
+    shape: c4-person
+    style.fill: "#084c61"
+    style.stroke: "#063945"
+    style.font-color: "#ffffff"
+  }
+  system: {
+    style.fill: "#177e89"
+    style.stroke: "#0f5961"
+    style.font-color: "#ffffff"
+  }
+  external: {
+    style.fill: "#f4f1de"
+    style.stroke: "#9b8f66"
+  }
+}
+
+distributor: {
+  class: person
+  label: |md
+    ## Distribution Operations Manager
+    Monitors stock, shipments, shortages, and expiration risk.
+  |
+}
+
+pharmacy: {
+  class: person
+  label: |md
+    ## Hospital or Pharmacy Operations User
+    Coordinates medication availability and replenishment.
+  |
+}
+
+compliance: {
+  class: person
+  label: |md
+    ## Compliance Officer
+    Reviews audit evidence and regulatory reports.
+  |
+}
+
+engineer: {
+  class: person
+  label: |md
+    ## Partner Integration Engineer
+    Configures adapters and resolves feed failures.
+  |
+}
+
+pharmaSync: {
+  class: system
+  label: |md
+    ## PharmaSync Protocol Phase 1 POC
+    [Software System]
+
+    Near-real-time pharmaceutical inventory, integration, shortage/expiry signals, and compliance evidence system.
+  |
+}
+
+manufacturer: {
+  class: external
+  label: |md
+    ## Manufacturer ERP/WMS
+    Shipment, ASN, lot, and inventory feeds.
+  |
+}
+
+ehr: {
+  class: external
+  label: |md
+    ## Hospital EHR / Pharmacy System
+    Facility stock, dispense, and utilization feeds.
+  |
+}
+
+government: {
+  class: external
+  label: |md
+    ## Government Medication Program
+    VA, SNS, DoD, or state program inventory feeds.
+  |
+}
+
+audit: {
+  class: external
+  label: |md
+    ## Audit and Governance Stakeholders
+    Internal governance teams, auditors, and regulatory reviewers.
+  |
+}
+
+distributor -> pharmaSync: "Views supply chain status [HTTPS]"
+pharmacy -> pharmaSync: "Reviews availability and alerts [HTTPS]"
+compliance -> pharmaSync: "Exports evidence and reports [HTTPS]"
+engineer -> pharmaSync: "Configures and monitors integrations [HTTPS]"
+manufacturer -> pharmaSync: "Sends shipment and lot feeds [API/File]"
+ehr -> pharmaSync: "Sends inventory and utilization feeds [API/File]"
+government -> pharmaSync: "Shares program stock and allocation data [API/File]"
+pharmaSync -> audit: "Produces evidence packages for authorized review [Secure file/API]"
+
+d2-legend: {
+  person: {
+    class: person
+    label: "Person"
+  }
+  software: {
+    class: system
+    label: "Software System"
+  }
+  external: {
+    class: external
+    label: "External System"
+  }
+}

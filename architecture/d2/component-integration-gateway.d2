@@ -1,0 +1,105 @@
+vars: {
+  d2-config: {
+    layout-engine: elk
+  }
+}
+
+classes: {
+  component: {
+    style.fill: "#6c757d"
+    style.stroke: "#495057"
+    style.font-color: "#ffffff"
+  }
+  data: {
+    shape: cylinder
+    style.fill: "#f4f1de"
+    style.stroke: "#9b8f66"
+  }
+  external: {
+    style.fill: "#e9ecef"
+    style.stroke: "#6c757d"
+  }
+}
+
+partnerSystems: {
+  class: external
+  label: "Partner Systems\n[ERP/WMS/EHR/program feeds]"
+}
+
+integrationGateway: {
+  label: "Integration Gateway [Container]"
+
+  adapter: {
+    class: component
+    label: |md
+      ## Partner Feed Adapter
+      Receives CSV, JSON API, and mock healthcare-format inventory feeds.
+    |
+  }
+
+  validation: {
+    class: component
+    label: |md
+      ## Payload Validation
+      Validates schema, required fields, data types, and business constraints.
+    |
+  }
+
+  mapper: {
+    class: component
+    label: |md
+      ## Canonical Mapping
+      Maps partner payloads into medication, lot, location, and movement events.
+    |
+  }
+
+  idempotency: {
+    class: component
+    label: |md
+      ## Idempotency
+      Deduplicates repeated submissions using source IDs, payload hash, and partner event identifiers.
+    |
+  }
+
+  quarantine: {
+    class: component
+    label: |md
+      ## Quarantine
+      Stores rejected payloads with error reasons, source metadata, and trace IDs.
+    |
+  }
+
+  publisher: {
+    class: component
+    label: |md
+      ## Event Publisher
+      Publishes accepted integration and inventory events through the queue/outbox.
+    |
+  }
+}
+
+inventoryApi: {
+  class: external
+  label: "Inventory API"
+}
+
+queue: {
+  class: data
+  label: "Workflow Queue and Outbox\n[PostgreSQL outbox + worker queue]"
+}
+
+storage: {
+  class: data
+  label: "Evidence and Payload Storage\n[S3-compatible]"
+}
+
+partnerSystems -> integrationGateway.adapter: "Submits inventory, shipment, and dispense feeds"
+integrationGateway.adapter -> integrationGateway.validation: "Raw partner payload"
+integrationGateway.validation -> integrationGateway.mapper: "Valid payload"
+integrationGateway.validation -> integrationGateway.quarantine: "Invalid payload"
+integrationGateway.mapper -> integrationGateway.idempotency: "Canonical event"
+integrationGateway.idempotency -> integrationGateway.publisher: "New event"
+integrationGateway.idempotency -> integrationGateway.quarantine: "Duplicate or conflict"
+integrationGateway.quarantine -> storage: "Rejected payload + trace metadata"
+integrationGateway.publisher -> queue: "Integration events"
+integrationGateway.publisher -> inventoryApi: "Accepted inventory event [JSON/HTTPS]"

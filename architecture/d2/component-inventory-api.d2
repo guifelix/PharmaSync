@@ -1,0 +1,82 @@
+vars: {
+  d2-config: {
+    layout-engine: elk
+  }
+}
+
+classes: {
+  component: {
+    style.fill: "#6c757d"
+    style.stroke: "#495057"
+    style.font-color: "#ffffff"
+  }
+  data: {
+    shape: cylinder
+    style.fill: "#f4f1de"
+    style.stroke: "#9b8f66"
+  }
+  external: {
+    style.fill: "#e9ecef"
+    style.stroke: "#6c757d"
+  }
+}
+
+apiGateway: {
+  class: external
+  label: "API Gateway"
+}
+
+inventoryApi: {
+  label: "Inventory API [Container]"
+
+  rest: {
+    class: component
+    label: |md
+      ## Inventory REST Controller
+      Handles commands, queries, movement ingestion, and correction requests.
+    |
+  }
+
+  domain: {
+    class: component
+    label: |md
+      ## Inventory Domain Component
+      Medication, lot, expiration, stock, and movement business rules.
+    |
+  }
+
+  replenishment: {
+    class: component
+    label: |md
+      ## Replenishment Component
+      Thresholds, recommendations, allocation support, and shortage checks.
+    |
+  }
+
+  auditPublisher: {
+    class: component
+    label: |md
+      ## Audit Publisher Component
+      Emits auditable inventory actions and correction events.
+    |
+  }
+}
+
+db: {
+  class: data
+  label: "Operational Database\n[PostgreSQL]"
+}
+
+queue: {
+  class: data
+  label: "Workflow Queue and Outbox\n[PostgreSQL outbox + worker queue]"
+}
+
+apiGateway -> inventoryApi.rest: "Routes inventory requests [JSON/HTTPS]"
+inventoryApi.rest -> inventoryApi.domain: "Executes inventory commands"
+inventoryApi.rest -> inventoryApi.replenishment: "Requests recommendations"
+inventoryApi.domain -> db: "Persists medications, lots, locations, and movements"
+inventoryApi.replenishment -> db: "Reads stock, history, thresholds"
+inventoryApi.domain -> inventoryApi.auditPublisher: "Auditable inventory actions"
+inventoryApi.replenishment -> inventoryApi.auditPublisher: "Recommendation events"
+inventoryApi.auditPublisher -> queue: "Publishes inventory and audit events"
