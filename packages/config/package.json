@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc --noEmit",
     "lint": "tsc --noEmit",
-    "test": "node --test",
+    "test": "node --test src/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

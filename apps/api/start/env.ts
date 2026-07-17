@@ -16,9 +16,11 @@ export default await Env.create(new URL('../', import.meta.url), {
   NODE_ENV: Env.schema.enum(['development', 'production', 'test'] as const),
   PORT: Env.schema.number(),
   HOST: Env.schema.string({ format: 'host' }),
-  LOG_LEVEL: Env.schema.string(),
+  LOG_LEVEL: Env.schema.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal'] as const),
 
   // App
+  APP_NAME: Env.schema.string(),
+  APP_ENV: Env.schema.enum(['development', 'test', 'staging', 'pilot', 'production'] as const),
   APP_KEY: Env.schema.secret(),
   APP_URL: Env.schema.string({ format: 'url', tld: false }),
 
@@ -29,6 +31,14 @@ export default await Env.create(new URL('../', import.meta.url), {
   DB_HOST: Env.schema.string({ format: 'host' }),
   DB_PORT: Env.schema.number(),
   DB_USER: Env.schema.string(),
-  DB_PASSWORD: Env.schema.string.optional(),
+  DB_PASSWORD: Env.schema.string(),
   DB_DATABASE: Env.schema.string(),
+
+  // Object storage
+  S3_ENDPOINT: Env.schema.string({ format: 'url', tld: false }),
+  S3_REGION: Env.schema.string(),
+  S3_ACCESS_KEY_ID: Env.schema.string(),
+  S3_SECRET_ACCESS_KEY: Env.schema.secret(),
+  S3_BUCKET: Env.schema.string(),
+  S3_FORCE_PATH_STYLE: Env.schema.boolean(),
 })

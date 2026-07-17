@@ -14,7 +14,7 @@
     "lint": "turbo run lint",
     "services:down": "docker compose -f infra/local/docker-compose.yml down",
     "services:ps": "docker compose -f infra/local/docker-compose.yml ps",
-    "services:up": "docker compose -f infra/local/docker-compose.yml up -d",
+    "services:up": "docker compose --env-file .env -f infra/local/docker-compose.yml up -d",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
     "format": "prettier --check ."

@@ -23,9 +23,11 @@ Prerequisites:
 
 - Node.js and pnpm matching `package.json`.
 - Docker or Podman-compatible Docker CLI for local Postgres and MinIO.
+- A root env file for local services and worker configuration.
 - A local API env file at `apps/api/.env`. Start from `apps/api/.env.example`, then generate an Adonis app key:
 
 ```bash
+cp .env.example .env
 cp apps/api/.env.example apps/api/.env
 pnpm --filter @pharmasync/api exec node ace generate:key
 ```
