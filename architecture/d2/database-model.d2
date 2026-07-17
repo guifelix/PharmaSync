@@ -1,0 +1,199 @@
+vars: {
+  d2-config: {
+    layout-engine: elk
+  }
+}
+
+pharmaSync: {
+  label: "PharmaSync Phase 1 Data Model"
+
+  organizations: {
+    shape: sql_table
+    id: int PK
+    organization_key: text UNQ
+    name: text
+    type: text
+    status: text
+    created_at: timestamp
+    updated_at: timestamp
+  }
+
+  sites: {
+    shape: sql_table
+    id: int PK
+    organization_id: int FK
+    organization_key: text
+    site_key: text
+    name: text
+    type: text
+    status: text
+    city: text
+    region: text
+    country: text
+    created_at: timestamp
+    updated_at: timestamp
+  }
+
+  medication_products: {
+    shape: sql_table
+    id: int PK
+    ndc: text
+    normalized_ndc: text UNQ
+    proprietary_name: text
+    nonproprietary_name: text
+    active_ingredient: text
+    dosage_form: text
+    route: text
+    labeler_name: text
+    product_type: text
+    marketing_category: text
+    strength: text
+    source: text
+    created_at: timestamp
+    updated_at: timestamp
+  }
+
+  medication_lots: {
+    shape: sql_table
+    id: int PK
+    medication_product_id: int FK
+    lot_number: text
+    expiration_date: date
+    source: text
+    created_at: timestamp
+    updated_at: timestamp
+  }
+
+  stock_positions: {
+    shape: sql_table
+    id: int PK
+    organization_id: int FK
+    site_id: int FK
+    medication_product_id: int FK
+    medication_lot_id: int FK
+    quantity_on_hand: int
+    quantity_reserved: int
+    status: text
+    last_counted_at: timestamp
+    created_at: timestamp
+    updated_at: timestamp
+  }
+
+  inventory_movements: {
+    shape: sql_table
+    id: int PK
+    organization_id: int FK
+    site_id: int FK
+    stock_position_id: int FK
+    movement_type: text
+    quantity_delta: int
+    occurred_at: timestamp
+    source: text
+    trace_id: text
+    created_at: timestamp
+    updated_at: timestamp
+  }
+
+  partner_feeds: {
+    shape: sql_table
+    id: int PK
+    organization_id: int FK
+    site_id: int FK
+    source_system: text
+    feed_type: text
+    payload_hash: text
+    received_at: timestamp
+    trace_id: text
+    created_at: timestamp
+    updated_at: timestamp
+  }
+
+  quarantine_records: {
+    shape: sql_table
+    id: int PK
+    organization_id: int FK
+    site_id: int FK
+    source_system: text
+    reason_code: text
+    reason_detail: text
+    trace_id: text
+    created_at: timestamp
+    updated_at: timestamp
+  }
+
+  risk_signals: {
+    shape: sql_table
+    id: int PK
+    organization_id: int FK
+    site_id: int FK
+    signal_type: text
+    severity: text
+    status: text
+    due_at: timestamp
+    created_at: timestamp
+    updated_at: timestamp
+  }
+
+  audit_events: {
+    shape: sql_table
+    id: int PK
+    organization_id: int FK
+    site_id: int FK
+    actor_id: int
+    action: text
+    subject_type: text
+    subject_id: text
+    trace_id: text
+    created_at: timestamp
+  }
+
+  evidence_packages: {
+    shape: sql_table
+    id: int PK
+    organization_id: int FK
+    site_id: int
+    package_type: text
+    status: text
+    generated_at: timestamp
+    trace_id: text
+    created_at: timestamp
+    updated_at: timestamp
+  }
+
+  outbox_events: {
+    shape: sql_table
+    id: int PK
+    organization_id: int FK
+    site_id: int FK
+    aggregate_type: text
+    aggregate_id: text
+    event_type: text
+    payload: jsonb
+    available_at: timestamp
+    published_at: timestamp
+    attempt_count: int
+    trace_id: text
+    created_at: timestamp
+  }
+}
+
+pharmaSync.organizations.id -> pharmaSync.sites.organization_id
+pharmaSync.medication_products.id -> pharmaSync.medication_lots.medication_product_id
+pharmaSync.organizations.id -> pharmaSync.stock_positions.organization_id
+pharmaSync.sites.id -> pharmaSync.stock_positions.site_id
+pharmaSync.medication_products.id -> pharmaSync.stock_positions.medication_product_id
+pharmaSync.medication_lots.id -> pharmaSync.stock_positions.medication_lot_id
+pharmaSync.stock_positions.id -> pharmaSync.inventory_movements.stock_position_id
+pharmaSync.organizations.id -> pharmaSync.inventory_movements.organization_id
+pharmaSync.sites.id -> pharmaSync.inventory_movements.site_id
+pharmaSync.organizations.id -> pharmaSync.partner_feeds.organization_id
+pharmaSync.sites.id -> pharmaSync.partner_feeds.site_id
+pharmaSync.organizations.id -> pharmaSync.quarantine_records.organization_id
+pharmaSync.sites.id -> pharmaSync.quarantine_records.site_id
+pharmaSync.organizations.id -> pharmaSync.risk_signals.organization_id
+pharmaSync.sites.id -> pharmaSync.risk_signals.site_id
+pharmaSync.organizations.id -> pharmaSync.audit_events.organization_id
+pharmaSync.sites.id -> pharmaSync.audit_events.site_id
+pharmaSync.organizations.id -> pharmaSync.evidence_packages.organization_id
+pharmaSync.organizations.id -> pharmaSync.outbox_events.organization_id
+pharmaSync.sites.id -> pharmaSync.outbox_events.site_id

@@ -39,3 +39,5 @@ Lot and expiration rules:
 - Inventory responses must expose expired and near-expiry lots so operations users can identify items needing action.
 
 Phase 1 must avoid patient-identifiable data. Dispense events should be synthetic or aggregated.
+
+Table-level schema conventions and the current Phase 1 data model live in [database-design.md](database-design.md) and `architecture/d2/database-model.d2`.

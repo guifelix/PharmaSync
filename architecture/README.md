@@ -55,6 +55,7 @@ d2 architecture/d2/context.d2 architecture/out/context.svg
 d2 architecture/d2/container.d2 architecture/out/container.svg
 d2 architecture/d2/component-inventory-api.d2 architecture/out/component-inventory-api.svg
 d2 architecture/d2/component-integration-gateway.d2 architecture/out/component-integration-gateway.svg
+d2 architecture/d2/database-model.d2 architecture/out/database-model.svg
 ```
 
 Preferred with Podman:
@@ -65,6 +66,7 @@ podman run --rm -v "$PWD:/workspace:Z" -w /workspace docker.io/terrastruct/d2 ar
 podman run --rm -v "$PWD:/workspace:Z" -w /workspace docker.io/terrastruct/d2 architecture/d2/container.d2 architecture/out/container.svg
 podman run --rm -v "$PWD:/workspace:Z" -w /workspace docker.io/terrastruct/d2 architecture/d2/component-inventory-api.d2 architecture/out/component-inventory-api.svg
 podman run --rm -v "$PWD:/workspace:Z" -w /workspace docker.io/terrastruct/d2 architecture/d2/component-integration-gateway.d2 architecture/out/component-integration-gateway.svg
+podman run --rm -v "$PWD:/workspace:Z" -w /workspace docker.io/terrastruct/d2 architecture/d2/database-model.d2 architecture/out/database-model.svg
 ```
 
 Docker fallback:
@@ -76,6 +78,7 @@ docker run --rm -v "$PWD:/workspace" -w /workspace terrastruct/d2 architecture/d
 docker run --rm -v "$PWD:/workspace" -w /workspace terrastruct/d2 architecture/d2/container.d2 architecture/out/container.svg
 docker run --rm -v "$PWD:/workspace" -w /workspace terrastruct/d2 architecture/d2/component-inventory-api.d2 architecture/out/component-inventory-api.svg
 docker run --rm -v "$PWD:/workspace" -w /workspace terrastruct/d2 architecture/d2/component-integration-gateway.d2 architecture/out/component-integration-gateway.svg
+docker run --rm -v "$PWD:/workspace" -w /workspace terrastruct/d2 architecture/d2/database-model.d2 architecture/out/database-model.svg
 ```
 
 ## Local verification status

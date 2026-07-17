@@ -6,6 +6,7 @@ Required before pilot deployment:
 
 - Health checks for API, database, object storage, and worker processing.
 - Environment validation for all required secrets and connection strings.
+- Database migrations and indexes reviewed against [database-design.md](database-design.md).
 - Structured logs with trace IDs.
 - Database migrations run automatically or as a controlled release step.
 - S3 buckets encrypted with KMS.

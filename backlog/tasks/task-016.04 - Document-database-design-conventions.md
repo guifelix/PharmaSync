@@ -1,9 +1,10 @@
 ---
 id: TASK-016.04
 title: Document database design conventions
-status: To Do
+status: In Progress
 assignee: []
 created_date: '2026-07-17 02:54'
+updated_date: '2026-07-17 04:41'
 labels:
   - database
   - engineering-system
@@ -31,22 +32,26 @@ As a backend engineer, I want database design conventions so migrations, tenant 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Database conventions define naming, IDs, timestamps, soft-delete/archive policy, and migration rules
-- [ ] #2 Database conventions define tenant-scoping columns and query expectations
-- [ ] #3 Database conventions define indexing strategy for inventory, feeds, quarantine, audit, and outbox queries
-- [ ] #4 Database conventions define outbox table and audit immutability rules at design level
-- [ ] #5 Database conventions identify where ERD/table-level documentation should live
+- [x] #1 Database conventions define naming, IDs, timestamps, soft-delete/archive policy, and migration rules
+- [x] #2 Database conventions define tenant-scoping columns and query expectations
+- [x] #3 Database conventions define indexing strategy for inventory, feeds, quarantine, audit, and outbox queries
+- [x] #4 Database conventions define outbox table and audit immutability rules at design level
+- [x] #5 Database conventions identify where ERD/table-level documentation should live
 <!-- AC:END -->
 
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
-1. Create docs/system-design/database-design.md with table/migration conventions.
-2. Define tenant scoping, index expectations, outbox table shape, and audit immutability rules.
-3. Cross-link with data-model.md, production-readiness.md, and ADR-0007.
-4. Add examples for inventory, partner feed, quarantine, audit, and outbox tables.
-5. Validate against existing Adonis/Lucid migration conventions.
+1. Write docs/system-design/database-design.md with layered planning guidance, table conventions, indexing rules, tenant scope, and outbox/audit rules.
+2. Add a D2 sql_table diagram for the core data model and link it from the data-model and DB package docs.
+3. Cross-link the new convention doc from data-model.md, production-readiness.md, and packages/db/README.md, then validate the rendered diagram and task references.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Added docs/system-design/database-design.md and architecture/d2/database-model.d2. Rendered architecture/out/database-model.svg with Podman/D2 successfully.
+<!-- SECTION:NOTES:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
