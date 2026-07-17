@@ -4,11 +4,17 @@ title: Archive raw and normalized payloads
 status: To Do
 assignee: []
 created_date: '2026-07-17 02:22'
+updated_date: '2026-07-17 02:40'
 labels:
   - story
   - compliance
   - R1
-dependencies: []
+milestone: m-1
+dependencies:
+  - TASK-004.01
+references:
+  - docs/system-design/integration-contracts.md
+  - docs/adr/0004-compliance-evidence-not-automated-compliance.md
 parent_task_id: TASK-008
 priority: high
 ordinal: 41000
@@ -26,3 +32,20 @@ As a Compliance Officer, I want raw and normalized payloads archived so feed pro
 - [ ] #2 Normalized accepted payloads are stored after mapping
 - [ ] #3 Stored objects are referenced by trace ID and feed metadata
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. Define object-storage keys and metadata for raw and normalized payloads.
+2. Archive raw payloads before validation and normalized payloads after mapping.
+3. Store object references on feed and trace records.
+4. Add access-control and audit coverage for archive retrieval.
+<!-- SECTION:PLAN:END -->
+
+## Definition of Done
+<!-- DOD:BEGIN -->
+- [ ] #1 All acceptance criteria are checked through Backlog.md
+- [ ] #2 Relevant tests, typechecks, or manual validation are run and recorded in implementation notes
+- [ ] #3 API contracts, docs, or ADRs are updated when behavior or architecture changes
+- [ ] #4 Work is committed as an atomic Conventional Commit
+<!-- DOD:END -->
