@@ -53,7 +53,10 @@ test.group('tenant-aware query scope', () => {
 
     response.assertStatus(200)
     assert.deepEqual(recordIds(response.body().data), ['audit_alpha_org', 'audit_alpha_main'])
-    assert.deepEqual(recordTraceIds(response.body().data), ['trace-audit-alpha-org', 'trace-audit-alpha-main'])
+    assert.deepEqual(recordTraceIds(response.body().data), [
+      'trace-audit-alpha-org',
+      'trace-audit-alpha-main',
+    ])
   })
 
   test('does not leak records from another organization with the same site id', async ({
@@ -62,7 +65,9 @@ test.group('tenant-aware query scope', () => {
   }) => {
     const response = await client
       .get('/api/v1/inventory/stock')
-      .bearerToken(tokenFor({ roles: ['operations'], organizationId: 'org_beta', siteIds: ['site_main'] }))
+      .bearerToken(
+        tokenFor({ roles: ['operations'], organizationId: 'org_beta', siteIds: ['site_main'] })
+      )
 
     response.assertStatus(200)
     assert.deepEqual(recordIds(response.body().data), ['stock_beta_main_metformin'])

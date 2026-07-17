@@ -40,7 +40,12 @@ export function recordReceipt(
   }
 
   const movement = movementRecord(stockPosition, command, command.quantity, 'receipt')
-  const outboxEvent = outboxForSingleMovement(stockPosition, command, movement, updatedStockPosition)
+  const outboxEvent = outboxForSingleMovement(
+    stockPosition,
+    command,
+    movement,
+    updatedStockPosition
+  )
   const outboxMessage = createInventoryOutboxMessage(outboxEvent, new Date(command.occurredAt))
 
   return { updatedStockPosition, movement, outboxEvent, outboxMessage }
@@ -65,7 +70,12 @@ export function recordDispense(
   }
 
   const movement = movementRecord(stockPosition, command, -command.quantity, 'dispense')
-  const outboxEvent = outboxForSingleMovement(stockPosition, command, movement, updatedStockPosition)
+  const outboxEvent = outboxForSingleMovement(
+    stockPosition,
+    command,
+    movement,
+    updatedStockPosition
+  )
   const outboxMessage = createInventoryOutboxMessage(outboxEvent, new Date(command.occurredAt))
 
   return { updatedStockPosition, movement, outboxEvent, outboxMessage }
@@ -104,7 +114,12 @@ export function recordCorrection(
     beforeQuantityOnHand: command.beforeQuantityOnHand,
     afterQuantityOnHand: command.afterQuantityOnHand,
   }
-  const outboxEvent = outboxForSingleMovement(stockPosition, command, movement, updatedStockPosition)
+  const outboxEvent = outboxForSingleMovement(
+    stockPosition,
+    command,
+    movement,
+    updatedStockPosition
+  )
   const outboxMessage = createInventoryOutboxMessage(outboxEvent, new Date(command.occurredAt))
 
   return { updatedStockPosition, movement, outboxEvent, outboxMessage }
@@ -141,7 +156,8 @@ export function recordTransfer(
 
   assertPositiveQuantity(command.quantity, 'transfer quantity')
 
-  const availableQuantity = sourceStockPosition.quantityOnHand - sourceStockPosition.quantityReserved
+  const availableQuantity =
+    sourceStockPosition.quantityOnHand - sourceStockPosition.quantityReserved
   if (command.quantity > availableQuantity) {
     throw new Error('transfer quantity cannot exceed available quantity')
   }

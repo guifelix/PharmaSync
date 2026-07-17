@@ -5,7 +5,13 @@
   color: #17201d;
   background: #f7f8f6;
   font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
 
 body {
@@ -177,21 +183,21 @@ a {
   padding: 4px 10px;
 }
 
-.status-chip[data-tone='high'],
-.status-chip[data-tone='error'],
-.status-chip[data-tone='quarantined'] {
+.status-chip[data-tone="high"],
+.status-chip[data-tone="error"],
+.status-chip[data-tone="quarantined"] {
   background: #f4d7d7;
   color: #7a1f1f;
 }
 
-.status-chip[data-tone='medium'] {
+.status-chip[data-tone="medium"] {
   background: #f4e9c8;
   color: #6b5210;
 }
 
-.status-chip[data-tone='low'],
-.status-chip[data-tone='accepted'],
-.status-chip[data-tone='fresh'] {
+.status-chip[data-tone="low"],
+.status-chip[data-tone="accepted"],
+.status-chip[data-tone="fresh"] {
   background: #dbeae7;
   color: #0f2f2e;
 }

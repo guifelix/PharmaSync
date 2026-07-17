@@ -48,7 +48,10 @@ export function expirationStatus(
   return expiration.getTime() <= nearExpiryThreshold.getTime() ? 'near-expiry' : 'ok'
 }
 
-export function requireLotTracking(input: { lotNumber?: string | null; expirationDate?: string | null }) {
+export function requireLotTracking(input: {
+  lotNumber?: string | null
+  expirationDate?: string | null
+}) {
   return Boolean(input.lotNumber?.trim() && input.expirationDate?.trim())
 }
 

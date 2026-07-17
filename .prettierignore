@@ -18,3 +18,4 @@ apps/web/components.d.ts
 .husky/_
 AGENTS.md
 **/*.d.ts
+pnpm-lock.yaml

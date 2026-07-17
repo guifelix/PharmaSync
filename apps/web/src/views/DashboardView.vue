@@ -3,7 +3,10 @@
     <header class="page-header">
       <div>
         <h2>Network Overview</h2>
-        <p>Current pilot status across inventory, integrations, signals, and evidence.</p>
+        <p>
+          Current pilot status across inventory, integrations, signals, and
+          evidence.
+        </p>
       </div>
     </header>
 
@@ -41,7 +44,9 @@
         <tbody>
           <tr>
             <td>Inventory</td>
-            <td><span class="trace-id">trace-stock-alpha-main-amoxicillin</span></td>
+            <td>
+              <span class="trace-id">trace-stock-alpha-main-amoxicillin</span>
+            </td>
             <td>Latest stock update</td>
           </tr>
           <tr>

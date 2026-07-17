@@ -1,22 +1,22 @@
 <script setup lang="ts">
 const stockRows = [
   {
-    id: 'stock_alpha_main_amoxicillin',
-    site: 'Alpha Main Warehouse',
-    lot: 'AMX-2026-08-A',
-    traceId: 'trace-stock-alpha-main-amoxicillin',
-    availability: '100 available',
-    freshness: 'stale 120 min',
+    id: "stock_alpha_main_amoxicillin",
+    site: "Alpha Main Warehouse",
+    lot: "AMX-2026-08-A",
+    traceId: "trace-stock-alpha-main-amoxicillin",
+    availability: "100 available",
+    freshness: "stale 120 min",
   },
   {
-    id: 'stock_alpha_overflow_atorvastatin',
-    site: 'Alpha Overflow Pharmacy',
-    lot: 'ATO-2027-01-B',
-    traceId: 'trace-stock-alpha-overflow-atorvastatin',
-    availability: '14 available',
-    freshness: 'fresh',
+    id: "stock_alpha_overflow_atorvastatin",
+    site: "Alpha Overflow Pharmacy",
+    lot: "ATO-2027-01-B",
+    traceId: "trace-stock-alpha-overflow-atorvastatin",
+    availability: "14 available",
+    freshness: "fresh",
   },
-]
+];
 </script>
 
 <template>
@@ -24,7 +24,9 @@ const stockRows = [
     <header class="page-header">
       <div>
         <h2>Inventory</h2>
-        <p>Medication stock by product, lot, expiration, site, and trace context.</p>
+        <p>
+          Medication stock by product, lot, expiration, site, and trace context.
+        </p>
       </div>
     </header>
     <div class="panel table-panel">
@@ -47,7 +49,9 @@ const stockRows = [
             <td>{{ row.id }}</td>
             <td>{{ row.site }}</td>
             <td>{{ row.lot }}</td>
-            <td><span class="trace-id">{{ row.traceId }}</span></td>
+            <td>
+              <span class="trace-id">{{ row.traceId }}</span>
+            </td>
             <td>{{ row.availability }}</td>
             <td>{{ row.freshness }}</td>
           </tr>

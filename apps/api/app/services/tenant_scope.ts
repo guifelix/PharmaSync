@@ -17,7 +17,10 @@ export function tenantScopeFromAuth(workforceAuth: WorkforceAuthContext): Tenant
   }
 }
 
-export function scopeTenantRecords<T extends TenantOwnedRecord>(records: readonly T[], scope: TenantScope) {
+export function scopeTenantRecords<T extends TenantOwnedRecord>(
+  records: readonly T[],
+  scope: TenantScope
+) {
   return records.filter((record) => {
     if (record.organizationId !== scope.organizationId) {
       return false

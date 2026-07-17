@@ -32,9 +32,13 @@ export default class extends BaseSeeder {
       ['organizationId', 'siteId', 'medicationProductId', 'medicationLotId'],
       demoStockPositions.map((stockPosition) => {
         const organizationId = organizationIdsByKey.get(stockPosition.organizationId)!
-        const siteId = siteIdsByOrganizationAndKey.get(`${stockPosition.organizationId}:${stockPosition.siteId}`)!
+        const siteId = siteIdsByOrganizationAndKey.get(
+          `${stockPosition.organizationId}:${stockPosition.siteId}`
+        )!
         const medicationProductId = productIdsByNdc.get(stockPosition.medicationProductNdc)!
-        const medicationLotId = lotIdsByProductAndNumber.get(`${medicationProductId}:${stockPosition.lotNumber}`)!
+        const medicationLotId = lotIdsByProductAndNumber.get(
+          `${medicationProductId}:${stockPosition.lotNumber}`
+        )!
 
         return {
           organizationId,

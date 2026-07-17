@@ -21,7 +21,8 @@ export default class StockPositionsController {
 
     return {
       data: filterStockPositions(demoStockPositions, workforceAuth, filters, observedAt).map(
-        (stockPosition) => toStockPositionView(stockPosition, observedAt, stockPositionFreshnessThresholdMinutes)
+        (stockPosition) =>
+          toStockPositionView(stockPosition, observedAt, stockPositionFreshnessThresholdMinutes)
       ),
       meta: stockPositionMeta({
         organizationId: workforceAuth.organizationId,

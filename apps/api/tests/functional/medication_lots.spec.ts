@@ -20,33 +20,33 @@ test.group('Medication lots', () => {
   })
 
   test('includes lot and expiration status in inventory responses', async ({ client, assert }) => {
-    const response = await client
-      .get('/api/v1/inventory/stock')
-      .bearerToken(
-        signLocalWorkforceToken({
-          iss: 'https://auth.local.pharmasync.test',
-          sub: 'usr_lot_visibility',
-          aud: 'pharmasync-api',
-          exp: expiresAt,
-          org_id: 'org_alpha',
-          site_ids: ['site_main', 'site_overflow'],
-          roles: ['operations'],
-        })
-      )
+    const response = await client.get('/api/v1/inventory/stock').bearerToken(
+      signLocalWorkforceToken({
+        iss: 'https://auth.local.pharmasync.test',
+        sub: 'usr_lot_visibility',
+        aud: 'pharmasync-api',
+        exp: expiresAt,
+        org_id: 'org_alpha',
+        site_ids: ['site_main', 'site_overflow'],
+        roles: ['operations'],
+      })
+    )
 
     response.assertStatus(200)
     assert.deepEqual(
-      response.body().data.map(
-        (stockPosition: {
-          lotNumber: string
-          expirationDate: string
-          expirationStatus: string
-        }) => ({
-          lotNumber: stockPosition.lotNumber,
-          expirationDate: stockPosition.expirationDate,
-          expirationStatus: stockPosition.expirationStatus,
-        })
-      ),
+      response
+        .body()
+        .data.map(
+          (stockPosition: {
+            lotNumber: string
+            expirationDate: string
+            expirationStatus: string
+          }) => ({
+            lotNumber: stockPosition.lotNumber,
+            expirationDate: stockPosition.expirationDate,
+            expirationStatus: stockPosition.expirationStatus,
+          })
+        ),
       [
         {
           lotNumber: 'AMX-2026-08-A',

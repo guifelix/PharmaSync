@@ -8,7 +8,18 @@ import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
 export class AuthAccessTokenSchema extends BaseModel {
-  static $columns = ['abilities', 'createdAt', 'expiresAt', 'hash', 'id', 'lastUsedAt', 'name', 'tokenableId', 'type', 'updatedAt'] as const
+  static $columns = [
+    'abilities',
+    'createdAt',
+    'expiresAt',
+    'hash',
+    'id',
+    'lastUsedAt',
+    'name',
+    'tokenableId',
+    'type',
+    'updatedAt',
+  ] as const
   $columns = AuthAccessTokenSchema.$columns
   @column()
   declare abilities: string
@@ -65,7 +76,23 @@ export class WorkerHeartbeatSchema extends BaseModel {
 }
 
 export class MedicationProductSchema extends BaseModel {
-  static $columns = ['activeIngredient', 'createdAt', 'dosageForm', 'id', 'labelerName', 'marketingCategory', 'ndc', 'nonproprietaryName', 'normalizedNdc', 'productType', 'proprietaryName', 'route', 'source', 'strength', 'updatedAt'] as const
+  static $columns = [
+    'activeIngredient',
+    'createdAt',
+    'dosageForm',
+    'id',
+    'labelerName',
+    'marketingCategory',
+    'ndc',
+    'nonproprietaryName',
+    'normalizedNdc',
+    'productType',
+    'proprietaryName',
+    'route',
+    'source',
+    'strength',
+    'updatedAt',
+  ] as const
   $columns = MedicationProductSchema.$columns
   @column()
   declare activeIngredient: string
@@ -100,7 +127,15 @@ export class MedicationProductSchema extends BaseModel {
 }
 
 export class OrganizationSchema extends BaseModel {
-  static $columns = ['createdAt', 'id', 'name', 'organizationKey', 'status', 'type', 'updatedAt'] as const
+  static $columns = [
+    'createdAt',
+    'id',
+    'name',
+    'organizationKey',
+    'status',
+    'type',
+    'updatedAt',
+  ] as const
   $columns = OrganizationSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -119,7 +154,20 @@ export class OrganizationSchema extends BaseModel {
 }
 
 export class SiteSchema extends BaseModel {
-  static $columns = ['city', 'country', 'createdAt', 'id', 'name', 'organizationId', 'organizationKey', 'region', 'siteKey', 'status', 'type', 'updatedAt'] as const
+  static $columns = [
+    'city',
+    'country',
+    'createdAt',
+    'id',
+    'name',
+    'organizationId',
+    'organizationKey',
+    'region',
+    'siteKey',
+    'status',
+    'type',
+    'updatedAt',
+  ] as const
   $columns = SiteSchema.$columns
   @column()
   declare city: string
@@ -148,7 +196,15 @@ export class SiteSchema extends BaseModel {
 }
 
 export class MedicationLotSchema extends BaseModel {
-  static $columns = ['createdAt', 'expirationDate', 'id', 'lotNumber', 'medicationProductId', 'source', 'updatedAt'] as const
+  static $columns = [
+    'createdAt',
+    'expirationDate',
+    'id',
+    'lotNumber',
+    'medicationProductId',
+    'source',
+    'updatedAt',
+  ] as const
   $columns = MedicationLotSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 const navItems = [
-  { label: 'Overview', to: '/' },
-  { label: 'Inventory', to: '/inventory' },
-  { label: 'Signals', to: '/signals' },
-  { label: 'Integrations', to: '/integrations' },
-  { label: 'Audit', to: '/audit' },
-]
+  { label: "Overview", to: "/" },
+  { label: "Inventory", to: "/inventory" },
+  { label: "Signals", to: "/signals" },
+  { label: "Integrations", to: "/integrations" },
+  { label: "Audit", to: "/audit" },
+];
 </script>
 
 <template>

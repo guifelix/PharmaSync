@@ -38,10 +38,22 @@ test.group('Outbox reference', () => {
   test('claims the oldest due pending records and marks them as processing', async ({ assert }) => {
     const result = claimOutboxBatch(
       [
-        record({ id: 'later', availableAt: '2026-07-17T12:10:00.000Z', createdAt: '2026-07-17T12:00:00.000Z' }),
-        record({ id: 'due-b', availableAt: '2026-07-17T11:55:00.000Z', createdAt: '2026-07-17T11:50:00.000Z' }),
+        record({
+          id: 'later',
+          availableAt: '2026-07-17T12:10:00.000Z',
+          createdAt: '2026-07-17T12:00:00.000Z',
+        }),
+        record({
+          id: 'due-b',
+          availableAt: '2026-07-17T11:55:00.000Z',
+          createdAt: '2026-07-17T11:50:00.000Z',
+        }),
         record({ id: 'locked', lockedAt: '2026-07-17T11:59:00.000Z' }),
-        record({ id: 'due-a', availableAt: '2026-07-17T11:55:00.000Z', createdAt: '2026-07-17T11:40:00.000Z' }),
+        record({
+          id: 'due-a',
+          availableAt: '2026-07-17T11:55:00.000Z',
+          createdAt: '2026-07-17T11:40:00.000Z',
+        }),
       ],
       'worker-1',
       observedAt,
@@ -57,11 +69,17 @@ test.group('Outbox reference', () => {
     )
     assert.deepEqual(
       result.records.find((item) => item.id === 'later'),
-      record({ id: 'later', availableAt: '2026-07-17T12:10:00.000Z', createdAt: '2026-07-17T12:00:00.000Z' })
+      record({
+        id: 'later',
+        availableAt: '2026-07-17T12:10:00.000Z',
+        createdAt: '2026-07-17T12:00:00.000Z',
+      })
     )
   })
 
-  test('awaits async handlers and keeps unrelated records moving when one fails', async ({ assert }) => {
+  test('awaits async handlers and keeps unrelated records moving when one fails', async ({
+    assert,
+  }) => {
     const result = await processOutboxBatch(
       [
         record({ id: 'poison' }),

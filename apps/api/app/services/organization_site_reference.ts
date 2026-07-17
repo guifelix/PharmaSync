@@ -78,10 +78,13 @@ export const demoSites: SiteReference[] = [
   },
 ]
 
-export function activeSitesForTenant(sites: readonly SiteReference[], tenantScope: {
-  organizationId: string
-  permittedSiteIds: string[]
-}) {
+export function activeSitesForTenant(
+  sites: readonly SiteReference[],
+  tenantScope: {
+    organizationId: string
+    permittedSiteIds: string[]
+  }
+) {
   return scopeTenantRecords(
     sites
       .filter((site) => site.status === 'active')

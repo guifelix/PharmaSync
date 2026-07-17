@@ -22,7 +22,9 @@ test.group('Stock position reference', () => {
     assert.equal(availableQuantity(stockPosition), 38)
     assert.doesNotThrow(() => ensureValidStockPosition(stockPosition))
     assert.throws(() => ensureValidStockPosition(position({ quantityOnHand: -1 })))
-    assert.throws(() => ensureValidStockPosition(position({ quantityOnHand: 10, quantityReserved: 11 })))
+    assert.throws(() =>
+      ensureValidStockPosition(position({ quantityOnHand: 10, quantityReserved: 11 }))
+    )
   })
 
   test('marks stale records after the freshness threshold', async ({ assert }) => {
@@ -56,34 +58,44 @@ test.group('Stock position reference', () => {
     }
 
     assert.deepEqual(
-      filterStockPositions(demoStockPositions, alphaScope, { siteId: 'site_main' }).map((item) => item.id),
+      filterStockPositions(demoStockPositions, alphaScope, { siteId: 'site_main' }).map(
+        (item) => item.id
+      ),
       ['stock_alpha_main_amoxicillin']
     )
 
     assert.deepEqual(
-      filterStockPositions(demoStockPositions, alphaScope, { medicationProductId: 'med_atorvastatin_20' }).map(
+      filterStockPositions(demoStockPositions, alphaScope, {
+        medicationProductId: 'med_atorvastatin_20',
+      }).map((item) => item.id),
+      ['stock_alpha_overflow_atorvastatin']
+    )
+
+    assert.deepEqual(
+      filterStockPositions(demoStockPositions, alphaScope, { expirationWindowDays: 120 }).map(
+        (item) => item.id
+      ),
+      ['stock_alpha_main_amoxicillin']
+    )
+
+    assert.deepEqual(
+      filterStockPositions(demoStockPositions, alphaScope, { lowStockOnly: true }).map(
         (item) => item.id
       ),
       ['stock_alpha_overflow_atorvastatin']
     )
 
     assert.deepEqual(
-      filterStockPositions(demoStockPositions, alphaScope, { expirationWindowDays: 120 }).map((item) => item.id),
-      ['stock_alpha_main_amoxicillin']
-    )
-
-    assert.deepEqual(
-      filterStockPositions(demoStockPositions, alphaScope, { lowStockOnly: true }).map((item) => item.id),
-      ['stock_alpha_overflow_atorvastatin']
-    )
-
-    assert.deepEqual(
-      filterStockPositions(demoStockPositions, alphaScope, { staleOnly: true }).map((item) => item.id),
+      filterStockPositions(demoStockPositions, alphaScope, { staleOnly: true }).map(
+        (item) => item.id
+      ),
       ['stock_alpha_main_amoxicillin']
     )
   })
 
-  test('builds a response view with expiration, availability, and freshness metadata', async ({ assert }) => {
+  test('builds a response view with expiration, availability, and freshness metadata', async ({
+    assert,
+  }) => {
     const view = toStockPositionView(
       position({
         quantityOnHand: 12,

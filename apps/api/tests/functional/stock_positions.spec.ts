@@ -12,29 +12,31 @@ test.group('Stock positions', () => {
 
     response.assertStatus(200)
     assert.deepEqual(
-      response.body().data.map(
-        (stockPosition: {
-          id: string
-          siteId: string
-          medicationProductId: string
-          lotNumber: string
-          traceId: string
-          quantityOnHand: number
-          quantityReserved: number
-          availableQuantity: number
-          updatedAt: string
-        }) => ({
-          id: stockPosition.id,
-          siteId: stockPosition.siteId,
-          medicationProductId: stockPosition.medicationProductId,
-          lotNumber: stockPosition.lotNumber,
-          traceId: stockPosition.traceId,
-          quantityOnHand: stockPosition.quantityOnHand,
-          quantityReserved: stockPosition.quantityReserved,
-          availableQuantity: stockPosition.availableQuantity,
-          updatedAt: stockPosition.updatedAt,
-        }),
-      ),
+      response
+        .body()
+        .data.map(
+          (stockPosition: {
+            id: string
+            siteId: string
+            medicationProductId: string
+            lotNumber: string
+            traceId: string
+            quantityOnHand: number
+            quantityReserved: number
+            availableQuantity: number
+            updatedAt: string
+          }) => ({
+            id: stockPosition.id,
+            siteId: stockPosition.siteId,
+            medicationProductId: stockPosition.medicationProductId,
+            lotNumber: stockPosition.lotNumber,
+            traceId: stockPosition.traceId,
+            quantityOnHand: stockPosition.quantityOnHand,
+            quantityReserved: stockPosition.quantityReserved,
+            availableQuantity: stockPosition.availableQuantity,
+            updatedAt: stockPosition.updatedAt,
+          })
+        ),
       [
         {
           id: 'stock_alpha_main_amoxicillin',
@@ -93,21 +95,26 @@ test.group('Stock positions', () => {
     lowStockFiltered.assertStatus(200)
     staleFiltered.assertStatus(200)
 
-    assert.deepEqual(siteFiltered.body().data.map((item: { id: string }) => item.id), [
-      'stock_alpha_main_amoxicillin',
-    ])
-    assert.deepEqual(productFiltered.body().data.map((item: { id: string }) => item.id), [
-      'stock_alpha_overflow_atorvastatin',
-    ])
-    assert.deepEqual(expirationFiltered.body().data.map((item: { id: string }) => item.id), [
-      'stock_alpha_main_amoxicillin',
-    ])
-    assert.deepEqual(lowStockFiltered.body().data.map((item: { id: string }) => item.id), [
-      'stock_alpha_overflow_atorvastatin',
-    ])
-    assert.deepEqual(staleFiltered.body().data.map((item: { id: string }) => item.id), [
-      'stock_alpha_main_amoxicillin',
-    ])
+    assert.deepEqual(
+      siteFiltered.body().data.map((item: { id: string }) => item.id),
+      ['stock_alpha_main_amoxicillin']
+    )
+    assert.deepEqual(
+      productFiltered.body().data.map((item: { id: string }) => item.id),
+      ['stock_alpha_overflow_atorvastatin']
+    )
+    assert.deepEqual(
+      expirationFiltered.body().data.map((item: { id: string }) => item.id),
+      ['stock_alpha_main_amoxicillin']
+    )
+    assert.deepEqual(
+      lowStockFiltered.body().data.map((item: { id: string }) => item.id),
+      ['stock_alpha_overflow_atorvastatin']
+    )
+    assert.deepEqual(
+      staleFiltered.body().data.map((item: { id: string }) => item.id),
+      ['stock_alpha_main_amoxicillin']
+    )
   })
 
   test('keeps available quantity non-negative and exposes stale metadata only when applicable', async ({
@@ -117,7 +124,11 @@ test.group('Stock positions', () => {
     const response = await client.get('/api/v1/inventory/stock').bearerToken(tokenFor())
 
     response.assertStatus(200)
-    assert.isTrue(response.body().data.every((item: { availableQuantity: number }) => item.availableQuantity >= 0))
+    assert.isTrue(
+      response
+        .body()
+        .data.every((item: { availableQuantity: number }) => item.availableQuantity >= 0)
+    )
     assert.isTrue(Boolean(response.body().data[0].freshness))
     assert.isNull(response.body().data[1].freshness)
   })

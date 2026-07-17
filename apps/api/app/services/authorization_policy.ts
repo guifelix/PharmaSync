@@ -23,9 +23,9 @@ const privilegedPermissions: readonly Permission[] = [
 ]
 
 const rolePermissions: Record<WorkforceRole, readonly Permission[]> = {
-  operations: ['inventory:read', 'signals:read'],
-  compliance: ['audit:read', 'evidence:generate'],
-  integration: ['integration:health:read', 'quarantine:read', 'quarantine:reprocess'],
+  'operations': ['inventory:read', 'signals:read'],
+  'compliance': ['audit:read', 'evidence:generate'],
+  'integration': ['integration:health:read', 'quarantine:read', 'quarantine:reprocess'],
   'platform-admin': [...permissions],
 }
 

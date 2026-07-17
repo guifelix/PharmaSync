@@ -36,7 +36,9 @@ test.group('Inventory movement reference', () => {
     assert.equal(result.outboxMessage.payloadVersion, 1)
     assert.equal(result.outboxMessage.status, 'pending')
     assert.deepEqual(result.outboxEvent.payload.movements, [result.movement])
-    assert.deepEqual(result.outboxEvent.payload.updatedStockPositions, [result.updatedStockPosition])
+    assert.deepEqual(result.outboxEvent.payload.updatedStockPositions, [
+      result.updatedStockPosition,
+    ])
   })
 
   test('records dispense movements without allowing negative availability', async ({ assert }) => {

@@ -40,7 +40,9 @@ test.group('sites and organizations', () => {
     )
   })
 
-  test('active site helper does not leak same-key sites across organizations', async ({ assert }) => {
+  test('active site helper does not leak same-key sites across organizations', async ({
+    assert,
+  }) => {
     assert.deepEqual(
       activeSitesForTenant(demoSites, {
         organizationId: 'org_beta',
@@ -51,13 +53,7 @@ test.group('sites and organizations', () => {
   })
 })
 
-function tokenFor({
-  organizationId,
-  siteIds,
-}: {
-  organizationId: string
-  siteIds: string[]
-}) {
+function tokenFor({ organizationId, siteIds }: { organizationId: string; siteIds: string[] }) {
   return signLocalWorkforceToken({
     iss: 'https://auth.local.pharmasync.test',
     sub: `usr_${organizationId}_operations`,

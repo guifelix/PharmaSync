@@ -111,12 +111,16 @@ const demoStockPositionsSeed: StockPositionSeed[] = [
   },
 ] satisfies readonly StockPositionSeed[]
 
-export const demoStockPositions: StockPositionReference[] = demoStockPositionsSeed.map((position) => ({
-  ...position,
-  updatedAt: position.updatedAt.toISOString(),
-}))
+export const demoStockPositions: StockPositionReference[] = demoStockPositionsSeed.map(
+  (position) => ({
+    ...position,
+    updatedAt: position.updatedAt.toISOString(),
+  })
+)
 
-export function availableQuantity(stockPosition: Pick<StockPositionReference, 'quantityOnHand' | 'quantityReserved'>) {
+export function availableQuantity(
+  stockPosition: Pick<StockPositionReference, 'quantityOnHand' | 'quantityReserved'>
+) {
   ensureValidStockPosition(stockPosition)
   return stockPosition.quantityOnHand - stockPosition.quantityReserved
 }

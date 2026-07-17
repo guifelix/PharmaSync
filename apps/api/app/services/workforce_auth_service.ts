@@ -43,7 +43,10 @@ export function bearerTokenFromHeader(value: string | undefined) {
   return token
 }
 
-export function signLocalWorkforceToken(claims: WorkforceClaims, secret = env.get('AUTH_LOCAL_JWT_SECRET')) {
+export function signLocalWorkforceToken(
+  claims: WorkforceClaims,
+  secret = env.get('AUTH_LOCAL_JWT_SECRET')
+) {
   const header = encodeJson({ alg: 'HS256', typ: 'JWT' })
   const payload = encodeJson(claims)
   const signature = hmac(`${header}.${payload}`, secret)
@@ -63,7 +66,10 @@ export function verifyWorkforceToken(token: string, traceId: string) {
     return null
   }
 
-  const expectedSignature = hmac(`${encodedHeader}.${encodedPayload}`, env.get('AUTH_LOCAL_JWT_SECRET'))
+  const expectedSignature = hmac(
+    `${encodedHeader}.${encodedPayload}`,
+    env.get('AUTH_LOCAL_JWT_SECRET')
+  )
   if (!constantTimeEqual(signature, expectedSignature)) {
     return null
   }
@@ -71,7 +77,10 @@ export function verifyWorkforceToken(token: string, traceId: string) {
   return contextFromClaims(claims, traceId)
 }
 
-export function contextFromClaims(claims: WorkforceClaims, traceId: string): WorkforceAuthContext | null {
+export function contextFromClaims(
+  claims: WorkforceClaims,
+  traceId: string
+): WorkforceAuthContext | null {
   const audience = Array.isArray(claims.aud) ? claims.aud : claims.aud ? [claims.aud] : []
   const organizationId = claims.org_id ?? claims.organization_id
   const permittedSiteIds = claims.permitted_site_ids ?? claims.site_ids

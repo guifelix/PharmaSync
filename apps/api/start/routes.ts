@@ -25,7 +25,8 @@ const QuarantineReprocessingsController = () =>
 const RiskSignalsController = () => import('#controllers/risk_signals_controller')
 const SitesController = () => import('#controllers/sites_controller')
 const StockPositionsController = () => import('#controllers/stock_positions_controller')
-const WorkforceAuthContextController = () => import('#controllers/workforce_auth_context_controller')
+const WorkforceAuthContextController = () =>
+  import('#controllers/workforce_auth_context_controller')
 
 router.get('/', () => {
   return { hello: 'world' }
@@ -39,7 +40,9 @@ router
   .group(() => {
     router
       .group(() => {
-        router.get('context', [WorkforceAuthContextController, 'show']).use(middleware.workforceAuth())
+        router
+          .get('context', [WorkforceAuthContextController, 'show'])
+          .use(middleware.workforceAuth())
         router.post('signup', [controllers.NewAccount, 'store'])
         router.post('login', [controllers.AccessTokens, 'store'])
       })
@@ -57,9 +60,12 @@ router
 
     router
       .group(() => {
-        router
-          .get('stock', [StockPositionsController, 'index'])
-          .use(middleware.requirePermission({ permission: 'inventory:read', resource: 'inventory.stock' }))
+        router.get('stock', [StockPositionsController, 'index']).use(
+          middleware.requirePermission({
+            permission: 'inventory:read',
+            resource: 'inventory.stock',
+          })
+        )
       })
       .prefix('inventory')
       .use(middleware.workforceAuth())
@@ -88,7 +94,9 @@ router
       .group(() => {
         router
           .get('/', [QuarantineRecordsController, 'index'])
-          .use(middleware.requirePermission({ permission: 'quarantine:read', resource: 'quarantine' }))
+          .use(
+            middleware.requirePermission({ permission: 'quarantine:read', resource: 'quarantine' })
+          )
         router.post(':id/reprocessings', [QuarantineReprocessingsController, 'store']).use(
           middleware.requirePermission({
             permission: 'quarantine:reprocess',
