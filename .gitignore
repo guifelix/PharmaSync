@@ -1,0 +1,14 @@
+node_modules/
+.turbo/
+dist/
+build/
+.env
+.env.*
+!.env.example
+coverage/
+tmp/
+logs/
+*.log
+architecture/.structurizr/
+architecture/workspace.json
+apps/api/build/
