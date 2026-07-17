@@ -42,30 +42,108 @@ paths:
       responses:
         "202":
           description: Feed accepted for processing
-  /v1/inventory/stock:
+  /api/v1/integration/health:
+    get:
+      summary: View integration health
+      security:
+        - workforceBearer: []
+      responses:
+        "200":
+          description: Integration health status
+        "403":
+          description: Authenticated user lacks the required role permission
+  /api/v1/integration/mappings/{id}:
+    patch:
+      summary: Change an integration mapping
+      security:
+        - workforceBearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Integration mapping change accepted
+        "403":
+          description: Authenticated user lacks the required role permission
+  /api/v1/inventory/stock:
     get:
       summary: List current stock positions
+      security:
+        - workforceBearer: []
       responses:
         "200":
           description: Current stock positions
-  /v1/signals:
+        "403":
+          description: Authenticated user lacks the required role permission
+  /api/v1/signals:
     get:
       summary: List shortage, overstock, and expiration signals
+      security:
+        - workforceBearer: []
       responses:
         "200":
           description: Risk signals
-  /v1/quarantine:
+        "403":
+          description: Authenticated user lacks the required role permission
+  /api/v1/quarantine:
     get:
       summary: List quarantined integration payloads
+      security:
+        - workforceBearer: []
       responses:
         "200":
           description: Quarantine records
-  /v1/audit/events:
+        "403":
+          description: Authenticated user lacks the required role permission
+  /api/v1/quarantine/{id}/reprocessings:
+    post:
+      summary: Reprocess a quarantined payload
+      security:
+        - workforceBearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Reprocessing queued
+        "403":
+          description: Authenticated user lacks the required role permission
+  /api/v1/audit/events:
     get:
       summary: List auditable platform events
+      security:
+        - workforceBearer: []
       responses:
         "200":
           description: Audit events
+        "403":
+          description: Authenticated user lacks the required role permission
+  /api/v1/evidence/packages:
+    post:
+      summary: Generate an evidence package
+      security:
+        - workforceBearer: []
+      responses:
+        "200":
+          description: Evidence package generation queued
+        "403":
+          description: Authenticated user lacks the required role permission
+  /api/v1/configuration/access:
+    patch:
+      summary: Manage access configuration
+      security:
+        - workforceBearer: []
+      responses:
+        "200":
+          description: Configuration change accepted
+        "403":
+          description: Authenticated user lacks the required role permission
 components:
   securitySchemes:
     workforceBearer:

@@ -4,9 +4,18 @@
  */
 
 export const controllers = {
+  AccessConfiguration: () => import('#controllers/access_configuration_controller'),
   AccessTokens: () => import('#controllers/access_tokens_controller'),
+  AuditEvents: () => import('#controllers/audit_events_controller'),
+  EvidencePackages: () => import('#controllers/evidence_packages_controller'),
   Health: () => import('#controllers/health_controller'),
+  IntegrationHealth: () => import('#controllers/integration_health_controller'),
+  IntegrationMappings: () => import('#controllers/integration_mappings_controller'),
   NewAccount: () => import('#controllers/new_account_controller'),
   Profile: () => import('#controllers/profile_controller'),
+  QuarantineRecords: () => import('#controllers/quarantine_records_controller'),
+  QuarantineReprocessings: () => import('#controllers/quarantine_reprocessings_controller'),
+  RiskSignals: () => import('#controllers/risk_signals_controller'),
+  StockPositions: () => import('#controllers/stock_positions_controller'),
   WorkforceAuthContext: () => import('#controllers/workforce_auth_context_controller'),
 }

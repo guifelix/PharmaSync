@@ -46,5 +46,6 @@ router.use([
  */
 export const middleware = router.named({
   auth: () => import('#middleware/auth_middleware'),
+  requirePermission: () => import('#middleware/require_permission_middleware'),
   workforceAuth: () => import('#middleware/workforce_auth_middleware'),
 })

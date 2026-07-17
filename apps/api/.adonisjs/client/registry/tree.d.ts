@@ -24,4 +24,31 @@ export interface ApiDefinition {
       destroy: typeof routes['profile.access_tokens.destroy']
     }
   }
+  stockPositions: {
+    index: typeof routes['stock_positions.index']
+  }
+  riskSignals: {
+    index: typeof routes['risk_signals.index']
+  }
+  quarantineRecords: {
+    index: typeof routes['quarantine_records.index']
+  }
+  quarantineReprocessings: {
+    store: typeof routes['quarantine_reprocessings.store']
+  }
+  integrationHealth: {
+    show: typeof routes['integration_health.show']
+  }
+  integrationMappings: {
+    update: typeof routes['integration_mappings.update']
+  }
+  auditEvents: {
+    index: typeof routes['audit_events.index']
+  }
+  evidencePackages: {
+    store: typeof routes['evidence_packages.store']
+  }
+  accessConfiguration: {
+    update: typeof routes['access_configuration.update']
+  }
 }

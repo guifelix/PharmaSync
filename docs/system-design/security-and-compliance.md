@@ -7,11 +7,12 @@ Phase 1 security posture:
 - Required OIDC configuration names the issuer URL, client ID, API audience, JWKS discovery URL, and accepted claims.
 - Accepted workforce claims are `sub`, `iss`, `aud`, `exp`, `nbf`, `org_id` or `organization_id`, `site_ids` or `permitted_site_ids`, and `roles`.
 - The authenticated request context must expose user ID, organization ID, permitted site IDs, roles, and request trace ID.
-- Role-based access by organization, site, and responsibility.
+- Role-based access by organization, site, and responsibility. The Phase 1 permission matrix lives in [Permissions Matrix](permissions-matrix.md).
 - Tenant-aware data access in every inventory, signal, integration, and audit query.
 - Encryption in transit and at rest.
 - No patient-identifiable data required for the pilot.
 - Append-only audit events for imports, corrections, quarantine actions, exports, and configuration changes.
+- Authorization failures and allowed privileged actions produce structured audit logs with user, organization, role, permission, resource, and trace metadata until persisted audit events are introduced.
 
 Compliance stance:
 
