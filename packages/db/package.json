@@ -1,0 +1,12 @@
+{
+  "name": "@pharmasync/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "echo \"Lucid models and migrations live in apps/api for Phase 1\"",
+    "lint": "echo \"No standalone db package lint yet\"",
+    "test": "echo \"No standalone db package tests yet\"",
+    "typecheck": "echo \"No standalone db package typecheck yet\""
+  }
+}

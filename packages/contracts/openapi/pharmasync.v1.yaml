@@ -1,0 +1,42 @@
+openapi: 3.1.0
+info:
+  title: PharmaSync API
+  version: 0.1.0
+  description: Pilot API contract for inventory visibility, integration health, signals, and audit evidence.
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+  /v1/integration/feeds:
+    post:
+      summary: Submit a partner inventory feed
+      responses:
+        "202":
+          description: Feed accepted for processing
+  /v1/inventory/stock:
+    get:
+      summary: List current stock positions
+      responses:
+        "200":
+          description: Current stock positions
+  /v1/signals:
+    get:
+      summary: List shortage, overstock, and expiration signals
+      responses:
+        "200":
+          description: Risk signals
+  /v1/quarantine:
+    get:
+      summary: List quarantined integration payloads
+      responses:
+        "200":
+          description: Quarantine records
+  /v1/audit/events:
+    get:
+      summary: List auditable platform events
+      responses:
+        "200":
+          description: Audit events
