@@ -10,13 +10,13 @@ This folder contains two complementary diagram sources:
 Preferred with Podman:
 
 ```bash
-podman run --rm -it -p 8080:8080 -v "$PWD/architecture:/usr/local/structurizr:Z" docker.io/structurizr/structurizr local
+podman run --rm -it --user 0:0 -p 8080:8080 -v "$PWD/architecture:/usr/local/structurizr:Z" docker.io/structurizr/structurizr local
 ```
 
 Docker fallback:
 
 ```bash
-docker run --rm -it -p 8080:8080 -v "$PWD/architecture:/usr/local/structurizr" structurizr/structurizr local
+docker run --rm -it --user 0:0 -p 8080:8080 -v "$PWD/architecture:/usr/local/structurizr" structurizr/structurizr local
 ```
 
 Then open `http://localhost:8080`.
