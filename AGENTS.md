@@ -65,7 +65,15 @@ For any work that creates, modifies, or deletes project files, use this workflow
    - Resist accidental complexity from agent-noun abstractions. Before creating a `*Manager`, `*Service`, `*Handler`, `*Processor`, `*Generator`, or similar "thing that does the verb" class, ask whether the behavior belongs as an affordance on the domain object being changed, an action-named listener/job/command, or a plain function/invokable action. Use service-like classes when they genuinely coordinate a workflow, isolate an external dependency, or simplify testing; do not create them only to make code look abstract.
    - Keep trunk releasable: do not leave broken typechecks, failing tests, or half-applied migrations.
 
-6. **Contract and data discipline**
+6. **Refactoring and design quality**
+   - Treat design patterns as vocabulary, not goals. Do not introduce a pattern unless current code pressure justifies it.
+   - Before refactoring, name the smell or force being addressed: duplication, long method, large class/module, shotgun surgery, divergent change, primitive obsession, feature envy, inappropriate intimacy, speculative generality, or accidental complexity.
+   - Refactoring must preserve behavior. Prefer small mechanical steps with tests/typechecks green between meaningful changes.
+   - Do not hide unclear code behind comments. Prefer better names, smaller functions, clearer boundaries, and explicit domain language.
+   - Watch for antipatterns during implementation and review: god controllers, service-layer bloat, transaction script sprawl, anemic domain objects, over-generalized abstractions, and framework leakage into shared packages.
+   - Patterns are acceptable when they simplify the design: adapters for external systems, factories for complex construction, strategies for real interchangeable policies, and domain events for meaningful asynchronous workflows.
+
+7. **Contract and data discipline**
    - Prefer CRUD-shaped API/controller design. Before adding custom controller actions such as `publish`, `subscribe`, `reprocess`, `approve`, or `uploadImage`, ask whether the operation is really `index`, `show`, `store`, `update`, or `destroy` on a more specific resource such as `PublishedInventoryFeed`, `FeedReprocessing`, `ProductImage`, or `SiteMembership`.
    - Create more small, resource-focused controllers instead of growing large controllers with many custom actions or optional-parameter branches. Do not funnel distinct user intentions through one action and then reverse-engineer intent from route params; split nested resources, pivot/relationship resources, state-transition resources, and independently edited subresources into dedicated controllers when that makes the workflow clearer.
    - Update OpenAPI contracts before or alongside API behavior changes.
@@ -74,12 +82,12 @@ For any work that creates, modifies, or deletes project files, use this workflow
    - For integration work, preserve trace IDs, idempotency behavior, quarantine behavior, and audit evidence paths.
    - For regulated-data-adjacent work, minimize sensitive data, avoid PHI in fixtures, and audit security-relevant actions.
 
-7. **Validation before handoff**
+8. **Validation before handoff**
    - Run the narrowest relevant check first, then broader checks when the blast radius requires it.
    - Typical checks include `pnpm --filter <package> typecheck`, package tests, `pnpm typecheck`, API contract validation, migration checks, and UI build/accessibility checks when frontend behavior changes.
    - Record validation commands and results in the Backlog task notes.
 
-8. **Task finalization**
+9. **Task finalization**
    - Check acceptance criteria and Definition of Done through the Backlog CLI.
    - Add implementation notes and a final summary.
    - Move the task to `Done` only after the work is implemented, validated, documented, and ready to commit.
