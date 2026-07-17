@@ -1,19 +1,62 @@
 import {
   archivePartnerFeedSubmission,
-  normalizePartnerFeedSubmission,
+  parsePartnerFeedSubmission,
   randomTraceId,
 } from '#services/partner_feed_reference'
+import {
+  createPartnerFeedQuarantineRecords,
+  validatePartnerFeedSubmission,
+} from '#services/partner_feed_validation'
+import { appendQuarantineRecords } from '#services/quarantine_record_reference'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class PartnerFeedsController {
   async store({ request, response }: HttpContext) {
     const traceId = request.header('x-request-id')?.trim() || randomTraceId()
     const receivedAt = new Date()
+
     try {
       const input = request.all() as Record<string, unknown>
       const rawPayload = readRawPayload(input)
-      const submission = normalizePartnerFeedSubmission(input)
-      const archived = await archivePartnerFeedSubmission(submission, rawPayload, traceId, receivedAt)
+      const submission = parsePartnerFeedSubmission(input)
+      const archived = await archivePartnerFeedSubmission(
+        submission,
+        rawPayload,
+        traceId,
+        receivedAt
+      )
+      const validation = validatePartnerFeedSubmission(submission)
+      const quarantineRecords = createPartnerFeedQuarantineRecords(
+        submission,
+        archived.traceId,
+        archived.payloadHash,
+        archived.archivePath,
+        validation.issues,
+        receivedAt
+      )
+
+      await appendQuarantineRecords(quarantineRecords)
+
+      const issues = validation.issues.map((issue) => ({
+        code: issue.code,
+        category: issue.category,
+        fieldPath: issue.fieldPath,
+        message: issue.message,
+        sourceEventId: issue.sourceEventId,
+        rowIndex: issue.rowIndex,
+      }))
+
+      if (validation.acceptedMovements.length === 0) {
+        return response.unprocessableEntity({
+          data: {
+            status: 'rejected',
+            traceId: archived.traceId,
+            partnerId: archived.partnerId,
+            feedId: archived.feedId,
+            issues,
+          },
+        })
+      }
 
       return response.status(202).send({
         data: {
@@ -25,6 +68,9 @@ export default class PartnerFeedsController {
           archivePath: archived.archivePath,
           receivedAt: archived.receivedAt,
           format: archived.format,
+          acceptedCount: validation.acceptedMovements.length,
+          quarantinedCount: quarantineRecords.length,
+          issues,
         },
       })
     } catch (error) {
@@ -40,7 +86,7 @@ export default class PartnerFeedsController {
 }
 
 function readRawPayload(input: Record<string, unknown>) {
-  if (input.format === 'csv') {
+  if (input.format === 'csv' || input.csv !== undefined) {
     return String(input.csv ?? '')
   }
 

@@ -1,0 +1,18 @@
+{
+  "format": "json",
+  "partner_id": "partner_alpha",
+  "feed_id": "feed_alpha_001",
+  "submitted_at": "2026-07-17T12:00:00.000Z",
+  "movements": [
+    {
+      "source_event_id": "event-001",
+      "event_type": "receipt",
+      "site_code": "site_main",
+      "ndc": "0378615501",
+      "lot_number": "AMX-2026-08-A",
+      "expiration_date": "2026-08-15",
+      "quantity_delta": 25,
+      "occurred_at": "2026-07-17T12:00:00.000Z"
+    }
+  ]
+}

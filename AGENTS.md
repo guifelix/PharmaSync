@@ -92,7 +92,7 @@ For any work that creates, modifies, or deletes project files, use this workflow
    - Check acceptance criteria and Definition of Done through the Backlog CLI.
    - Add implementation notes and a final summary.
    - Move the task to `Done` only after the work is implemented, validated, documented, and ready to commit.
-   - Commit the completed task as an atomic Conventional Commit. Do not mix unrelated task work in the same commit.
+   - Commit the completed task as an atomic Conventional Commit using (.agents/skills/conventional-commit-message/SKILL.md). Do not mix unrelated task work in the same commit.
 
 
 </CRITICAL_INSTRUCTION>

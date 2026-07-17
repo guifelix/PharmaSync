@@ -1,0 +1,2 @@
+partner_id,source_event_id,event_type,site_code,ndc,lot_number,expiration_date,quantity_delta,occurred_at,source_location,destination_location
+partner_alpha,event-002,receipt,site_overflow,6050526713,ATO-2027-01-B,2027-01-31,14,2026-07-17T12:00:00.000Z,warehouse-a,pharmacy-b

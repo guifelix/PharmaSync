@@ -1,0 +1,70 @@
+{
+  "packages": {
+    "apps/api": {
+      "release-type": "node",
+      "package-name": "@pharmasync/api",
+      "changelog-path": "apps/api/CHANGELOG.md",
+      "version-file": "apps/api/package.json"
+    },
+    "apps/web": {
+      "release-type": "node",
+      "package-name": "@pharmasync/web",
+      "changelog-path": "apps/web/CHANGELOG.md",
+      "version-file": "apps/web/package.json"
+    },
+    "apps/worker": {
+      "release-type": "node",
+      "package-name": "@pharmasync/worker",
+      "changelog-path": "apps/worker/CHANGELOG.md",
+      "version-file": "apps/worker/package.json"
+    },
+    "packages/config": {
+      "release-type": "node",
+      "package-name": "@pharmasync/config",
+      "changelog-path": "packages/config/CHANGELOG.md",
+      "version-file": "packages/config/package.json"
+    },
+    "packages/contracts": {
+      "release-type": "node",
+      "package-name": "@pharmasync/contracts",
+      "changelog-path": "packages/contracts/CHANGELOG.md",
+      "version-file": "packages/contracts/package.json"
+    },
+    "packages/db": {
+      "release-type": "node",
+      "package-name": "@pharmasync/db",
+      "changelog-path": "packages/db/CHANGELOG.md",
+      "version-file": "packages/db/package.json"
+    },
+    "packages/domain": {
+      "release-type": "node",
+      "package-name": "@pharmasync/domain",
+      "changelog-path": "packages/domain/CHANGELOG.md",
+      "version-file": "packages/domain/package.json"
+    },
+    "packages/integration": {
+      "release-type": "node",
+      "package-name": "@pharmasync/integration",
+      "changelog-path": "packages/integration/CHANGELOG.md",
+      "version-file": "packages/integration/package.json"
+    },
+    "packages/observability": {
+      "release-type": "node",
+      "package-name": "@pharmasync/observability",
+      "changelog-path": "packages/observability/CHANGELOG.md",
+      "version-file": "packages/observability/package.json"
+    },
+    "packages/testkit": {
+      "release-type": "node",
+      "package-name": "@pharmasync/testkit",
+      "changelog-path": "packages/testkit/CHANGELOG.md",
+      "version-file": "packages/testkit/package.json"
+    }
+  },
+  "plugins": ["release-please-plugin"],
+  "release-type": "node",
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "draft": false,
+  "prerelease": false
+}

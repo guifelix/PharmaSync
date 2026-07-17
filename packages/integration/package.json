@@ -8,13 +8,15 @@
   "scripts": {
     "build": "tsc --noEmit",
     "lint": "tsc --noEmit",
-    "test": "node --test",
+    "test": "vitest run --passWithNoTests",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@pharmasync/domain": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.7.2"
+    "@vitest/coverage-v8": "^4.1.10",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.10"
   }
 }

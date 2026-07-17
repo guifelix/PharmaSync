@@ -56,6 +56,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PartnerFeedAcceptedResponse"
+        "422":
+          description: Feed rejected with structured validation issues
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PartnerFeedRejectedResponse"
   /api/v1/integration/health:
     get:
       summary: View integration health
@@ -220,7 +226,17 @@ components:
   schemas:
     WorkforceAuthContext:
       type: object
-      required: [userId, organizationId, permittedSiteIds, roles, traceId, subject, issuer, audience]
+      required:
+        [
+          userId,
+          organizationId,
+          permittedSiteIds,
+          roles,
+          traceId,
+          subject,
+          issuer,
+          audience,
+        ]
       additionalProperties: false
       properties:
         userId:
@@ -335,7 +351,19 @@ components:
       properties:
         data:
           type: object
-          required: [status, traceId, partnerId, feedId, payloadHash, archivePath, receivedAt, format]
+          required:
+            [
+              status,
+              traceId,
+              partnerId,
+              feedId,
+              payloadHash,
+              archivePath,
+              receivedAt,
+              format,
+              acceptedCount,
+              quarantinedCount,
+            ]
           additionalProperties: false
           properties:
             status:
@@ -357,6 +385,66 @@ components:
             format:
               type: string
               enum: [csv, json]
+            acceptedCount:
+              type: integer
+            quarantinedCount:
+              type: integer
+            issues:
+              type: array
+              items:
+                $ref: "#/components/schemas/PartnerFeedValidationIssue"
+    PartnerFeedRejectedResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [status, traceId, partnerId, feedId, issues]
+          additionalProperties: false
+          properties:
+            status:
+              type: string
+              enum: [rejected]
+            traceId:
+              type: string
+            partnerId:
+              type: string
+            feedId:
+              type: string
+            issues:
+              type: array
+              items:
+                $ref: "#/components/schemas/PartnerFeedValidationIssue"
+    PartnerFeedValidationIssue:
+      type: object
+      required: [code, category, fieldPath, message, rowIndex]
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+          enum:
+            - MISSING_REQUIRED_FIELD
+            - INVALID_DATE
+            - INVALID_QUANTITY
+            - UNKNOWN_SITE
+            - UNKNOWN_PRODUCT
+            - INVALID_EVENT_TYPE
+            - DUPLICATE_EVENT
+            - CONFLICTING_DUPLICATE
+        category:
+          type: string
+          enum: [schema, reference-data, business-rule, duplicate]
+        fieldPath:
+          type: string
+        message:
+          type: string
+        sourceEventId:
+          type:
+            - string
+            - "null"
+        rowIndex:
+          type: integer
     MedicationProduct:
       type: object
       required:
@@ -425,7 +513,8 @@ components:
               type: string
     Site:
       type: object
-      required: [siteKey, organizationId, name, type, status, city, region, country]
+      required:
+        [siteKey, organizationId, name, type, status, city, region, country]
       additionalProperties: false
       properties:
         siteKey:
@@ -569,7 +658,24 @@ components:
               type: string
     QuarantineRecord:
       type: object
-      required: [id, organizationId, siteId, traceId, reason]
+      required:
+        [
+          id,
+          organizationId,
+          siteId,
+          partnerId,
+          feedId,
+          traceId,
+          payloadHash,
+          reasonCode,
+          reasonCategory,
+          reasonMessage,
+          fieldPath,
+          sourceEventId,
+          rawPayloadUri,
+          status,
+          createdAt,
+        ]
       additionalProperties: false
       properties:
         id:
@@ -577,11 +683,47 @@ components:
         organizationId:
           type: string
         siteId:
+          type:
+            - string
+            - "null"
+        partnerId:
+          type: string
+        feedId:
           type: string
         traceId:
           type: string
-        reason:
+        payloadHash:
           type: string
+        reasonCode:
+          type: string
+          enum:
+            - MISSING_REQUIRED_FIELD
+            - INVALID_DATE
+            - INVALID_QUANTITY
+            - UNKNOWN_SITE
+            - UNKNOWN_PRODUCT
+            - INVALID_EVENT_TYPE
+            - DUPLICATE_EVENT
+            - CONFLICTING_DUPLICATE
+        reasonCategory:
+          type: string
+          enum: [schema, reference-data, business-rule, duplicate]
+        reasonMessage:
+          type: string
+        fieldPath:
+          type: string
+        sourceEventId:
+          type:
+            - string
+            - "null"
+        rawPayloadUri:
+          type: string
+        status:
+          type: string
+          enum: [quarantined]
+        createdAt:
+          type: string
+          format: date-time
     QuarantineRecordsResponse:
       type: object
       required: [data, meta]

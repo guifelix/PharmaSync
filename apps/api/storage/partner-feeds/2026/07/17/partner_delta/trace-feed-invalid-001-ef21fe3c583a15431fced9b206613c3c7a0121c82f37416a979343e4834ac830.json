@@ -1,0 +1,18 @@
+{
+  "format": "json",
+  "partner_id": "partner_delta",
+  "feed_id": "feed_delta_001",
+  "submitted_at": "not-a-date",
+  "movements": [
+    {
+      "source_event_id": null,
+      "event_type": "unknown",
+      "site_code": "site_missing",
+      "ndc": "9999999999",
+      "lot_number": null,
+      "expiration_date": "not-a-date",
+      "quantity_delta": 0,
+      "occurred_at": "bad-timestamp"
+    }
+  ]
+}

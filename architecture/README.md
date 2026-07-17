@@ -7,13 +7,7 @@ This folder contains two complementary diagram sources:
 
 ## View with Structurizr locally
 
-Preferred with Podman:
-
-```bash
-podman run --rm -it --user 0:0 -p 8080:8080 -v "$PWD/architecture:/usr/local/structurizr:Z" docker.io/structurizr/structurizr local
-```
-
-Docker fallback:
+Docker:
 
 ```bash
 docker run --rm -it --user 0:0 -p 8080:8080 -v "$PWD/architecture:/usr/local/structurizr" structurizr/structurizr local
@@ -24,14 +18,6 @@ Then open `http://localhost:8080`.
 ## Validate Structurizr views
 
 Validated locally with Docker:
-
-Preferred with Podman:
-
-```bash
-podman run --rm -v "$PWD/architecture:/workspace:Z" docker.io/structurizr/cli validate -workspace /workspace/workspace.dsl
-```
-
-Docker fallback:
 
 ```bash
 docker run --rm -v "$PWD/architecture:/workspace" structurizr/cli validate -workspace /workspace/workspace.dsl
@@ -85,4 +71,4 @@ docker run --rm -v "$PWD:/workspace" -w /workspace terrastruct/d2 architecture/d
 
 - `architecture/workspace.dsl` validated with `structurizr/cli` via Docker.
 - All direct D2 files rendered successfully to SVG in `architecture/out/`.
-- Podman is preferred for local runs when available; Docker fallback works with the same volume mount and `local` command.
+- Docker is the supported local runtime in this workspace. Podman rootless mounts can fail on Structurizr's generated `.structurizr` cache.

@@ -12,15 +12,33 @@
     "dev:web": "pnpm --filter @pharmasync/web dev",
     "dev:worker": "pnpm --filter @pharmasync/worker dev",
     "lint": "turbo run lint",
+    "lint:root": "eslint . --ext .js,.ts,.json",
+    "knip": "knip",
+    "depcruise": "depcruise --validate .dependency-cruiser.json",
+    "prepare": "lefthook install",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "services:down": "docker compose -f infra/local/docker-compose.yml down",
     "services:ps": "docker compose -f infra/local/docker-compose.yml ps",
     "services:up": "docker compose --env-file .env -f infra/local/docker-compose.yml up -d",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
-    "format": "prettier --check ."
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "lint-staged": {
+    "*.{js,cjs,mjs,ts,tsx,vue,json,md,yml,yaml,css,scss,html}": "prettier --write",
+    "apps/api/**/*.{js,ts}": "pnpm --filter @pharmasync/api exec eslint --fix",
+    "apps/web/**/*.{js,ts,vue}": "pnpm --filter @pharmasync/web exec eslint --fix"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
     "@types/node": "^26.1.1",
+    "dependency-cruiser": "^16.10.4",
+    "eslint-plugin-unicorn": "^56.0.1",
+    "knip": "^5.88.1",
+    "lefthook": "^2.1.10",
+    "lint-staged": "^17.0.8",
     "prettier": "^3.4.2",
     "turbo": "^2.3.3",
     "typescript": "^5.7.2"
