@@ -30,6 +30,9 @@ export interface ApiDefinition {
   riskSignals: {
     index: typeof routes['risk_signals.index']
   }
+  medicationProducts: {
+    index: typeof routes['medication_products.index']
+  }
   quarantineRecords: {
     index: typeof routes['quarantine_records.index']
   }

@@ -54,6 +54,12 @@ const routes = {
     tokens: [{"old":"/api/v1/signals","type":0,"val":"api","end":""},{"old":"/api/v1/signals","type":0,"val":"v1","end":""},{"old":"/api/v1/signals","type":0,"val":"signals","end":""}],
     types: placeholder as Registry['risk_signals.index']['types'],
   },
+  'medication_products.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/v1/medication-products',
+    tokens: [{"old":"/api/v1/medication-products","type":0,"val":"api","end":""},{"old":"/api/v1/medication-products","type":0,"val":"v1","end":""},{"old":"/api/v1/medication-products","type":0,"val":"medication-products","end":""}],
+    types: placeholder as Registry['medication_products.index']['types'],
+  },
   'quarantine_records.index': {
     methods: ["GET","HEAD"],
     pattern: '/api/v1/quarantine',

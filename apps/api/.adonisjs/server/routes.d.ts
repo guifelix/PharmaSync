@@ -12,6 +12,7 @@ export type ScannedRoutes = {
     'profile.access_tokens.destroy': { paramsTuple?: []; params?: {} }
     'stock_positions.index': { paramsTuple?: []; params?: {} }
     'risk_signals.index': { paramsTuple?: []; params?: {} }
+    'medication_products.index': { paramsTuple?: []; params?: {} }
     'quarantine_records.index': { paramsTuple?: []; params?: {} }
     'quarantine_reprocessings.store': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'integration_health.show': { paramsTuple?: []; params?: {} }
@@ -26,6 +27,7 @@ export type ScannedRoutes = {
     'profile.profile.show': { paramsTuple?: []; params?: {} }
     'stock_positions.index': { paramsTuple?: []; params?: {} }
     'risk_signals.index': { paramsTuple?: []; params?: {} }
+    'medication_products.index': { paramsTuple?: []; params?: {} }
     'quarantine_records.index': { paramsTuple?: []; params?: {} }
     'integration_health.show': { paramsTuple?: []; params?: {} }
     'audit_events.index': { paramsTuple?: []; params?: {} }
@@ -36,6 +38,7 @@ export type ScannedRoutes = {
     'profile.profile.show': { paramsTuple?: []; params?: {} }
     'stock_positions.index': { paramsTuple?: []; params?: {} }
     'risk_signals.index': { paramsTuple?: []; params?: {} }
+    'medication_products.index': { paramsTuple?: []; params?: {} }
     'quarantine_records.index': { paramsTuple?: []; params?: {} }
     'integration_health.show': { paramsTuple?: []; params?: {} }
     'audit_events.index': { paramsTuple?: []; params?: {} }

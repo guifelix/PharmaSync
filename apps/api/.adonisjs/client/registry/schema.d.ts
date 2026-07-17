@@ -103,6 +103,18 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/risk_signals_controller').default['index']>>>
     }
   }
+  'medication_products.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/v1/medication-products'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/medication_products_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/medication_products_controller').default['index']>>>
+    }
+  }
   'quarantine_records.index': {
     methods: ["GET","HEAD"]
     pattern: '/api/v1/quarantine'

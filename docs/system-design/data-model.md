@@ -4,7 +4,7 @@ Core entities:
 
 - Organization: tenant boundary for a distributor, facility, or program.
 - Site: physical or logical location where inventory is held. Sites belong to one organization.
-- Medication Product: public reference product, seeded from FDA/openFDA NDC data where possible.
+- Medication Product: public reference product, seeded from FDA/openFDA NDC data where possible. Products include the source NDC, normalized NDC, proprietary and nonproprietary names, dosage form, route, labeler, product type, marketing category, active ingredient, strength, and source.
 - Lot: product lot with lot number and expiration date. Lots are visible only through organization-owned stock and movement records.
 - Stock Position: current inventory quantity for a site/product/lot. Stock positions are organization-owned and site-scoped.
 - Inventory Movement: receipt, dispense, transfer, or correction event. Movements are organization-owned and site-scoped when a site applies.
@@ -22,5 +22,12 @@ Tenant-owned query rules:
 - Site ID is mandatory for site-level inventory records and optional for organization-level audit/configuration records.
 - Query code must filter by organization first, then by permitted site when a site ID is present.
 - Public medication reference data may be shared across organizations, but tenant-owned joins must still apply organization/site scope.
+
+Medication product lookup rules:
+
+- Normalize NDC lookup values by removing punctuation before search and duplicate checks.
+- Enforce uniqueness on normalized NDC.
+- Support lookup by normalized NDC, proprietary name, nonproprietary name, active ingredient, and labeler.
+- Seed representative public/demo medication product data for local pilot usage before partner feed mapping depends on it.
 
 Phase 1 must avoid patient-identifiable data. Dispense events should be synthetic or aggregated.

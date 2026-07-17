@@ -17,6 +17,7 @@ const AuditEventsController = () => import('#controllers/audit_events_controller
 const EvidencePackagesController = () => import('#controllers/evidence_packages_controller')
 const IntegrationHealthController = () => import('#controllers/integration_health_controller')
 const IntegrationMappingsController = () => import('#controllers/integration_mappings_controller')
+const MedicationProductsController = () => import('#controllers/medication_products_controller')
 const QuarantineRecordsController = () => import('#controllers/quarantine_records_controller')
 const QuarantineReprocessingsController = () =>
   import('#controllers/quarantine_reprocessings_controller')
@@ -63,6 +64,16 @@ router
       .get('signals', [RiskSignalsController, 'index'])
       .use(middleware.workforceAuth())
       .use(middleware.requirePermission({ permission: 'signals:read', resource: 'signals' }))
+
+    router
+      .get('medication-products', [MedicationProductsController, 'index'])
+      .use(middleware.workforceAuth())
+      .use(
+        middleware.requirePermission({
+          permission: 'inventory:read',
+          resource: 'medication-products',
+        })
+      )
 
     router
       .group(() => {

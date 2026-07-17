@@ -78,6 +78,28 @@ paths:
           description: Current stock positions
         "403":
           description: Authenticated user lacks the required role permission
+  /api/v1/medication-products:
+    get:
+      summary: Search medication product reference data
+      description: Looks up public medication reference products by NDC or descriptive name fields.
+      security:
+        - workforceBearer: []
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+          description: NDC fragment or product/name/ingredient/labeler search term.
+      responses:
+        "200":
+          description: Medication products
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MedicationProductsResponse"
+        "403":
+          description: Authenticated user lacks the required role permission
   /api/v1/signals:
     get:
       summary: List shortage, overstock, and expiration signals
@@ -186,6 +208,72 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/WorkforceAuthContext"
+    MedicationProduct:
+      type: object
+      required:
+        - id
+        - ndc
+        - normalizedNdc
+        - proprietaryName
+        - nonproprietaryName
+        - dosageForm
+        - route
+        - labelerName
+        - productType
+        - marketingCategory
+        - activeIngredient
+        - strength
+        - source
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+        ndc:
+          type: string
+        normalizedNdc:
+          type: string
+        proprietaryName:
+          type: string
+        nonproprietaryName:
+          type: string
+        dosageForm:
+          type: string
+        route:
+          type: string
+        labelerName:
+          type: string
+        productType:
+          type: string
+        marketingCategory:
+          type: string
+        activeIngredient:
+          type: string
+        strength:
+          type: string
+        source:
+          type: string
+    MedicationProductsResponse:
+      type: object
+      required: [data, meta]
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MedicationProduct"
+        meta:
+          type: object
+          required: [query, organizationId, traceId]
+          additionalProperties: false
+          properties:
+            query:
+              type:
+                - string
+                - "null"
+            organizationId:
+              type: string
+            traceId:
+              type: string
     HealthStatus:
       type: string
       enum: [up, down]

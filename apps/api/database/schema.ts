@@ -63,3 +63,38 @@ export class WorkerHeartbeatSchema extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 }
+
+export class MedicationProductSchema extends BaseModel {
+  static $columns = ['activeIngredient', 'createdAt', 'dosageForm', 'id', 'labelerName', 'marketingCategory', 'ndc', 'nonproprietaryName', 'normalizedNdc', 'productType', 'proprietaryName', 'route', 'source', 'strength', 'updatedAt'] as const
+  $columns = MedicationProductSchema.$columns
+  @column()
+  declare activeIngredient: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare dosageForm: string
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare labelerName: string
+  @column()
+  declare marketingCategory: string
+  @column()
+  declare ndc: string
+  @column()
+  declare nonproprietaryName: string
+  @column()
+  declare normalizedNdc: string
+  @column()
+  declare productType: string
+  @column()
+  declare proprietaryName: string
+  @column()
+  declare route: string
+  @column()
+  declare source: string
+  @column()
+  declare strength: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
