@@ -30,6 +30,7 @@ async function loadModel() {
       theme: props.theme === "dark" ? "dark" : "light",
       grid: true,
       fit: "contain",
+      layoutMissingDi: "all",
     });
   } catch (e: any) {
     container.value.textContent = `Failed to load model: ${e.message}`;

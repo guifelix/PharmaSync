@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from "vue";
+import { ref, computed, onMounted } from "vue";
 import type { ModelEntry } from "./types";
 import ModelCanvas from "./ModelCanvas.vue";
+import DmnCanvas from "./DmnCanvas.vue";
 
 const models = ref<ModelEntry[]>([]);
 const search = ref("");
 const selectedId = ref<string | null>(null);
-const theme = ref<"light" | "dark">("dark");
+const theme = ref<"light" | "dark">("light");
 
 onMounted(async () => {
   const res = await fetch("/models.json");
@@ -56,7 +57,7 @@ function toggleTheme() {
   <div class="app" :class="theme">
     <aside class="sidebar">
       <div class="sidebar-header">
-        <h1>BPMN Viewer</h1>
+        <h1>Model Viewer</h1>
         <span class="badge">{{ models.length }} models</span>
         <button
           class="theme-btn"
@@ -92,6 +93,10 @@ function toggleTheme() {
               :class="{ active: selectedId === m.id }"
               @click="select(m.id)"
             >
+              <span v-if="m.category === 'dmn'" class="type-badge dmn"
+                >DMN</span
+              >
+              <span v-else class="type-badge bpmn">BPMN</span>
               {{ m.name }}
             </button>
           </div>
@@ -101,14 +106,19 @@ function toggleTheme() {
 
     <main class="canvas-area">
       <ModelCanvas
-        v-if="selectedModel"
+        v-if="selectedModel && selectedModel.category !== 'dmn'"
+        :key="selectedModel.id"
+        :model-id="selectedModel.id"
+        :theme="theme"
+      />
+      <DmnCanvas
+        v-else-if="selectedModel && selectedModel.category === 'dmn'"
         :key="selectedModel.id"
         :model-id="selectedModel.id"
         :theme="theme"
       />
       <div v-else class="placeholder">
         <p>Select a model from the sidebar</p>
-        <p class="hint">All 56 process models are available</p>
       </div>
     </main>
   </div>
@@ -122,7 +132,7 @@ function toggleTheme() {
   margin: 0;
   padding: 0;
 }
-
+/**
 :root {
   --bg: #0f1117;
   --surface: #1a1d27;
@@ -135,6 +145,17 @@ function toggleTheme() {
 }
 
 .app.light {
+  --bg: #f5f6fa;
+  --surface: #ffffff;
+  --border: #dde0e8;
+  --text: #1a1d27;
+  --text-dim: #6b7084;
+  --accent: #6244d7;
+  --accent-hover: #7558e8;
+  --active-bg: #eeeaff;
+}
+ */
+:root {
   --bg: #f5f6fa;
   --surface: #ffffff;
   --border: #dde0e8;
@@ -291,6 +312,37 @@ body {
   font-weight: 500;
 }
 
+.type-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-right: 6px;
+  vertical-align: middle;
+  letter-spacing: 0.3px;
+}
+
+.type-badge.bpmn {
+  background: #2d6a4f;
+  color: #d8f3dc;
+}
+
+.type-badge.dmn {
+  background: #7b2d8b;
+  color: #f0d9fa;
+}
+
+.app.light .type-badge.bpmn {
+  background: #d8f3dc;
+  color: #1b4332;
+}
+
+.app.light .type-badge.dmn {
+  background: #f0d9fa;
+  color: #4a0e4f;
+}
+
 /* Canvas area */
 .canvas-area {
   flex: 1;
@@ -306,9 +358,5 @@ body {
   height: 100%;
   gap: 8px;
   color: var(--text-dim);
-}
-
-.placeholder .hint {
-  font-size: 13px;
 }
 </style>
