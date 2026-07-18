@@ -1,36 +1,63 @@
-# PharmaSync Protocol POC
+# PharmaSync Protocol
 
-Pilot-ready reference system for PharmaSync Protocol, focused on pharmaceutical inventory integration, operational visibility, shortage/expiration signals, and compliance evidence.
+PharmaSync is a work-in-progress pharmaceutical platform for real-time inventory integration, traceability, operational monitoring, and compliance evidence.
 
-## What is included
+The intended product direction is a unified system that helps reduce medication waste, improve supply-chain visibility, and support coordinated operations across pharmaceutical workflows.
 
-- `apps/` - Deployable web, API, and worker applications.
-- `packages/` - Shared domain, integration, contracts, database, configuration, observability, and testkit packages.
-- `infra/` - Local and AWS infrastructure foundations.
-- `docs/solution-design.md` - POC scope, architecture rationale, implementation phases, risks, and success metrics.
-- `docs/adr/` - Indexed Architecture Decision Records and ADR template.
-- `docs/system-design/` - Production system design notes.
-- `architecture/workspace.dsl` - Structurizr DSL model with C4 context, container, component, dynamic, and deployment views.
-- `architecture/d2/context.d2` - D2 C4-style system context diagram.
-- `architecture/d2/container.d2` - D2 C4-style container diagram.
-- `architecture/d2/component-inventory-api.d2` - D2 component view for the Inventory API.
-- `architecture/d2/component-integration-gateway.d2` - D2 component view for the Integration Gateway.
-- `architecture/README.md` - Local viewing and export commands.
+## Current Status
 
-## Development
+This repository is actively under development.
+
+- The core monorepo structure is in place.
+- The API, web app, worker, and shared packages are scaffolded.
+- Architecture and system-design docs are maintained alongside the code.
+- Backlog items track the delivery slices and their dependencies.
+- The current implementation is the foundation of a larger platform, not the full product.
+
+## What This Project Covers
+
+- Pharmaceutical inventory intake and canonicalization
+- Lot, expiration, and stock position tracking
+- Outbox-backed event propagation
+- Operational visibility and auditability
+- Compliance evidence capture and packaging
+- Shared contracts, architecture decisions, and process models
+
+Planned product capabilities include:
+
+- An integrated drug inventory and control system
+- A secure training experience for pharmaceutical representatives
+- Automated system integrations and API-based connectivity
+- Approval, auditing, and reporting support for regulated workflows
+
+## Repository Layout
+
+- `apps/` - Deployable applications: API, web, and worker
+- `packages/` - Shared domain, contracts, integration, configuration, observability, and test utilities
+- `infra/` - Local and cloud infrastructure foundations
+- `architecture/` - Structurizr C4 model, D2 diagrams, and local rendering guidance
+- `docs/` - ADRs, solution design, and system-design notes
+- `backlog/` - Structured delivery tasks and milestones
+- `tools/` - Supporting tools and viewers
+
+## Design References
+
+Start here when you need the intended shape of the system:
+
+- [Solution design](docs/solution-design.md)
+- [Architecture README](architecture/README.md)
+- [ADRs](docs/adr/README.md)
+- [System design docs](docs/system-design/)
+- [Process model docs](architecture/processes/README.md)
+
+## Local Development
 
 Prerequisites:
 
-- Node.js and pnpm matching `package.json`.
-- Docker or Podman-compatible Docker CLI for local Postgres and MinIO.
-- A root env file for local services and worker configuration.
-- A local API env file at `apps/api/.env`. Start from `apps/api/.env.example`, then generate an Adonis app key:
-
-```bash
-cp .env.example .env
-cp apps/api/.env.example apps/api/.env
-pnpm --filter @pharmasync/api exec node ace generate:key
-```
+- Node.js and pnpm versions compatible with `package.json`
+- Docker or Podman-compatible Docker CLI for local services
+- A root `.env` file for shared local settings
+- `apps/api/.env` based on `apps/api/.env.example`
 
 Install dependencies:
 
@@ -38,26 +65,19 @@ Install dependencies:
 pnpm install
 ```
 
-Local services:
+Start local services:
 
 ```bash
 pnpm services:up
-pnpm services:ps
 ```
 
-Run database migrations:
-
-```bash
-pnpm --filter @pharmasync/api exec node ace migration:run --force
-```
-
-Run the full local stack:
+Run the full stack:
 
 ```bash
 pnpm dev
 ```
 
-This starts:
+The stack includes:
 
 - API: `http://localhost:3333`
 - Web app: `http://localhost:5173`
@@ -66,24 +86,11 @@ This starts:
 - MinIO API: `http://localhost:9000`
 - MinIO console: `http://localhost:9001`
 
-Targeted dev commands:
+Useful checks:
 
 ```bash
-pnpm dev:api
-pnpm dev:web
-pnpm dev:worker
-```
-
-Basic validation:
-
-```bash
-curl -i http://localhost:3333
-curl -I http://localhost:5173
 pnpm typecheck
-```
-
-Stop local services:
-
-```bash
-pnpm services:down
+pnpm lint
+pnpm test
+pnpm build
 ```
