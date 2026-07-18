@@ -1,11 +1,11 @@
 ---
 id: TASK-004.03
 title: Map partner records to canonical events
-status: In Progress
+status: Done
 assignee:
   - '@felix'
 created_date: '2026-07-17 02:22'
-updated_date: '2026-07-18 18:19'
+updated_date: '2026-07-18 18:21'
 labels:
   - story
   - integration
