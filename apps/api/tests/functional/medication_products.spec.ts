@@ -14,6 +14,7 @@ test.group('Medication products', () => {
 
   test('deduplicates products by normalized NDC', async ({ assert }) => {
     const first = medicationProduct({
+      productId: 'med_humalog_100',
       ndc: '0002-8215-01',
       proprietaryName: 'Humalog',
       nonproprietaryName: 'Insulin Lispro',
@@ -37,6 +38,7 @@ test.group('Medication products', () => {
   test('searches by NDC and product name fields', async ({ assert }) => {
     const products = [
       medicationProduct({
+        productId: 'med_amoxicillin_500',
         ndc: '0378-6155-01',
         proprietaryName: 'Amoxicillin',
         nonproprietaryName: 'Amoxicillin',
@@ -49,6 +51,7 @@ test.group('Medication products', () => {
         strength: '500 mg',
       }),
       medicationProduct({
+        productId: 'med_atorvastatin_20',
         ndc: '60505-2671-3',
         proprietaryName: 'Atorvastatin Calcium',
         nonproprietaryName: 'Atorvastatin Calcium',

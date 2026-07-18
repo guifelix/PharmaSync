@@ -8,6 +8,7 @@ import {
   validatePartnerFeedSubmission,
 } from '#services/partner_feed_validation'
 import { appendQuarantineRecords } from '#services/quarantine_record_reference'
+import { appendCanonicalEvents, mapAcceptedMovements } from '#services/partner_feed_mapping'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class PartnerFeedsController {
@@ -26,7 +27,7 @@ export default class PartnerFeedsController {
         receivedAt
       )
       const validation = validatePartnerFeedSubmission(submission)
-      const quarantineRecords = createPartnerFeedQuarantineRecords(
+      const validationQuarantineRecords = createPartnerFeedQuarantineRecords(
         submission,
         archived.traceId,
         archived.payloadHash,
@@ -35,7 +36,23 @@ export default class PartnerFeedsController {
         receivedAt
       )
 
-      await appendQuarantineRecords(quarantineRecords)
+      const mappingResult = mapAcceptedMovements(
+        validation.acceptedMovements,
+        archived.traceId,
+        archived.partnerId,
+        archived.feedId,
+        archived.payloadHash,
+        archived.archivePath,
+        receivedAt
+      )
+
+      const allQuarantineRecords = [
+        ...validationQuarantineRecords,
+        ...mappingResult.quarantineRecords,
+      ]
+
+      await appendQuarantineRecords(allQuarantineRecords)
+      await appendCanonicalEvents(mappingResult.canonicalEvents)
 
       const issues = validation.issues.map((issue) => ({
         code: issue.code,
@@ -69,7 +86,9 @@ export default class PartnerFeedsController {
           receivedAt: archived.receivedAt,
           format: archived.format,
           acceptedCount: validation.acceptedMovements.length,
-          quarantinedCount: quarantineRecords.length,
+          quarantinedCount: allQuarantineRecords.length,
+          canonicalEventCount: mappingResult.canonicalEvents.length,
+          outboxMessageCount: mappingResult.outboxMessages.length,
           issues,
         },
       })

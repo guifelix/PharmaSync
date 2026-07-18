@@ -5,6 +5,7 @@ import {
   clearQuarantineRecords,
   loadQuarantineRecords,
 } from '#services/quarantine_record_reference'
+import { clearCanonicalEvents, loadCanonicalEvents } from '#services/partner_feed_mapping'
 
 type PartnerFeedAcceptedBody = {
   data: {
@@ -18,6 +19,8 @@ type PartnerFeedAcceptedBody = {
     format: 'csv' | 'json'
     acceptedCount: number
     quarantinedCount: number
+    canonicalEventCount?: number
+    outboxMessageCount?: number
     issues: Array<{
       code: string
       category: string
@@ -167,6 +170,188 @@ test.group('Partner feeds', () => {
     assert.equal(quarantined[0]?.partnerId, 'partner_delta')
     assert.equal(quarantined[0]?.traceId, 'trace-feed-invalid-001')
     await clearQuarantineRecords()
+  })
+
+  test('maps accepted receipt to canonical events and outbox messages', async ({
+    client,
+    assert,
+  }) => {
+    await clearQuarantineRecords()
+    await clearCanonicalEvents()
+
+    const response = await client
+      .post('/v1/integration/feeds')
+      .header('x-request-id', 'trace-map-receipt-001')
+      .json({
+        format: 'json',
+        partner_id: 'partner_alpha',
+        feed_id: 'feed_map_001',
+        submitted_at: '2026-07-17T13:00:00.000Z',
+        movements: [
+          {
+            source_event_id: 'evt-receipt-001',
+            event_type: 'receipt',
+            site_code: 'site_main',
+            ndc: '0378615501',
+            lot_number: 'AMX-2026-08-A',
+            expiration_date: '2026-08-15',
+            quantity_delta: 100,
+            occurred_at: '2026-07-17T13:00:00.000Z',
+          },
+        ],
+      })
+
+    response.assertStatus(202)
+    const body = response.body() as unknown as PartnerFeedAcceptedBody
+    assert.equal(body.data.status, 'accepted')
+    assert.equal(body.data.acceptedCount, 1)
+    assert.equal(body.data.quarantinedCount, 0)
+    assert.equal(body.data.canonicalEventCount, 1)
+    assert.equal(body.data.outboxMessageCount, 1)
+
+    const events = await loadCanonicalEvents()
+    assert.lengthOf(events, 1)
+    assert.equal(events[0]?.partnerId, 'partner_alpha')
+    assert.equal(events[0]?.movement.type, 'receipt')
+    assert.equal(events[0]?.movement.siteId, 'site_main')
+    assert.equal(events[0]?.movement.productId, 'med_amoxicillin_500')
+    assert.equal(events[0]?.movement.lotId, 'med_amoxicillin_500:AMX-2026-08-A')
+    assert.equal(events[0]?.movement.quantityDelta, 100)
+    assert.isString(events[0]?.idempotencyKey)
+
+    await clearCanonicalEvents()
+  })
+
+  test('maps dispense with negative quantity delta', async ({ client, assert }) => {
+    await clearCanonicalEvents()
+
+    const response = await client
+      .post('/v1/integration/feeds')
+      .header('x-request-id', 'trace-map-dispense-001')
+      .json({
+        format: 'json',
+        partner_id: 'partner_alpha',
+        feed_id: 'feed_map_002',
+        submitted_at: '2026-07-17T13:05:00.000Z',
+        movements: [
+          {
+            source_event_id: 'evt-dispense-001',
+            event_type: 'dispense',
+            site_code: 'site_main',
+            ndc: '0378615501',
+            lot_number: 'AMX-2026-08-A',
+            expiration_date: '2026-08-15',
+            quantity_delta: -3,
+            occurred_at: '2026-07-17T13:05:00.000Z',
+          },
+        ],
+      })
+
+    response.assertStatus(202)
+    const body = response.body() as unknown as PartnerFeedAcceptedBody
+    assert.equal(body.data.acceptedCount, 1)
+    assert.equal(body.data.canonicalEventCount, 1)
+
+    const events = await loadCanonicalEvents()
+    assert.lengthOf(events, 1)
+    assert.equal(events[0]?.movement.type, 'dispense')
+    assert.equal(events[0]?.movement.quantityDelta, -3)
+
+    await clearCanonicalEvents()
+  })
+
+  test('maps a transfer into source and destination canonical events', async ({
+    client,
+    assert,
+  }) => {
+    await clearCanonicalEvents()
+
+    const response = await client
+      .post('/v1/integration/feeds')
+      .header('x-request-id', 'trace-map-transfer-001')
+      .json({
+        format: 'json',
+        partner_id: 'partner_alpha',
+        feed_id: 'feed_map_003',
+        submitted_at: '2026-07-17T13:10:00.000Z',
+        movements: [
+          {
+            source_event_id: 'evt-transfer-001',
+            event_type: 'transfer',
+            site_code: 'site_main',
+            ndc: '6050526713',
+            lot_number: 'ATO-2027-01-B',
+            expiration_date: '2027-01-31',
+            quantity_delta: 30,
+            occurred_at: '2026-07-17T13:10:00.000Z',
+            destination_location: 'site_overflow',
+          },
+        ],
+      })
+
+    response.assertStatus(202)
+    const body = response.body() as unknown as PartnerFeedAcceptedBody
+    assert.equal(body.data.acceptedCount, 1)
+    assert.equal(body.data.canonicalEventCount, 2)
+    assert.equal(body.data.quarantinedCount, 0)
+
+    const events = await loadCanonicalEvents()
+    assert.lengthOf(events, 2)
+
+    const sourceEvent = events.find((e) => e.movement.siteId === 'site_main')
+    assert.isDefined(sourceEvent)
+    assert.equal(sourceEvent!.movement.quantityDelta, -30)
+
+    const destEvent = events.find((e) => e.movement.siteId === 'site_overflow')
+    assert.isDefined(destEvent)
+    assert.equal(destEvent!.movement.quantityDelta, 30)
+
+    await clearCanonicalEvents()
+  })
+
+  test('quarantines transfers with unknown destination site', async ({ client, assert }) => {
+    await clearQuarantineRecords()
+    await clearCanonicalEvents()
+
+    const response = await client
+      .post('/v1/integration/feeds')
+      .header('x-request-id', 'trace-map-bad-transfer-001')
+      .json({
+        format: 'json',
+        partner_id: 'partner_alpha',
+        feed_id: 'feed_map_004',
+        submitted_at: '2026-07-17T13:15:00.000Z',
+        movements: [
+          {
+            source_event_id: 'evt-bad-transfer-001',
+            event_type: 'transfer',
+            site_code: 'site_main',
+            ndc: '0378615501',
+            lot_number: 'AMX-2026-08-A',
+            expiration_date: '2026-08-15',
+            quantity_delta: 10,
+            occurred_at: '2026-07-17T13:15:00.000Z',
+            destination_location: 'site_nonexistent',
+          },
+        ],
+      })
+
+    response.assertStatus(202)
+    const body = response.body() as unknown as PartnerFeedAcceptedBody
+    assert.equal(body.data.acceptedCount, 1)
+    assert.equal(body.data.canonicalEventCount, 0)
+    assert.equal(body.data.quarantinedCount, 1)
+
+    const events = await loadCanonicalEvents()
+    assert.lengthOf(events, 0)
+
+    const records = await loadQuarantineRecords()
+    const mappingQuarantine = records.find((r) => r.reasonCode === 'UNKNOWN_SITE')
+    assert.isDefined(mappingQuarantine)
+    assert.equal(mappingQuarantine!.sourceEventId, 'evt-bad-transfer-001')
+
+    await clearQuarantineRecords()
+    await clearCanonicalEvents()
   })
 
   test('accepts mixed batches while quarantining rejected rows', async ({ client, assert }) => {

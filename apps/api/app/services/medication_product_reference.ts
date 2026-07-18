@@ -1,4 +1,5 @@
 export type MedicationProductReference = {
+  productId: string
   ndc: string
   normalizedNdc: string
   proprietaryName: string
@@ -15,6 +16,7 @@ export type MedicationProductReference = {
 
 export const demoMedicationProducts = deduplicateMedicationProducts([
   medicationProduct({
+    productId: 'med_humalog_100',
     ndc: '0002-8215-01',
     proprietaryName: 'Humalog',
     nonproprietaryName: 'Insulin Lispro',
@@ -27,6 +29,7 @@ export const demoMedicationProducts = deduplicateMedicationProducts([
     strength: '100 [iU]/mL',
   }),
   medicationProduct({
+    productId: 'med_amoxicillin_500',
     ndc: '0378-6155-01',
     proprietaryName: 'Amoxicillin',
     nonproprietaryName: 'Amoxicillin',
@@ -39,6 +42,7 @@ export const demoMedicationProducts = deduplicateMedicationProducts([
     strength: '500 mg',
   }),
   medicationProduct({
+    productId: 'med_atorvastatin_20',
     ndc: '60505-2671-3',
     proprietaryName: 'Atorvastatin Calcium',
     nonproprietaryName: 'Atorvastatin Calcium',
@@ -76,6 +80,13 @@ export function deduplicateMedicationProducts(products: readonly MedicationProdu
   }
 
   return [...byNdc.values()]
+}
+
+export function findProductByNormalizedNdc(
+  products: readonly MedicationProductReference[],
+  normalizedNdc: string
+): MedicationProductReference | undefined {
+  return products.find((product) => product.normalizedNdc === normalizedNdc)
 }
 
 export function searchMedicationProducts(

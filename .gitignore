@@ -13,3 +13,6 @@ memory/
 architecture/.structurizr/
 architecture/workspace.json
 apps/api/build/
+apps/api/storage/*.ndjson
+apps/api/storage/partner-feeds/
+apps/api/storage/quarantine-records/
