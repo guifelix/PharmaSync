@@ -18,6 +18,9 @@ references:
   - docs/system-design/integration-contracts.md
   - packages/integration/src/index.ts
   - packages/contracts/openapi/pharmasync.v1.yaml
+  - architecture/processes/system/ingestion/feed-ingestion.bpmn.ts
+  - architecture/processes/system/ingestion/feed-validation.bpmn.ts
+  - architecture/processes/system/ingestion/canonical-mapping.bpmn.ts
 parent_task_id: TASK-016
 priority: high
 ordinal: 62000

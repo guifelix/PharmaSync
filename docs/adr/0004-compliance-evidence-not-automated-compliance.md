@@ -55,4 +55,10 @@ The system captures audit evidence, trace IDs, policy findings, and evidence pac
 
 - [Solution Design](../solution-design.md)
 - [Structurizr Workspace](../../architecture/workspace.dsl)
+- Process: [Evidence Collection](../../architecture/processes/system/evidence/evidence-collection.bpmn.ts)
+- Process: [Evidence Packaging](../../architecture/processes/system/evidence/evidence-packaging.bpmn.ts)
+- Process: [Evidence Export](../../architecture/processes/system/evidence/evidence-export.bpmn.ts)
+- Process: [Evidence Review](../../architecture/processes/human/evidence/evidence-review.bpmn.ts)
+- Process: [Compliance Signoff](../../architecture/processes/human/evidence/compliance-signoff.bpmn.ts)
+- Decision Table: [Evidence Requirements](../../architecture/processes/dmn/compliance/evidence-requirements.dmn.ts)
 

@@ -18,3 +18,12 @@ Phase 1 security posture:
 Compliance stance:
 
 PharmaSync should generate traceability and evidence packages. It should not claim automated regulatory compliance. Human governance remains responsible for formal review and submission decisions.
+
+## Related Processes
+
+- [Evidence Collection](architecture/processes/system/evidence/evidence-collection.bpmn.ts) — captures audit events for every action
+- [Evidence Packaging](architecture/processes/system/evidence/evidence-packaging.bpmn.ts) — bundles raw and normalized payloads
+- [Evidence Export](architecture/processes/system/evidence/evidence-export.bpmn.ts) — exports evidence packages for external review
+- [Evidence Requirements DMN](architecture/processes/dmn/compliance/evidence-requirements.dmn.ts) — decision table governing what evidence is required
+- [Evidence Review](architecture/processes/human/evidence/evidence-review.bpmn.ts) — human review of exported evidence
+- [Compliance Signoff](architecture/processes/human/evidence/compliance-signoff.bpmn.ts) — final human attestation for compliance packages

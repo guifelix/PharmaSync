@@ -17,6 +17,7 @@ references:
   - docs/adr/0004-compliance-evidence-not-automated-compliance.md
   - docs/system-design/security-and-compliance.md
   - packages/domain/src/index.ts
+  - architecture/processes/system/evidence/evidence-collection.bpmn.ts
 parent_task_id: TASK-008
 priority: high
 ordinal: 40000

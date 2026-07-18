@@ -16,6 +16,8 @@ dependencies:
 references:
   - docs/solution-design.md
   - packages/domain/src/index.ts
+  - architecture/processes/system/signals/expiry-risk-detection.bpmn.ts
+  - architecture/processes/dmn/signals/expiry-windows.dmn.ts
 parent_task_id: TASK-006
 priority: high
 ordinal: 32000

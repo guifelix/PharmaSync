@@ -55,4 +55,9 @@ Model Integration Gateway explicitly with adapters, validation, canonical mappin
 
 - [Integration Gateway D2 Diagram](../../architecture/d2/component-integration-gateway.d2)
 - [Structurizr Workspace](../../architecture/workspace.dsl)
+- Process: [Feed Ingestion](../../architecture/processes/system/ingestion/feed-ingestion.bpmn.ts)
+- Process: [Feed Validation](../../architecture/processes/system/ingestion/feed-validation.bpmn.ts)
+- Process: [Idempotency Check](../../architecture/processes/system/ingestion/idempotency-check.bpmn.ts)
+- Process: [Canonical Mapping](../../architecture/processes/system/ingestion/canonical-mapping.bpmn.ts)
+- Process: [Quarantine Review](../../architecture/processes/human/quarantine/quarantine-review.bpmn.ts)
 

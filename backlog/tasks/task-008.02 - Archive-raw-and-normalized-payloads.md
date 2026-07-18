@@ -15,6 +15,7 @@ dependencies:
 references:
   - docs/system-design/integration-contracts.md
   - docs/adr/0004-compliance-evidence-not-automated-compliance.md
+  - architecture/processes/system/evidence/evidence-packaging.bpmn.ts
 parent_task_id: TASK-008
 priority: high
 ordinal: 41000

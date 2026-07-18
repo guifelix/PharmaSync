@@ -16,6 +16,8 @@ dependencies:
 references:
   - docs/solution-design.md
   - packages/domain/src/index.ts
+  - architecture/processes/system/signals/shortage-detection.bpmn.ts
+  - architecture/processes/dmn/signals/shortage-threshold.dmn.ts
 parent_task_id: TASK-006
 priority: high
 ordinal: 33000

@@ -46,3 +46,11 @@ Lot and expiration rules:
 Phase 1 must avoid patient-identifiable data. Dispense events should be synthetic or aggregated.
 
 Table-level schema conventions and the current Phase 1 data model live in [database-design.md](database-design.md) and `architecture/d2/database-model.d2`.
+
+## Related Processes
+
+- [Feed Ingestion](architecture/processes/system/ingestion/feed-ingestion.bpmn.ts) — creates Partner Feed and Quarantine Record entities
+- [Idempotency Check](architecture/processes/system/ingestion/idempotency-check.bpmn.ts) — deduplicates by source event ID and payload hash
+- [Canonical Mapping](architecture/processes/system/ingestion/canonical-mapping.bpmn.ts) — produces Stock Position and Inventory Movement records
+- [Evidence Collection](architecture/processes/system/evidence/evidence-collection.bpmn.ts) — creates Audit Event entities
+- [Expiry Risk Detection](architecture/processes/system/signals/expiry-risk-detection.bpmn.ts) — creates Risk Signal entities for expiration

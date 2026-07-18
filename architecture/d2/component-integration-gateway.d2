@@ -34,6 +34,8 @@ integrationGateway: {
     label: |md
       ## Partner Feed Adapter
       Receives CSV, JSON API, and mock healthcare-format inventory feeds.
+
+      Process: feed-ingestion.bpmn.ts
     |
   }
 
@@ -42,6 +44,8 @@ integrationGateway: {
     label: |md
       ## Payload Validation
       Validates schema, required fields, data types, and business constraints.
+
+      Process: feed-validation.bpmn.ts
     |
   }
 
@@ -50,6 +54,8 @@ integrationGateway: {
     label: |md
       ## Canonical Mapping
       Maps partner payloads into medication, lot, location, and movement events.
+
+      Process: canonical-mapping.bpmn.ts
     |
   }
 
@@ -58,6 +64,8 @@ integrationGateway: {
     label: |md
       ## Idempotency
       Deduplicates repeated submissions using source IDs, payload hash, and partner event identifiers.
+
+      Process: idempotency-check.bpmn.ts
     |
   }
 
@@ -66,6 +74,8 @@ integrationGateway: {
     label: |md
       ## Quarantine
       Stores rejected payloads with error reasons, source metadata, and trace IDs.
+
+      Processes: quarantine-review.bpmn.ts, payload-remediation.bpmn.ts
     |
   }
 
@@ -74,6 +84,8 @@ integrationGateway: {
     label: |md
       ## Event Publisher
       Publishes accepted integration and inventory events through the queue/outbox.
+
+      Process: outbox-publisher.bpmn.ts
     |
   }
 }

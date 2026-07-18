@@ -56,4 +56,8 @@ Build Phase 1 as a pilot-ready reference system focused on one regional supply c
 
 - [Solution Design](../solution-design.md)
 - [Structurizr Workspace](../../architecture/workspace.dsl)
+- Process: [Feed Ingestion](../../architecture/processes/system/ingestion/feed-ingestion.bpmn.ts)
+- Process: [Canonical Mapping](../../architecture/processes/system/ingestion/canonical-mapping.bpmn.ts)
+- Process: [Outbox Publisher](../../architecture/processes/system/outbox/outbox-publisher.bpmn.ts)
+- Process: [Expiry Risk Detection](../../architecture/processes/system/signals/expiry-risk-detection.bpmn.ts)
 

@@ -59,6 +59,8 @@ pharmaSync: {
       ## Integration Gateway
       [Workers / ETL]
       Validates, maps, deduplicates, quarantines, and normalizes partner payloads.
+
+      Processes: system/ingestion/*
     |
   }
 
@@ -68,6 +70,8 @@ pharmaSync: {
       ## Signal Service
       [TypeScript worker / rules engine]
       Rules-based shortage, overstock, expiry risk, and replenishment signals.
+
+      Processes: system/signals/*, dmn/signals/*
     |
   }
 
@@ -77,6 +81,8 @@ pharmaSync: {
       ## Compliance Evidence Service
       [AdonisJS service module]
       Evidence capture, policy findings, trace IDs, and review packages.
+
+      Processes: system/evidence/*, dmn/compliance/*
     |
   }
 

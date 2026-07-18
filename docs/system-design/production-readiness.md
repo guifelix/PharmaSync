@@ -21,3 +21,9 @@ Operational targets:
 - Duplicate feeds do not double-count inventory.
 - Invalid feeds produce quarantine records with actionable error reasons.
 - Inventory corrections produce audit evidence.
+
+## Related Processes
+
+- [Platform Deployment](architecture/processes/operational/platform-deployment.bpmn.ts) — deployment workflow for pilot environments
+- [Backup and Restore](architecture/processes/operational/backup-restore.bpmn.ts) — database and object storage backup procedures
+- [Disaster Recovery](architecture/processes/operational/disaster-recovery.bpmn.ts) — recovery steps for infrastructure failure

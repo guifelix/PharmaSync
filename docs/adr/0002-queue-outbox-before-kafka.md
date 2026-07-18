@@ -55,4 +55,7 @@ Use a workflow queue plus transactional outbox for Phase 1 asynchronous processi
 
 - [Solution Design](../solution-design.md)
 - [Container D2 Diagram](../../architecture/d2/container.d2)
+- Process: [Outbox Publisher](../../architecture/processes/system/outbox/outbox-publisher.bpmn.ts)
+- Process: [Dead Letter Handler](../../architecture/processes/system/outbox/dead-letter.bpmn.ts)
+- Process: [Outbox Decider](../../architecture/processes/dmn/outbox/outbox-decider.dmn.ts)
 

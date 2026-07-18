@@ -18,6 +18,9 @@ dependencies:
 references:
   - docs/system-design/production-readiness.md
   - infra/local/docker-compose.yml
+  - architecture/processes/operational/platform-deployment.bpmn.ts
+  - architecture/processes/operational/backup-restore.bpmn.ts
+  - architecture/processes/operational/disaster-recovery.bpmn.ts
 parent_task_id: TASK-016
 priority: medium
 ordinal: 61000

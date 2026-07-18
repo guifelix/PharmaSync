@@ -42,6 +42,8 @@ inventoryApi: {
     label: |md
       ## Inventory Domain Component
       Medication, lot, expiration, stock, and movement business rules.
+
+      Processes: movement-recording.bpmn.ts, correction-workflow.bpmn.ts
     |
   }
 
@@ -50,6 +52,8 @@ inventoryApi: {
     label: |md
       ## Replenishment Component
       Thresholds, recommendations, allocation support, and shortage checks.
+
+      Processes: stock-adjustment.bpmn.ts, dmn/inventory/allocation-rules.dmn.ts
     |
   }
 
@@ -58,6 +62,8 @@ inventoryApi: {
     label: |md
       ## Audit Publisher Component
       Emits auditable inventory actions and correction events.
+
+      Process: evidence-collection.bpmn.ts
     |
   }
 }

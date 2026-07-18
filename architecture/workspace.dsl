@@ -15,22 +15,22 @@ workspace "PharmaSync Protocol Phase 1 POC" "C4 model for a buildable proof of c
             webApp = container "Operations Web App" "Browser dashboard for inventory, alerts, recommendations, integration health, and compliance evidence views." "Vue 3 / Vite / Nuxt UI / Reka UI"
             apiGateway = container "API Gateway" "Authenticated entry point for users, partner APIs, and internal service APIs." "AdonisJS / REST / OpenAPI"
             inventoryApi = container "Inventory API" "Manages medications, lots, locations, stock levels, expirations, inventory movements, and corrections." "AdonisJS / Lucid ORM / PostgreSQL" {
-                inventoryApiComponent = component "Inventory Domain Component" "Medication, lot, expiration, stock, and inventory movement business rules." "Domain module"
-                replenishmentComponent = component "Replenishment Component" "Threshold checks, reorder recommendations, and inventory allocation support." "Domain module"
-                auditPublisherComponent = component "Audit Publisher Component" "Publishes auditable inventory actions and corrections." "Messaging module"
+                inventoryApiComponent = component "Inventory Domain Component" "Medication, lot, expiration, stock, and inventory movement business rules. Processes: movement-recording.bpmn.ts, correction-workflow.bpmn.ts." "Domain module"
+                replenishmentComponent = component "Replenishment Component" "Threshold checks, reorder recommendations, and inventory allocation support. Processes: stock-adjustment.bpmn.ts, dmn/inventory/allocation-rules.dmn.ts." "Domain module"
+                auditPublisherComponent = component "Audit Publisher Component" "Publishes auditable inventory actions and corrections. Process: evidence-collection.bpmn.ts." "Messaging module"
                 inventoryRestComponent = component "Inventory REST Controller" "REST endpoints for inventory queries, corrections, and movement ingestion." "API module"
             }
-            integrationGateway = container "Integration Gateway" "Ingests partner feeds, validates payloads, maps to the canonical model, handles idempotency, quarantines failures, and publishes accepted events." "Workers / ETL adapters" {
-                feedAdapterComponent = component "Partner Feed Adapter Component" "Receives CSV, JSON API, and mock healthcare-format inventory feeds." "Adapter module"
-                validationComponent = component "Payload Validation Component" "Validates schema, required fields, data types, and business constraints before ingestion." "Validation module"
-                canonicalMapperComponent = component "Canonical Mapping Component" "Maps partner-specific payloads into canonical medication, lot, location, and movement events." "Mapping module"
-                idempotencyComponent = component "Idempotency Component" "Deduplicates repeated partner submissions using source, payload hash, and partner event identifiers." "Reliability module"
-                quarantineComponent = component "Quarantine Component" "Stores rejected payloads with error reasons, source metadata, and trace IDs for remediation." "Exception handling module"
-                integrationEventPublisherComponent = component "Integration Event Publisher Component" "Publishes accepted integration and inventory events through the workflow queue/outbox." "Messaging module"
+            integrationGateway = container "Integration Gateway" "Ingests partner feeds, validates payloads, maps to the canonical model, handles idempotency, quarantines failures, and publishes accepted events. Processes: system/ingestion/*." "Workers / ETL adapters" {
+                feedAdapterComponent = component "Partner Feed Adapter Component" "Receives CSV, JSON API, and mock healthcare-format inventory feeds. Process: feed-ingestion.bpmn.ts." "Adapter module"
+                validationComponent = component "Payload Validation Component" "Validates schema, required fields, data types, and business constraints before ingestion. Process: feed-validation.bpmn.ts." "Validation module"
+                canonicalMapperComponent = component "Canonical Mapping Component" "Maps partner-specific payloads into canonical medication, lot, location, and movement events. Process: canonical-mapping.bpmn.ts." "Mapping module"
+                idempotencyComponent = component "Idempotency Component" "Deduplicates repeated partner submissions using source, payload hash, and partner event identifiers. Process: idempotency-check.bpmn.ts." "Reliability module"
+                quarantineComponent = component "Quarantine Component" "Stores rejected payloads with error reasons, source metadata, and trace IDs for remediation. Processes: quarantine-review.bpmn.ts, payload-remediation.bpmn.ts." "Exception handling module"
+                integrationEventPublisherComponent = component "Integration Event Publisher Component" "Publishes accepted integration and inventory events through the workflow queue/outbox. Process: outbox-publisher.bpmn.ts." "Messaging module"
             }
-            signalService = container "Signal Service" "Calculates shortage, overstock, expiration-risk, and replenishment signals using transparent rules for the POC." "TypeScript worker / rules engine"
-            complianceService = container "Compliance Evidence Service" "Captures audit evidence, policy findings, trace IDs, and evidence packages for authorized review." "AdonisJS service module"
-            workflowQueue = container "Workflow Queue and Outbox" "Reliably processes inventory, integration, signal, and audit events without requiring national-scale streaming infrastructure." "PostgreSQL outbox + worker queue"
+            signalService = container "Signal Service" "Calculates shortage, overstock, expiration-risk, and replenishment signals using transparent rules for the POC. Processes: system/signals/*, dmn/signals/*." "TypeScript worker / rules engine"
+            complianceService = container "Compliance Evidence Service" "Captures audit evidence, policy findings, trace IDs, and evidence packages for authorized review. Processes: system/evidence/*, dmn/compliance/*." "AdonisJS service module"
+            workflowQueue = container "Workflow Queue and Outbox" "Reliably processes inventory, integration, signal, and audit events without requiring national-scale streaming infrastructure. Processes: system/outbox/*." "PostgreSQL outbox + worker queue"
             database = container "Operational Database" "Stores canonical inventory, locations, users, permissions, policies, and reporting state." "PostgreSQL"
             objectStorage = container "Evidence and Payload Storage" "Stores import archives, generated reports, and audit evidence packages." "S3-compatible object storage"
         }

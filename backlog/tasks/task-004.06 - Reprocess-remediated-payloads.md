@@ -17,6 +17,10 @@ dependencies:
 references:
   - docs/system-design/integration-contracts.md
   - docs/adr/0003-integration-gateway-boundary.md
+  - architecture/processes/human/quarantine/reprocess-decision.bpmn.ts
+  - architecture/processes/system/ingestion/feed-validation.bpmn.ts
+  - architecture/processes/system/ingestion/canonical-mapping.bpmn.ts
+  - architecture/processes/system/ingestion/idempotency-check.bpmn.ts
 parent_task_id: TASK-004
 priority: medium
 ordinal: 28000

@@ -17,6 +17,10 @@ dependencies:
 references:
   - packages/contracts/openapi/pharmasync.v1.yaml
   - docs/system-design/production-readiness.md
+  - architecture/processes/system/evidence/evidence-export.bpmn.ts
+  - architecture/processes/human/evidence/evidence-review.bpmn.ts
+  - architecture/processes/human/evidence/compliance-signoff.bpmn.ts
+  - architecture/processes/dmn/compliance/evidence-requirements.dmn.ts
 parent_task_id: TASK-008
 priority: medium
 ordinal: 42000

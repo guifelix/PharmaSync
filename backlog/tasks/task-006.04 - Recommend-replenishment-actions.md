@@ -18,6 +18,8 @@ dependencies:
 references:
   - docs/solution-design.md
   - docs/adr/0004-compliance-evidence-not-automated-compliance.md
+  - architecture/processes/system/signals/replenishment-recommendation.bpmn.ts
+  - architecture/processes/dmn/signals/replenishment-priority.dmn.ts
 parent_task_id: TASK-006
 priority: medium
 ordinal: 35000

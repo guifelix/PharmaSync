@@ -16,6 +16,8 @@ dependencies:
 references:
   - docs/system-design/integration-contracts.md
   - packages/contracts/openapi/pharmasync.v1.yaml
+  - architecture/processes/human/quarantine/quarantine-review.bpmn.ts
+  - architecture/processes/human/quarantine/payload-remediation.bpmn.ts
 parent_task_id: TASK-004
 priority: high
 ordinal: 27000

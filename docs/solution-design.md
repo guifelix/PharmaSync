@@ -144,3 +144,12 @@ After the Phase 1 POC is credible, expand in this order:
 - Regulatory claims must stay scoped to evidence support, not automated legal compliance.
 - Forecasting accuracy depends on historical demand data quality.
 - Cross-organization data sharing will require governance, contracts, and access boundaries beyond the technical POC.
+
+## Related Processes
+
+- [Feed Ingestion](architecture/processes/system/ingestion/feed-ingestion.bpmn.ts) — receives and validates partner payloads
+- [Canonical Mapping](architecture/processes/system/ingestion/canonical-mapping.bpmn.ts) — transforms partner data into canonical inventory events
+- [Outbox Publisher](architecture/processes/system/outbox/outbox-publisher.bpmn.ts) — durable event dispatch for downstream consumers
+- [Evidence Collection](architecture/processes/system/evidence/evidence-collection.bpmn.ts) — captures append-only audit trail for every action
+- [Expiry Risk Detection](architecture/processes/system/signals/expiry-risk-detection.bpmn.ts) — identifies near-expiry lots
+- [Quarantine Review](architecture/processes/human/quarantine/quarantine-review.bpmn.ts) — human-in-the-loop for invalid or conflicting payloads
