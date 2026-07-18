@@ -10,6 +10,8 @@ tmp/
 logs/
 *.log
 memory/
+.supamem/
+.agents/insights/
 architecture/.structurizr/
 architecture/workspace.json
 apps/api/build/
