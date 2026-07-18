@@ -148,7 +148,14 @@ async function tick() {
   }
 }
 
-await tick();
+try {
+  await tick();
+} catch (error: unknown) {
+  console.error(
+    "Worker initial tick failed (DB may not be ready yet)",
+    error instanceof Error ? error.message : error,
+  );
+}
 setInterval(() => {
   tick().catch((error: unknown) => {
     console.error(
